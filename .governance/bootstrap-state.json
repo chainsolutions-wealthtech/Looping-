@@ -1,9 +1,13 @@
 {
   "schema_version": "1.0.0",
-  "status": "INITIALIZED_PENDING_ATTESTATION",
+  "status": "PASS",
   "initialized": true,
   "repository": "chainsolutions-wealthtech/Looping-",
   "canonical_branch": "main",
   "bootstrap_revision": 1,
-  "last_receipt": ".governance/bootstrap-receipt.json"
+  "last_receipt": ".governance/bootstrap-receipt.json",
+  "attested_initialization_commit_sha": "4900f36b8aecc6cea8d7f77179f079d635c0a924",
+  "attestation_subject_sha": "4900f36b8aecc6cea8d7f77179f079d635c0a924",
+  "attestation_model": "CHILD_COMMIT_ATTESTS_INITIALIZATION_COMMIT",
+  "attested_at": "2026-11-13T05:56:34+00:00"
 }

@@ -8,7 +8,7 @@
   "repository": "chainsolutions-wealthtech/Looping-",
   "canonical_branch": "main",
   "baseline_head": "TO_CAPTURE",
-  "next_action": "INITIALIZE_PROJECT_GOVERNANCE",
-  "last_verification": "NOT_RUN"
+  "next_action": "DISCOVER_PROJECT_BASELINE",
+  "last_verification": "GOVERNANCE_BOOTSTRAP_ATTESTED"
 }
 ```
