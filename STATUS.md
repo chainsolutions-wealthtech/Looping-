@@ -4,9 +4,9 @@
 
 - Repository: `chainsolutions-wealthtech/Looping-`
 - Branch: `main`
-- Observed input HEAD: `fb76f7386f910dc7419fa55b870469930f3f35cb`
+- Observed input HEAD: `db04b73a22c513fdf9bfdb6c9396f884bce8cf19`
 - Attested initialization commit: `4900f36b8aecc6cea8d7f77179f079d635c0a924`
-- État du lot courant : mémoire et planification documentaires ; publication à vérifier dans le checkpoint.
+- État du lot courant : mémoire et planification documentaires publiées ; relecture distante vérifiée dans le checkpoint.
 - Mémoire : canonical_revision=3 ; work_revision=1 ; deux intakes réconciliés sans création de work-item.
 - Next action: `DISCOVER_PROJECT_BASELINE`
 

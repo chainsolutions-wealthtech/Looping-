@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "repository": "chainsolutions-wealthtech/Looping-",
-  "updated_at": "2026-11-13T07:14:36+00:00",
+  "updated_at": "2026-11-13T07:22:52+00:00",
   "role": "MATERIAL_ACTION_EVIDENCE_LEDGER",
   "event_timestamp_rule": "null quand la date originale n’est pas exposée ; recorded_at date uniquement l’enregistrement.",
   "actions": [
@@ -119,6 +119,36 @@
       ],
       "event_timestamp": null,
       "recorded_at": "2026-11-13T07:14:36+00:00",
+      "provider_session_ref": null
+    },
+    {
+      "action_id": "LOOP-ACT-010",
+      "kind": "CANONICAL_DOCUMENT_PUBLICATION",
+      "result": "VERIFIED",
+      "description": "Publication de la mémoire canonique, des demandes, du contexte, de la méthode, de l’architecture et de la roadmap.",
+      "evidence_refs": [
+        "https://github.com/chainsolutions-wealthtech/Looping-/commit/db04b73a22c513fdf9bfdb6c9396f884bce8cf19"
+      ],
+      "event_timestamp": null,
+      "recorded_at": "2026-11-13T07:22:52+00:00",
+      "provider_session_ref": null
+    },
+    {
+      "action_id": "LOOP-ACT-011",
+      "kind": "POST_WRITE_READBACK_AND_CI",
+      "result": "VERIFIED_WITH_CI_BLOCKERS",
+      "description": "Trente blobs comparés et onze contenus relus ; validation de structure réussie, CI complète arrêtée sur les chemins déjà absents.",
+      "evidence_refs": [
+        "docs/memory/CHECKPOINT.json",
+        "https://github.com/chainsolutions-wealthtech/Looping-/actions/runs/43384752965",
+        "https://github.com/chainsolutions-wealthtech/Looping-/actions/runs/43384752980",
+        "https://github.com/chainsolutions-wealthtech/Looping-/actions/runs/43384752850",
+        "https://github.com/chainsolutions-wealthtech/Looping-/actions/runs/43384752892",
+        "https://github.com/chainsolutions-wealthtech/Looping-/actions/runs/43384752852",
+        "https://github.com/chainsolutions-wealthtech/Looping-/actions/runs/43384752854"
+      ],
+      "event_timestamp": null,
+      "recorded_at": "2026-11-13T07:22:52+00:00",
       "provider_session_ref": null
     }
   ]

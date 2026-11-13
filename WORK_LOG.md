@@ -23,3 +23,15 @@ Ajouter ici les preuves d'exécution significatives, commandes, runs CI, anomali
 - Couverture des échanges accessible et lacunes consignées ; aucune date originale ou identité fournisseur inventée.
 - La baseline métier reste ouverte ; l’action globale demeure DISCOVER_PROJECT_BASELINE. La CI complète n’est pas déclarée réussie.
 - Validation locale et publication distante du lot : résultats à consulter dans docs/memory/CHECKPOINT.json.
+
+## 2026-11-13T07:22:52+00:00 — Publication et relecture du lot mémoire
+
+- Commit canonique publié : `db04b73a22c513fdf9bfdb6c9396f884bce8cf19` ; arbre `7ef08ff69ee7d9a4b4e60dcf28682bcdfa8beb76`.
+- Trente blobs attendus conformes ; onze documents principaux relus au commit exact.
+- Depuis la nouvelle demande : douze ajouts, dix-neuf modifications ; aucune suppression dans le lot canonique.
+- Sources utilisateur conservées et vérifiées ; vingt demandes, trois constats ; dépendances acycliques et références résolues.
+- Governance CI 43384752852 : validation de structure, compilation et premières étapes réussies ; arrêt sur le fichier SQL 007 absent.
+- Observable Arrival 43384752854 : même absence ; Continuity Relay 43384752980 : namespace-work-registry absent.
+- Exposure Gate et Auto Bootstrap ont réussi ; Route Selftest est SKIPPED. Aucune certification CI complète.
+- Résultats détaillés : docs/memory/CHECKPOINT.json ; actions : LOOP-ACT-010/011.
+- Cette entrée est une preuve du commit canonique ci-dessus ; le commit contenant ce compte rendu ne prétend pas connaître son propre SHA futur.

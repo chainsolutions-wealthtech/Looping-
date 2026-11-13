@@ -55,9 +55,159 @@
   ],
   "verification": {
     "local_checks": "PASS: JSON, source bodies/hashes, request references/dependencies, textual integrity",
-    "remote_publication": "PENDING",
-    "full_ci": "BLOCKED_ON_BASELINE",
-    "evidence_ref": "docs/intake/VERIFICATION.md"
+    "remote_publication": "VERIFIED",
+    "full_ci": "FAILURE_ON_INHERITED_MISSING_CLIENT_DEPENDENCIES",
+    "evidence_ref": "docs/intake/VERIFICATION.md",
+    "verified_at": "2026-11-13T07:22:52+00:00",
+    "verified_commit_sha": "db04b73a22c513fdf9bfdb6c9396f884bce8cf19",
+    "verified_tree_sha": "7ef08ff69ee7d9a4b4e60dcf28682bcdfa8beb76",
+    "matched_prepared_blobs": 30,
+    "principal_file_readbacks": 11,
+    "scope_since_owner_request": {
+      "baseline": "4569cd8bdb157f760729cf0b8b9e5751a640e6fb",
+      "newTree": "7ef08ff69ee7d9a4b4e60dcf28682bcdfa8beb76",
+      "added": 12,
+      "modified": 19,
+      "removed": 0,
+      "expectedCanonicalBlobs": 30
+    },
+    "governance_structure": "PASS_IN_GOVERNANCE_CI",
+    "workflow_runs": [
+      {
+        "run_id": 43384752965,
+        "name": "GSCC Function Route Selftest",
+        "status": "completed",
+        "conclusion": "skipped",
+        "url": "https://github.com/chainsolutions-wealthtech/Looping-/actions/runs/43384752965",
+        "head_sha": "db04b73a22c513fdf9bfdb6c9396f884bce8cf19"
+      },
+      {
+        "run_id": 43384752980,
+        "name": "Governed Agent Continuity Relay",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/chainsolutions-wealthtech/Looping-/actions/runs/43384752980",
+        "head_sha": "db04b73a22c513fdf9bfdb6c9396f884bce8cf19"
+      },
+      {
+        "run_id": 43384752850,
+        "name": "GSCC Function Exposure Gate",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/chainsolutions-wealthtech/Looping-/actions/runs/43384752850",
+        "head_sha": "db04b73a22c513fdf9bfdb6c9396f884bce8cf19"
+      },
+      {
+        "run_id": 43384752892,
+        "name": "Governance Auto Bootstrap",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/chainsolutions-wealthtech/Looping-/actions/runs/43384752892",
+        "head_sha": "db04b73a22c513fdf9bfdb6c9396f884bce8cf19"
+      },
+      {
+        "run_id": 43384752852,
+        "name": "Governance CI",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/chainsolutions-wealthtech/Looping-/actions/runs/43384752852",
+        "head_sha": "db04b73a22c513fdf9bfdb6c9396f884bce8cf19"
+      },
+      {
+        "run_id": 43384752854,
+        "name": "GSCC Observable Arrival Gateway",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/chainsolutions-wealthtech/Looping-/actions/runs/43384752854",
+        "head_sha": "db04b73a22c513fdf9bfdb6c9396f884bce8cf19"
+      }
+    ],
+    "job_results": [
+      {
+        "run_id": 43384752980,
+        "run_name": "Governed Agent Continuity Relay",
+        "job_id": 131750495951,
+        "conclusion": "failure",
+        "failed_steps": [
+          "Validate GACR state"
+        ],
+        "passed_steps": [
+          "Set up job",
+          "Run actions/checkout@v4",
+          "Run actions/setup-python@v5",
+          "Capture exact base HEAD",
+          "Execute GACR command",
+          "Refresh capacity-aware work offers",
+          "Run continuity mini-loop",
+          "Deliver pending GSCC control commands",
+          "Reconcile continuity delivery projection",
+          "Persist optional external GACR delivery state",
+          "Post Run actions/checkout@v4",
+          "Complete job"
+        ]
+      },
+      {
+        "run_id": 43384752852,
+        "run_name": "Governance CI",
+        "job_id": 131750495726,
+        "conclusion": "failure",
+        "failed_steps": [
+          "Test first-touch field block gate database"
+        ],
+        "passed_steps": [
+          "Set up job",
+          "Run actions/checkout@v4",
+          "Run actions/setup-python@v5",
+          "Validate governed repository structure",
+          "Compile governance scripts",
+          "Test GSCC core protocol and SessionEndpoint",
+          "Test exhaustive first-touch capture",
+          "Post Run actions/checkout@v4",
+          "Complete job"
+        ]
+      },
+      {
+        "run_id": 43384752854,
+        "run_name": "GSCC Observable Arrival Gateway",
+        "job_id": 131750495741,
+        "conclusion": "failure",
+        "failed_steps": [
+          "Materialize first-touch field block gate database"
+        ],
+        "passed_steps": [
+          "Set up job",
+          "Run actions/checkout@v4",
+          "Run actions/setup-python@v5",
+          "Capture exhaustive first-touch evidence",
+          "Restore previous GSCC GSE First Touch state",
+          "Post Run actions/checkout@v4",
+          "Complete job"
+        ]
+      }
+    ],
+    "error_lines": [
+      {
+        "job_id": 131750495951,
+        "lines": [
+          "2026-11-13T07:18:05.4484299Z FileNotFoundError: [Errno 2] No such file or directory: '/home/runner/work/Looping-/Looping-/.governance/control-plane-state/namespace-work-registry.json'"
+        ]
+      },
+      {
+        "job_id": 131750495726,
+        "lines": [
+          "2026-11-13T07:18:03.8628190Z GOVERNANCE_VALIDATION_PASS: instantiated repository mode v2",
+          "2026-11-13T07:18:04.3378324Z FileNotFoundError: [Errno 2] No such file or directory: '/home/runner/work/Looping-/Looping-/.governance/control-plane-db/007_first_touch_field_block_gate.sql'"
+        ]
+      },
+      {
+        "job_id": 131750495741,
+        "lines": [
+          "2026-11-13T07:18:18.0632310Z FileNotFoundError: [Errno 2] No such file or directory: '/home/runner/work/Looping-/Looping-/.governance/control-plane-db/007_first_touch_field_block_gate.sql'"
+        ]
+      }
+    ],
+    "proof_commit_boundary": "This checkpoint reports the published canonical document commit. The containing follow-up commit adds verification metadata and the prepared response; it does not claim its own future SHA or CI results."
   },
-  "authority_limit": "Documentary checkpoint, not a GSCC receipt, GACR session checkpoint or runtime attestation."
+  "authority_limit": "Documentary checkpoint, not a GSCC receipt, GACR session checkpoint or runtime attestation.",
+  "current_input_head_for_evidence_write": "db04b73a22c513fdf9bfdb6c9396f884bce8cf19"
 }

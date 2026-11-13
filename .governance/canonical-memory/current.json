@@ -4,7 +4,7 @@
   "canonical_branch": "main",
   "canonical_revision": 3,
   "work_revision": 1,
-  "observed_head_sha": "fb76f7386f910dc7419fa55b870469930f3f35cb",
+  "observed_head_sha": "db04b73a22c513fdf9bfdb6c9396f884bce8cf19",
   "current_checkpoint": "docs/memory/CHECKPOINT.json",
   "current_handoff": null,
   "next_action": "DISCOVER_PROJECT_BASELINE",
@@ -12,7 +12,7 @@
     "LOOP-FIND-001: full CI blocked by inherited missing client dependencies",
     "LOOP-FIND-002: source history coverage incomplete"
   ],
-  "freshness": "OBSERVED_DOCUMENTARY_REVIEW",
+  "freshness": "POST_PUBLICATION_VERIFIED_INPUT",
   "bootstrap_attestation_subject_sha": "4900f36b8aecc6cea8d7f77179f079d635c0a924",
   "attestation_model": "CHILD_COMMIT_ATTESTS_INITIALIZATION_COMMIT",
   "memory_index": "docs/memory/README.md",
@@ -32,5 +32,7 @@
     "next_action": "NEXT_ACTION.md"
   },
   "last_reviewed_at": "2026-11-13T07:14:36+00:00",
-  "head_semantics": "observed_head_sha is the pre-write observed input; the containing Git commit is the output artifact, never a fabricated self-SHA."
+  "head_semantics": "observed_head_sha is the pre-write observed input; the containing Git commit is the output artifact, never a fabricated self-SHA.",
+  "last_verified_head_sha": "db04b73a22c513fdf9bfdb6c9396f884bce8cf19",
+  "last_verified_at": "2026-11-13T07:22:52+00:00"
 }
