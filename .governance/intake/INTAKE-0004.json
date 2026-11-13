@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0.0",
+  "intake_id": "INTAKE-0004",
+  "sequence": 4,
+  "status": "RECEIVED",
+  "source_type": "chatgpt",
+  "source_id": "docs/memory/sources/U12.json",
+  "source_digest": "1a24f5b9e2e400e1a5b7e168b3a4a6456a02f4d8828497a4beb7417747776b7e",
+  "observed_at": "2026-11-13T07:52:15+00:00",
+  "summary": "Rechercher et consigner la jonction des dépôts des trois propriétaires GitHub avec les répertoires S1/S2 et le raccordement au parcours Governed Deploy Applications si le mapping manque.",
+  "disposition": "UNASSESSED",
+  "canonical_effect": false,
+  "work_effect": false
+}
