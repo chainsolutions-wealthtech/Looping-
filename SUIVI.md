@@ -39,3 +39,11 @@ Les entrées suivantes doivent documenter les changements durables, décisions, 
 - Deux autres workflows ont réussi ; un selftest a été ignoré (SKIPPED). Aucune certification CI complète.
 - Preuves et limites : [docs/intake/VERIFICATION.md](docs/intake/VERIFICATION.md).
 - Disposition inchangée : RECEIVED / UNASSESSED ; pas d’effet canonique ou de création de work-item.
+
+## 2026-11-13T07:01:33+00:00 — Nouvelle demande de mémoire et planification
+
+- Source exacte : [U10](docs/memory/sources/U10.json).
+- Intake : INTAKE-0002, RECEIVED / UNASSESSED ; aucun effet canonique ou work à ce stade.
+- Objet : mémoire canonique des informations disponibles, registre des demandes avec contexte, méthode, architecture et roadmap.
+- Entrée directe confirmée dans U09 et réobservée : acteur Patricked-code, permissions natives pull/push, HEAD `4569cd8bdb157f760729cf0b8b9e5751a640e6fb`.
+- Rôle déclaré : PLANNER_AGENT ; intention CONTEXT_INTAKE ; aucune session, claim ou autorité serveur créée.

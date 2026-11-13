@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0.0",
+  "source_id": "U10",
+  "kind": "USER_INSTRUCTION",
+  "repository": "chainsolutions-wealthtech/Looping-",
+  "provider_conversation_ref": null,
+  "message_timestamp": null,
+  "observed_at": "2026-11-13T07:01:33+00:00",
+  "source_text": "Excellent, tu dois continuer .\n\n\nNote que il faut bien bien enregistrer tous sur sur le repo github looping , dans une base de données ou dans un registre.\nPuis ensuite enregistre tous ce qui dit et fait ici dans une mémoire canonique sur le repo looping.\nPuis ensuite mets dans un registre tous ce que tu dois faire que je t'ai demandé et y ajoute le contexte la méthode de travail et la mets ça dans une architecture et une roadmap.",
+  "interpretation": "Poursuivre le travail dans Looping-, conserver les informations dans un registre versionné, constituer la mémoire canonique des échanges et actions disponibles, puis enregistrer les demandes avec contexte, méthode, architecture et roadmap.",
+  "coverage": "Texte visible de l'instruction courante ; aucun identifiant fournisseur ni horodatage de message déduit."
+}

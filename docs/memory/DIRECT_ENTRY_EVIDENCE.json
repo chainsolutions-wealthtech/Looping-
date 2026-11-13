@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0.0",
+  "record_type": "DIRECT_OWNER_ENTRY_OBSERVATIONS",
+  "decision": "DIRECT_OWNER_VERIFIED",
+  "repository": "chainsolutions-wealthtech/Looping-",
+  "repository_id": 1456213061,
+  "branch": "main",
+  "observed_head": "4569cd8bdb157f760729cf0b8b9e5751a640e6fb",
+  "observed_at": "2026-11-13T07:01:33+00:00",
+  "authenticated_actor": "Patricked-code",
+  "permissions": {
+    "admin": true,
+    "maintain": true,
+    "pull": true,
+    "push": true,
+    "triage": true
+  },
+  "entry_file": "00_DIRECT_OWNER_ENTRY.md",
+  "selection_source": "docs/intake/CONVERSATION_INPUTS.md#u09",
+  "current_authorization": "docs/memory/sources/U10.json",
+  "role_declaration": "PLANNER_AGENT",
+  "connection_intent": "CONTEXT_INTAKE",
+  "scope": [
+    "documentation",
+    "intake review",
+    "canonical project memory",
+    "request registry",
+    "planning"
+  ],
+  "no_runtime_or_code_permission_inferred": true,
+  "gscc_receipt_issued": false,
+  "gacr_session_claimed": false
+}

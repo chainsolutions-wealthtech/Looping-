@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0.0",
+  "intake_id": "INTAKE-0002",
+  "sequence": 2,
+  "status": "RECEIVED",
+  "source_type": "chatgpt",
+  "source_id": "docs/memory/sources/U10.json",
+  "source_digest": "3bad70136405f0247f49648a44432f8fcf3179cf35a5996e81b24d4ba938ce5a",
+  "observed_at": "2026-11-13T07:01:33+00:00",
+  "summary": "Constituer la mémoire canonique de Looping- et le registre traçable des demandes, avec contexte, méthode de travail, architecture documentaire et roadmap.",
+  "disposition": "UNASSESSED",
+  "canonical_effect": false,
+  "work_effect": false
+}
