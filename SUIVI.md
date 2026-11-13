@@ -28,3 +28,14 @@ Les entrées suivantes doivent documenter les changements durables, décisions, 
 - Entrée : `00_DIRECT_OWNER_ENTRY.md`, confirmation utilisateur U09 ; compte GitHub `Patricked-code` et permissions cible vérifiés.
 - Décision d’entrée : `DIRECT_OWNER_VERIFIED` pour `INFORMATION_INTAKE`, sans reçu GSCC ni claim GACR.
 - Baseline d’écriture : `86f0317905eb1eaf790e4f2f58a7e3e41735c2bf`, mise à jour fast-forward avec garde optimiste.
+
+## 2026-11-13T06:49:33+00:00 — Vérification de l’intake appliqué
+
+- Import enregistré sur main : `217f2380d19dc9b67eb60aef848c42ae7171062f`, parent baseline exact, sans force.
+- Contrôle distant : 28 ajouts, deux modifications attendues, aucune suppression ; 30 blobs conformes.
+- Relecture de sept documents principaux : conforme.
+- Governance CI : structure et premières étapes réussies ; arrêt sur la migration 007_first_touch_field_block_gate.sql absente.
+- Observable Arrival : même fichier SQL absent ; Continuity Relay : namespace-work-registry.json absent. Ces deux chemins sont déjà absents de la baseline d’entrée.
+- Deux autres workflows ont réussi ; un selftest a été ignoré (SKIPPED). Aucune certification CI complète.
+- Preuves et limites : [docs/intake/VERIFICATION.md](docs/intake/VERIFICATION.md).
+- Disposition inchangée : RECEIVED / UNASSESSED ; pas d’effet canonique ou de création de work-item.
