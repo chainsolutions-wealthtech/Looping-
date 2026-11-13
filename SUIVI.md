@@ -71,3 +71,10 @@ Les entrées suivantes doivent documenter les changements durables, décisions, 
 - Exposure Gate et Auto Bootstrap ont réussi ; Route Selftest est SKIPPED. Aucune certification CI complète.
 - Résultats détaillés : docs/memory/CHECKPOINT.json ; actions : LOOP-ACT-010/011.
 - Cette entrée est une preuve du commit canonique ci-dessus ; le commit contenant ce compte rendu ne prétend pas connaître son propre SHA futur.
+
+## 2026-11-13T07:34:18+00:00 — Poursuite de la prochaine action globale
+
+- Source exacte : docs/memory/sources/U11.json ; INTAKE-0003 RECEIVED avant qualification.
+- Action demandée : DISCOVER_PROJECT_BASELINE, reprise depuis le checkpoint existant.
+- Entrée B maintenue par U09 ; acteur Patricked-code et permissions natives pull/push vérifiés ; HEAD d’entrée `e8fed08594726e3506bd1903877a5815ad68da9b`.
+- Rôle déclaré : PLANNER_AGENT ; intention CONTEXT_INTAKE ; aucun claim, session ou accès serveur créé.

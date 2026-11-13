@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0.0",
+  "source_id": "U11",
+  "kind": "USER_INSTRUCTION",
+  "repository": "chainsolutions-wealthtech/Looping-",
+  "source_text": "La prochaine action globale  cntinue",
+  "message_timestamp": null,
+  "provider_conversation_ref": null,
+  "observed_at": "2026-11-13T07:34:18+00:00",
+  "interpretation": "Poursuivre l’action globale DISCOVER_PROJECT_BASELINE depuis la mémoire canonique de Looping-."
+}

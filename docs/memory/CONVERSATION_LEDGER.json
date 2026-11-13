@@ -3,13 +3,13 @@
   "ledger_id": "LOOP-CONVERSATION-001",
   "id_namespace": "REPOSITORY_LOCAL_NOT_PROVIDER_NATIVE",
   "repository": "chainsolutions-wealthtech/Looping-",
-  "updated_at": "2026-11-13T07:22:52+00:00",
+  "updated_at": "2026-11-13T07:34:18+00:00",
   "provider_conversation_ref": null,
   "coverage": {
-    "user_source_blocks": 10,
+    "user_source_blocks": 11,
     "prior_consolidated_source": "docs/intake/sources/conversation/methodologie-architecture-modulaire.source.json",
     "historical_sources": "docs/intake/SOURCE_REGISTER.json",
-    "assistant_records": 6,
+    "assistant_records": 7,
     "completeness": "AVAILABLE_PROJECT_MATERIAL_WITH_KNOWN_GAPS",
     "known_gaps": [
       "Les anciens messages assistant antérieurs à la fenêtre disponible ne sont pas tous accessibles comme messages bruts.",
@@ -154,6 +154,16 @@
       "message_timestamp": null,
       "timestamp_status": "UNAVAILABLE",
       "capture": "VERBATIM_JSON_SOURCE_BLOCK"
+    },
+    {
+      "message_id": "U11",
+      "speaker": "user",
+      "sequence": 11,
+      "source_ref": "docs/memory/sources/U11.json",
+      "source_text_sha256": "1e333132172dd061d67ac0dbc591d542f0d768cff4e6cac5b66bad860c92382a",
+      "message_timestamp": null,
+      "timestamp_status": "UNAVAILABLE",
+      "capture": "VERBATIM_JSON_SOURCE_BLOCK"
     }
   ],
   "assistant_messages": [
@@ -214,9 +224,18 @@
       "source_ref": "docs/memory/sources/A02.md",
       "source_text_sha256": "7da145093dee63c5ee11d95ae6b69d2afe395c797e750c2cb4dc8ece25d3863d",
       "message_timestamp": null,
-      "status": "PREPARED_FOR_DELIVERY_AFTER_FINAL_REMOTE_VERIFICATION",
-      "delivery_observed_at": null,
-      "qualification": "Réponse préparée et archivée avant son émission ; ne pas inventer de reçu ou d’horodatage fournisseur."
+      "status": "RESPONSE_VISIBLE_IN_CONVERSATION",
+      "delivery_observed_at": "2026-11-13T07:34:18+00:00",
+      "qualification": "Réponse précédente visible dans le contexte de continuation ; date native d’émission non exposée."
+    },
+    {
+      "message_id": "C05",
+      "speaker": "assistant",
+      "responds_to": "U11",
+      "source_text": "Je reprends `DISCOVER_PROJECT_BASELINE` depuis le checkpoint GitHub. Je vais vérifier l’état actuel du dépôt, qualifier les blocages déjà constatés et poursuivre les travaux de découverte autorisés, en conservant les preuves et le point de reprise dans la mémoire canonique.",
+      "message_timestamp": null,
+      "status": "PROGRESS_MESSAGE",
+      "order": 5
     }
   ],
   "action_log": "docs/memory/ACTIONS.json"

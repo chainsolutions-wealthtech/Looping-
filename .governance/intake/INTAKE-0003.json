@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0.0",
+  "intake_id": "INTAKE-0003",
+  "sequence": 3,
+  "status": "RECEIVED",
+  "source_type": "chatgpt",
+  "source_id": "docs/memory/sources/U11.json",
+  "source_digest": "b198a3c8d3f105a456fd19119380e7517ad1c16fa205c531b84acb1aa17486f5",
+  "observed_at": "2026-11-13T07:34:18+00:00",
+  "summary": "Poursuivre l’action globale DISCOVER_PROJECT_BASELINE depuis la mémoire canonique de Looping-.",
+  "disposition": "UNASSESSED",
+  "canonical_effect": false,
+  "work_effect": false
+}
