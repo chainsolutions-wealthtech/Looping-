@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "repository": "chainsolutions-wealthtech/Looping-",
-  "updated_at": "2026-11-13T07:22:52+00:00",
+  "updated_at": "2026-11-13T07:47:09+00:00",
   "role": "MATERIAL_ACTION_EVIDENCE_LEDGER",
   "event_timestamp_rule": "null quand la date originale n’est pas exposée ; recorded_at date uniquement l’enregistrement.",
   "actions": [
@@ -149,6 +149,45 @@
       ],
       "event_timestamp": null,
       "recorded_at": "2026-11-13T07:22:52+00:00",
+      "provider_session_ref": null
+    },
+    {
+      "action_id": "LOOP-ACT-012",
+      "kind": "OWNER_CONTINUATION_CAPTURE",
+      "result": "VERIFIED",
+      "description": "U11 et INTAKE-0003 enregistrés avant qualification.",
+      "evidence_refs": [
+        "https://github.com/chainsolutions-wealthtech/Looping-/commit/6895981eade110765e518e9dac65499cc7456156",
+        "docs/memory/sources/U11.json"
+      ],
+      "event_timestamp": null,
+      "recorded_at": "2026-11-13T07:47:09+00:00",
+      "provider_session_ref": null
+    },
+    {
+      "action_id": "LOOP-ACT-013",
+      "kind": "BASELINE_STATIC_AND_CI_AUDIT",
+      "result": "VERIFIED",
+      "description": "Arbre complet, code pertinent, frontière source/client et tracebacks consultés au SHA épinglé.",
+      "evidence_refs": [
+        "docs/baseline/REPOSITORY_INVENTORY.json",
+        "docs/baseline/CI_COMPATIBILITY.md"
+      ],
+      "event_timestamp": null,
+      "recorded_at": "2026-11-13T07:47:09+00:00",
+      "provider_session_ref": null
+    },
+    {
+      "action_id": "LOOP-ACT-014",
+      "kind": "QUALIFIED_DISCOVERY_TRANSITION",
+      "result": "DOCUMENTED_PENDING_REMOTE_VERIFICATION",
+      "description": "Qualification, reports, critères et passage documentaire préparés sans fermer les gates CI.",
+      "evidence_refs": [
+        "docs/baseline/BASELINE.json",
+        "docs/adr/ADR-0003-qualified-project-baseline.md"
+      ],
+      "event_timestamp": null,
+      "recorded_at": "2026-11-13T07:47:09+00:00",
       "provider_session_ref": null
     }
   ]

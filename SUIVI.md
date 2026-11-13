@@ -78,3 +78,15 @@ Les entrées suivantes doivent documenter les changements durables, décisions, 
 - Action demandée : DISCOVER_PROJECT_BASELINE, reprise depuis le checkpoint existant.
 - Entrée B maintenue par U09 ; acteur Patricked-code et permissions natives pull/push vérifiés ; HEAD d’entrée `e8fed08594726e3506bd1903877a5815ad68da9b`.
 - Rôle déclaré : PLANNER_AGENT ; intention CONTEXT_INTAKE ; aucun claim, session ou accès serveur créé.
+
+## 2026-11-13T07:47:09+00:00 — Découverte de baseline qualifiée et passage à W1
+
+- U11 poursuit DISCOVER_PROJECT_BASELINE ; entrée d’audit `e8fed08594726e3506bd1903877a5815ad68da9b`, capture `6895981eade110765e518e9dac65499cc7456156`.
+- Inventaire complet : 378 blobs au SHA d’audit, 176 fichiers Python et 14 workflows ; plugin GSCC présent en source, runtime non attesté.
+- Politique client et initialiseur confirment le retrait volontaire des répertoires source-only ; tracebacks relus pour les trois runs en échec.
+- Diagnostic précisé : first-touch lit la migration 007 ; le relais échoue dans l’assertion namespace de test_gscc_issue_control_bridge.py, pas dans un appel direct au validateur namespace.
+- Profil et infrastructure explicitement différés, sans changer les enums valides ni inventer de ressource ou de disponibilité live.
+- Risques, dépendances, contraintes et critères projet renseignés ; ADR-0003 borne la résolution de WORK-DISCOVER-001 à la capture/qualification.
+- WORK-SPEC-W1-001 est le candidat documentaire unique ; prochaine action SPECIFY_DOCUMENT_CONSTITUTION_WORKFLOW.
+- LOOP-INIT-001 et son critère GREEN restent ouverts ; aucun code, workflow, claim, session, secret ou serveur modifié.
+- Vérification et publication du lot : docs/memory/CHECKPOINT.json ; ne pas confondre préparation et preuve distante.

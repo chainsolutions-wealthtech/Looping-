@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 2,
+  "revision": 3,
   "items": [
     {
       "work_item_id": "WORK-INIT-001",
@@ -17,7 +17,7 @@
     {
       "work_item_id": "WORK-DISCOVER-001",
       "title": "Discover and capture the project baseline",
-      "status": "READY",
+      "status": "DONE",
       "priority": 900,
       "sequence": 2,
       "dependencies": [
@@ -26,7 +26,44 @@
       "collision_domains": [
         "governance-state"
       ],
-      "next_action": "DISCOVER_PROJECT_BASELINE"
+      "next_action": "DISCOVER_PROJECT_BASELINE",
+      "resolution": "BASELINE_CAPTURED_WITH_KNOWN_DEFECTS",
+      "completed_at": "2026-11-13T07:47:09+00:00",
+      "evidence_refs": [
+        "docs/baseline/BASELINE.json",
+        "docs/adr/ADR-0003-qualified-project-baseline.md"
+      ],
+      "scope_note": "Capture and qualification only; full CI and LOOP-INIT-001 remain open."
+    },
+    {
+      "work_item_id": "WORK-SPEC-W1-001",
+      "title": "Specify document constitution and coordination workflow W1",
+      "status": "READY",
+      "priority": 850,
+      "sequence": 3,
+      "dependencies": [
+        "WORK-DISCOVER-001"
+      ],
+      "collision_domains": [
+        "governance-state",
+        "document-constitution-spec"
+      ],
+      "next_action": "SPECIFY_DOCUMENT_CONSTITUTION_WORKFLOW",
+      "kind": "DOCUMENTARY_SPECIFICATION",
+      "execution_scope": "DOCUMENTATION_ONLY",
+      "expected_outputs": [
+        "W1 contract",
+        "document ownership/skeleton matrix",
+        "new/existing repository cases",
+        "entry/output and recovery criteria"
+      ],
+      "acceptance_criteria": [
+        "Inputs, outputs, dependencies and execution modes explicit",
+        "Reuse native authorities and registers",
+        "New and existing repositories distinguished",
+        "No invented activation or parallel queue"
+      ],
+      "authority_note": "READY grants no GitHub or runtime permission; own route, authority and exact-HEAD controls remain mandatory."
     }
   ]
 }

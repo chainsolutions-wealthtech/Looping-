@@ -3,13 +3,13 @@
   "ledger_id": "LOOP-CONVERSATION-001",
   "id_namespace": "REPOSITORY_LOCAL_NOT_PROVIDER_NATIVE",
   "repository": "chainsolutions-wealthtech/Looping-",
-  "updated_at": "2026-11-13T07:34:18+00:00",
+  "updated_at": "2026-11-13T07:47:09+00:00",
   "provider_conversation_ref": null,
   "coverage": {
     "user_source_blocks": 11,
     "prior_consolidated_source": "docs/intake/sources/conversation/methodologie-architecture-modulaire.source.json",
     "historical_sources": "docs/intake/SOURCE_REGISTER.json",
-    "assistant_records": 7,
+    "assistant_records": 8,
     "completeness": "AVAILABLE_PROJECT_MATERIAL_WITH_KNOWN_GAPS",
     "known_gaps": [
       "Les anciens messages assistant antérieurs à la fenêtre disponible ne sont pas tous accessibles comme messages bruts.",
@@ -235,7 +235,18 @@
       "source_text": "Je reprends `DISCOVER_PROJECT_BASELINE` depuis le checkpoint GitHub. Je vais vérifier l’état actuel du dépôt, qualifier les blocages déjà constatés et poursuivre les travaux de découverte autorisés, en conservant les preuves et le point de reprise dans la mémoire canonique.",
       "message_timestamp": null,
       "status": "PROGRESS_MESSAGE",
-      "order": 5
+      "order": 5,
+      "source_text_sha256": "647badb0f78d732c73d70b9736aa505268e53a31a1fa308707552496692667f9"
+    },
+    {
+      "message_id": "C06",
+      "speaker": "assistant",
+      "responds_to": "U11",
+      "source_text": "J’ai confirmé l’origine des blocages : l’initialisation retire volontairement les répertoires réservés au dépôt modèle, mais certains tests et workflows les appellent encore depuis `Looping-`. Le problème à traiter concerne donc leur portabilité vers un dépôt client. Je consigne cette distinction avec les dépendances, les risques et les critères de passage vers W1.",
+      "source_text_sha256": "07b6b86a118ca5a8a6af268786d3aefcae647ca911d45b3a5e4bd0eb08771e43",
+      "message_timestamp": null,
+      "status": "PROGRESS_MESSAGE",
+      "order": 6
     }
   ],
   "action_log": "docs/memory/ACTIONS.json"

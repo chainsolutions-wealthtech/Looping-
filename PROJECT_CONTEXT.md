@@ -41,3 +41,6 @@ GitHub est observé au moyen du connecteur authentifié. Les snapshots MCP et Lo
 
 ## Critical constraints
 Respecter GOVERNANCE, SOURCE_OF_TRUTH et la non-régression ; conserver chronologie et sources ; ne pas inventer de dates, capacités, identités ou validations ; garder une prochaine action globale ; suivre les dépendances ; enregistrer les contradictions et les inconnues. Les détails de travail sont dans docs/WORK_METHOD.md ; les demandes sont dans docs/memory/REQUESTS.json.
+
+## Disposition de découverte
+ADR-0003 qualifie la baseline de ce dépôt avec défauts connus. Le profil applicatif reste volontairement en découverte et ses choix sont différés ; l’infrastructure et l’accès runtime restent non résolus, sans appel serveur. Le détail des observations, limites et prérequis W1 se lit dans docs/baseline/BASELINE.json. Ce report est une décision de portée documentaire, pas un constat d’absence physique des ressources.

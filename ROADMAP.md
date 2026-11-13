@@ -6,8 +6,8 @@ Cette roadmap ordonne les demandes de docs/memory/REQUESTS.json. Elle constitue 
 |---|---|---|---|---|
 | RP-00 — Sources et chronologie | Corpus accessible enregistré ; lacunes ouvertes | Aucune | U01..U10, sources historiques, ledger et preuves d’import ; REQ-005/009/011 | Sources accessibles vérifiées ; couverture et lacunes explicites ; reconstitution exhaustive non prétendue |
 | RP-01 — Mémoire et registre | DOCUMENTED et relu sur GitHub ; preuves dans le checkpoint | RP-00 | Mémoire canonique, 20 demandes, méthode, contexte, architecture initiale, roadmap ; REQ-001/002/006/010/012..020 | Propriétaires uniques, sources exactes, références cohérentes, intake revu et relecture GitHub |
-| RP-02 — Baseline et qualification | IN_PROGRESS ; CI complète bloquée | RP-01 | Baseline code/docs/CI, frontière source/client, écarts et décisions de qualification ; REQ-005, FIND-001 | Défauts hérités caractérisés, stratégie de correction admise, profil et infrastructure observés ou explicitement différés ; aucune fausse CI verte |
-| RP-03 — Constitution documentaire et workflows | PLANNED | RP-02 | Contrat W1 en premier : squelette, fichiers présents/manquants, propriétaires, entrées/sorties et reprise ; puis correspondances W2..W10/T1..T2 ; REQ-003/004 | Parcours dépôt nouveau/existant définis, prérequis et sorties vérifiables, aucun dispatcher doublonné |
+| RP-02 — Baseline et qualification | QUALIFIED_WITH_KNOWN_DEFECTS ; corrections CI ouvertes | RP-01 | BASELINE, inventaire, qualification, risques/dépendances/critères et reports explicites | Capture/qualification achevée ; CI et gates opérationnels ne sont pas clôturés |
+| RP-03 — Constitution documentaire et workflows | READY_DOCUMENTARY_SPEC | RP-02 qualifiée | WORK-SPEC-W1-001 : contrat W1 en premier, squelette, propriétaires, entrées/sorties, cas nouveau/existant | Contrat complet et traçable ; aucune capacité déclarée implémentée |
 | RP-04 — Cahier des charges et architecture cible | Initialisation documentaire faite ; détail PLANNED | RP-03 | Besoins, règles métier, données, qualité, profils d’application de BASE, contrats d’intégration ; REQ-008/019 | Informations manquantes et décisions ouvertes visibles ; conception suffisante pour le lot concerné |
 | RP-05 — Contrat moteur et premier raccordement | SPECIFIED_NOT_IMPLEMENTED | RP-04 | Schéma/version BASE, chargeur, rattachements, compatibilité du prototype et ports existants ; REQ-007/008 | Scénarios de validation définis, lot borné admis, raccordement démontré avec ses limites |
 | RP-06 — Boucle complète démontrée | PLANNED | RP-05 | Une instruction accessible → source → demande → document → plan → travail autorisé → preuve → reprise | Traçabilité bout en bout, ambiguïté/contradiction et interruption traitées ; non-régression démontrée |
@@ -21,3 +21,6 @@ Le mécanisme W1 de constitution et coordination documentaire : connaître le sq
 
 ## Validation et disponibilité
 La présence des documents ne signifie pas readiness du moteur ou du déploiement. Le lot documentaire est contrôlé par parsing JSON, fidélité des sources, intégrité des liens et comparaison du tree Git ; la CI hérite encore de points d’arrêt attestés. Le checkpoint doit porter les preuves de publication après relecture. Aucune date de livraison ni charge non évaluée n’est inventée.
+
+## Passage de découverte
+ADR-0003 distingue la clôture de capture/qualification de WORK-DISCOVER-001 et la CI complète encore en échec. RP-03 est accessible à la spécification documentaire ; les gates d’activation et la clôture GREEN restent ouverts.

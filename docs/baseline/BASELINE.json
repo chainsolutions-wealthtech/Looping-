@@ -1,0 +1,287 @@
+{
+  "schema_version": "1.0.0",
+  "baseline_id": "LOOP-BASELINE-001",
+  "repository": "chainsolutions-wealthtech/Looping-",
+  "repository_id": 1456213061,
+  "canonical_branch": "main",
+  "audit_commit_sha": "e8fed08594726e3506bd1903877a5815ad68da9b",
+  "audit_tree_sha": "a8edff9fb01a4f1d5a92b2c50749f0692ef2f092",
+  "write_input_commit_sha": "6895981eade110765e518e9dac65499cc7456156",
+  "observed_at": "2026-11-13T07:47:09+00:00",
+  "discovery_state": "QUALIFIED_WITH_KNOWN_DEFECTS",
+  "release_state": "NOT_READY_FULL_CI_BLOCKED",
+  "scope": "Repository discovery, source qualification and design preconditions; no operational activation.",
+  "source_documents": {
+    "inventory": "docs/baseline/REPOSITORY_INVENTORY.json",
+    "qualification": "docs/baseline/SOURCE_QUALIFICATION.md",
+    "ci_diagnosis": "docs/baseline/CI_COMPATIBILITY.md"
+  },
+  "project_profile_disposition": "EXPLICITLY_DEFERRED_WITH_DISCOVERY_REQUIRED_ENUM_PRESERVED",
+  "infrastructure_disposition": "EXPLICITLY_DEFERRED_UNCONFIGURED_BINDING_NO_RUNTIME_OBSERVATION",
+  "entry": {
+    "route": "DIRECT_OWNER",
+    "selection_source": "U09",
+    "current_request": "U11",
+    "actor": "Patricked-code",
+    "native_permissions": {
+      "admin": true,
+      "maintain": true,
+      "pull": true,
+      "push": true,
+      "triage": true
+    },
+    "role": "PLANNER_AGENT",
+    "intent": "CONTEXT_INTAKE",
+    "gacr_session_id": null,
+    "claim_id": null,
+    "cli_observe_executed": false,
+    "observation_method": "Connected GitHub native repository/ref/permissions/projection reads permitted by Door B; no synthetic CLI output."
+  },
+  "observed_components": [
+    {
+      "id": "BASE-C01",
+      "name": "Governance and native work coordination",
+      "evidence": [
+        "GOVERNANCE.md",
+        "scripts/governance_agent.py",
+        ".governance/work/work-items.json"
+      ],
+      "status": "PRESENT_NOT_UNIVERSALLY_LIVE_VERIFIED"
+    },
+    {
+      "id": "BASE-C02",
+      "name": "GSCC first-touch and protocol",
+      "evidence": [
+        "scripts/first_touch_field_block_gate.py",
+        ".github/workflows/gscc-observable-arrival.yml"
+      ],
+      "status": "PARTIALLY_TESTED_BLOCKED_ON_CLIENT_PACKAGING"
+    },
+    {
+      "id": "BASE-C03",
+      "name": "GACR continuity",
+      "evidence": [
+        "scripts/governed_agent_continuity_relay.py",
+        ".github/workflows/governed-agent-continuity-relay.yml"
+      ],
+      "status": "CLIENT_WORKFLOW_TEST_BLOCKED"
+    },
+    {
+      "id": "BASE-C04",
+      "name": "Canonical project documents and registries",
+      "evidence": [
+        "docs/memory/README.md",
+        "docs/memory/REQUESTS.json",
+        "ROADMAP.md"
+      ],
+      "status": "DOCUMENTARY_SURFACE_PUBLISHED"
+    },
+    {
+      "id": "BASE-C05",
+      "name": "GSCC GitHub MCP proxy plugin source",
+      "evidence": [
+        "plugins/gscc-github-mcp/README.md",
+        "plugins/gscc-github-mcp/server.py",
+        "plugins/gscc-github-mcp/Dockerfile"
+      ],
+      "status": "SOURCE_PRESENT_BUILD_AND_RUNTIME_NOT_VERIFIED"
+    },
+    {
+      "id": "BASE-C06",
+      "name": "Loop engine reference prototype",
+      "evidence": [
+        "docs/intake/sources/prototype/loop.py.txt",
+        "docs/intake/ENGINE_BINDING.md"
+      ],
+      "status": "ARCHIVED_REFERENCE_NOT_INSTALLED_AS_ENGINE"
+    }
+  ],
+  "discovery_gates": [
+    {
+      "gate_id": "BASE-G01",
+      "criterion": "Sources et propositions qualifiées avec provenance",
+      "result": "PASS_WITH_COVERAGE_LIMITS",
+      "evidence": [
+        "docs/baseline/SOURCE_QUALIFICATION.md",
+        "docs/memory/CONVERSATION_LEDGER.json"
+      ]
+    },
+    {
+      "gate_id": "BASE-G02",
+      "criterion": "Profil technique choisi ou explicitement différé",
+      "result": "PASS_DEFERRED",
+      "evidence": [
+        ".governance/project-profile.json",
+        "docs/adr/ADR-0003-qualified-project-baseline.md"
+      ]
+    },
+    {
+      "gate_id": "BASE-G03",
+      "criterion": "Infrastructure observée ou laissée non résolue avec justification",
+      "result": "PASS_DEFERRED_NOT_OBSERVED",
+      "evidence": [
+        ".governance/infrastructure-intent.json",
+        ".governance/mcp-binding.json",
+        "docs/adr/ADR-0003-qualified-project-baseline.md"
+      ]
+    },
+    {
+      "gate_id": "BASE-G04",
+      "criterion": "Contexte, architecture, risques, dépendances et critères initiaux documentés",
+      "result": "PASS_DOCUMENTED",
+      "evidence": [
+        "PROJECT_CONTEXT.md",
+        "docs/ARCHITECTURE.md",
+        "RISKS.md",
+        "DEPENDENCIES.md",
+        "ACCEPTANCE_CRITERIA.md"
+      ]
+    },
+    {
+      "gate_id": "BASE-G05",
+      "criterion": "Baseline HEAD/CI et défauts hérités enregistrés",
+      "result": "PASS_WITH_OPEN_CI_DEFECTS",
+      "evidence": [
+        "docs/baseline/CI_COMPATIBILITY.md",
+        "docs/baseline/REPOSITORY_INVENTORY.json"
+      ]
+    },
+    {
+      "gate_id": "BASE-G06",
+      "criterion": "Passage documentaire vers W1 défini",
+      "result": "PASS_DOCUMENTATION_ONLY",
+      "evidence": [
+        "NEXT_ACTION.md",
+        "ROADMAP.md",
+        "docs/adr/ADR-0003-qualified-project-baseline.md"
+      ]
+    },
+    {
+      "gate_id": "BASE-G07",
+      "criterion": "Prochaine action unique et registre natif cohérents",
+      "result": "PASS_PREPARED",
+      "evidence": [
+        "NEXT_ACTION.md",
+        ".governance/work/work-items.json",
+        ".governance/canonical-memory/current.json"
+      ]
+    }
+  ],
+  "ci_runs_at_audit_commit": [
+    {
+      "id": 43385471771,
+      "name": "GSCC Observable Arrival Gateway",
+      "conclusion": "failure",
+      "status": "completed",
+      "url": "https://github.com/chainsolutions-wealthtech/Looping-/actions/runs/43385471771",
+      "head_sha": "e8fed08594726e3506bd1903877a5815ad68da9b"
+    },
+    {
+      "id": 43385471692,
+      "name": "Governed Agent Continuity Relay",
+      "conclusion": "failure",
+      "status": "completed",
+      "url": "https://github.com/chainsolutions-wealthtech/Looping-/actions/runs/43385471692",
+      "head_sha": "e8fed08594726e3506bd1903877a5815ad68da9b"
+    },
+    {
+      "id": 43385471811,
+      "name": "Governance Auto Bootstrap",
+      "conclusion": "success",
+      "status": "completed",
+      "url": "https://github.com/chainsolutions-wealthtech/Looping-/actions/runs/43385471811",
+      "head_sha": "e8fed08594726e3506bd1903877a5815ad68da9b"
+    },
+    {
+      "id": 43385471759,
+      "name": "GSCC Function Exposure Gate",
+      "conclusion": "success",
+      "status": "completed",
+      "url": "https://github.com/chainsolutions-wealthtech/Looping-/actions/runs/43385471759",
+      "head_sha": "e8fed08594726e3506bd1903877a5815ad68da9b"
+    },
+    {
+      "id": 43385471798,
+      "name": "Governance CI",
+      "conclusion": "failure",
+      "status": "completed",
+      "url": "https://github.com/chainsolutions-wealthtech/Looping-/actions/runs/43385471798",
+      "head_sha": "e8fed08594726e3506bd1903877a5815ad68da9b"
+    },
+    {
+      "id": 43385471845,
+      "name": "GSCC Function Route Selftest",
+      "conclusion": "skipped",
+      "status": "completed",
+      "url": "https://github.com/chainsolutions-wealthtech/Looping-/actions/runs/43385471845",
+      "head_sha": "e8fed08594726e3506bd1903877a5815ad68da9b"
+    }
+  ],
+  "job_findings": [
+    {
+      "job_id": 131752790083,
+      "run_id": 43385471798,
+      "failed_steps": [
+        "Test first-touch field block gate database"
+      ],
+      "trace": [
+        "2026-11-13T07:24:02.1036426Z Traceback (most recent call last):",
+        "2026-11-13T07:24:02.1047792Z   File \"/home/runner/work/Looping-/Looping-/scripts/test_first_touch_field_block_gate.py\", line 110, in <module>",
+        "2026-11-13T07:24:02.1052070Z   File \"/home/runner/work/Looping-/Looping-/scripts/test_first_touch_field_block_gate.py\", line 45, in main",
+        "2026-11-13T07:24:02.1058693Z   File \"/home/runner/work/Looping-/Looping-/scripts/first_touch_field_block_gate.py\", line 272, in build_capture_database",
+        "2026-11-13T07:24:02.1062758Z   File \"/home/runner/work/Looping-/Looping-/scripts/first_touch_field_block_gate.py\", line 47, in install_schema",
+        "2026-11-13T07:24:02.1068530Z   File \"/opt/hostedtoolcache/Python/3.12.16/x64/lib/python3.12/pathlib.py\", line 1027, in read_text",
+        "2026-11-13T07:24:02.1271958Z   File \"/opt/hostedtoolcache/Python/3.12.16/x64/lib/python3.12/pathlib.py\", line 1013, in open",
+        "2026-11-13T07:24:02.1282672Z FileNotFoundError: [Errno 2] No such file or directory: '/home/runner/work/Looping-/Looping-/.governance/control-plane-db/007_first_touch_field_block_gate.sql'"
+      ]
+    },
+    {
+      "job_id": 131752789893,
+      "run_id": 43385471692,
+      "failed_steps": [
+        "Validate GACR state"
+      ],
+      "trace": [
+        "2026-11-13T07:24:02.6044530Z Traceback (most recent call last):",
+        "2026-11-13T07:24:02.6052586Z   File \"/home/runner/work/Looping-/Looping-/scripts/test_gscc_issue_control_bridge.py\", line 392, in <module>",
+        "2026-11-13T07:24:02.6057133Z   File \"/home/runner/work/Looping-/Looping-/scripts/test_gscc_issue_control_bridge.py\", line 387, in main",
+        "2026-11-13T07:24:02.6059610Z     test_control_dispatch_id_is_registered_canonical_namespace()",
+        "2026-11-13T07:24:02.6062336Z   File \"/home/runner/work/Looping-/Looping-/scripts/test_gscc_issue_control_bridge.py\", line 368, in test_control_dispatch_id_is_registered_canonical_namespace",
+        "2026-11-13T07:24:02.6065896Z     (ROOT / \".governance\" / \"control-plane-state\" / \"namespace-work-registry.json\").read_text(encoding=\"utf-8\")",
+        "2026-11-13T07:24:02.6068415Z   File \"/opt/hostedtoolcache/Python/3.12.16/x64/lib/python3.12/pathlib.py\", line 1027, in read_text",
+        "2026-11-13T07:24:02.6073666Z   File \"/opt/hostedtoolcache/Python/3.12.16/x64/lib/python3.12/pathlib.py\", line 1013, in open",
+        "2026-11-13T07:24:02.6080053Z FileNotFoundError: [Errno 2] No such file or directory: '/home/runner/work/Looping-/Looping-/.governance/control-plane-state/namespace-work-registry.json'"
+      ]
+    },
+    {
+      "job_id": 131752790660,
+      "run_id": 43385471771,
+      "failed_steps": [
+        "Materialize first-touch field block gate database"
+      ],
+      "trace": [
+        "2026-11-13T07:24:06.0957399Z Traceback (most recent call last):",
+        "2026-11-13T07:24:06.0964483Z   File \"/home/runner/work/Looping-/Looping-/scripts/first_touch_field_block_gate.py\", line 310, in <module>",
+        "2026-11-13T07:24:06.0966390Z   File \"/home/runner/work/Looping-/Looping-/scripts/first_touch_field_block_gate.py\", line 305, in main",
+        "2026-11-13T07:24:06.0968764Z   File \"/home/runner/work/Looping-/Looping-/scripts/first_touch_field_block_gate.py\", line 272, in build_capture_database",
+        "2026-11-13T07:24:06.0969954Z   File \"/home/runner/work/Looping-/Looping-/scripts/first_touch_field_block_gate.py\", line 47, in install_schema",
+        "2026-11-13T07:24:06.0971700Z   File \"/opt/hostedtoolcache/Python/3.12.16/x64/lib/python3.12/pathlib.py\", line 1027, in read_text",
+        "2026-11-13T07:24:06.0973540Z   File \"/opt/hostedtoolcache/Python/3.12.16/x64/lib/python3.12/pathlib.py\", line 1013, in open",
+        "2026-11-13T07:24:06.0977891Z FileNotFoundError: [Errno 2] No such file or directory: '/home/runner/work/Looping-/Looping-/.governance/control-plane-db/007_first_touch_field_block_gate.sql'"
+      ]
+    }
+  ],
+  "known_limits": [
+    "Full CI remains failed; later skipped tests are not validated.",
+    "Historical chat coverage is incomplete.",
+    "Runtime/server access was not attempted and is not attested.",
+    "The six target responsibilities in ARCHITECTURE are not six deployed services."
+  ],
+  "completion_boundary": "WORK-DISCOVER-001 records capture/qualification only. It does not close LOOP-INIT-001, fix portability or approve release.",
+  "next_action": "SPECIFY_DOCUMENT_CONSTITUTION_WORKFLOW",
+  "verification": {
+    "local": "PASS: inventory, gates, native-work uniqueness, references, revisions, JSON/textual checks",
+    "remote_publication": "PENDING",
+    "full_ci": "BLOCKED_KNOWN_BASELINE"
+  }
+}

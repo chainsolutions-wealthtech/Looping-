@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "registry_id": "LOOP-REQUESTS",
   "repository": "chainsolutions-wealthtech/Looping-",
-  "updated_at": "2026-11-13T07:14:36+00:00",
+  "updated_at": "2026-11-13T07:47:09+00:00",
   "role": "CANONICAL_USER_REQUEST_LEDGER_NOT_EXECUTION_QUEUE",
   "status_vocabulary": [
     "DOCUMENTED",
@@ -620,6 +620,39 @@
       "execution_authority": "NONE_FROM_THIS_RECORD",
       "canonical_work_item_id": null,
       "remaining": "Conserver et faire évoluer selon les nouvelles instructions."
+    },
+    {
+      "request_id": "LOOP-REQ-021",
+      "origin": "USER_REQUEST",
+      "title": "Poursuivre la prochaine action globale de découverte",
+      "source_message_ids": [
+        "U11"
+      ],
+      "source_owner": "docs/memory/CONVERSATION_LEDGER.json",
+      "interpretation": "Exécuter DISCOVER_PROJECT_BASELINE depuis le checkpoint courant.",
+      "context": "La mémoire et la roadmap sont publiées ; la baseline et les défauts client restent à qualifier.",
+      "work_method_ref": "docs/WORK_METHOD.md",
+      "architecture_component_ids": [
+        "M04",
+        "M06"
+      ],
+      "roadmap_phase_id": "RP-02",
+      "depends_on_request_ids": [
+        "LOOP-REQ-014",
+        "LOOP-REQ-020"
+      ],
+      "status": "DOCUMENTED",
+      "deliverable_refs": [
+        "docs/baseline/BASELINE.json",
+        "docs/baseline/CI_COMPATIBILITY.md",
+        "NEXT_ACTION.md"
+      ],
+      "acceptance_criteria": [
+        "Gates de découverte qualifiés ; reports explicites ; défauts sourcés ; prochaine action documentaire unique sans faux GREEN"
+      ],
+      "canonical_work_item_id": "WORK-DISCOVER-001",
+      "execution_authority": "NONE_FROM_THIS_RECORD",
+      "remaining": "Spécifier W1 ; corriger et vérifier ultérieurement la portabilité ; conserver les limites de capture et de runtime."
     }
   ],
   "derived_findings": [
@@ -630,10 +663,11 @@
       "status": "OPEN",
       "evidence_refs": [
         "docs/intake/VERIFICATION.md",
-        "https://github.com/chainsolutions-wealthtech/Looping-/actions/runs/43381457082"
+        "https://github.com/chainsolutions-wealthtech/Looping-/actions/runs/43381457082",
+        "docs/baseline/CI_COMPATIBILITY.md"
       ],
       "context": "Les fichiers SQL 007 et namespace-work-registry sont absents de la baseline client ; leur absence n’est pas une suppression de l’import.",
-      "next_required_result": "Déterminer le correctif de portabilité selon la frontière source/client ; ne pas réinjecter aveuglément la mémoire du template.",
+      "next_required_result": "Concevoir et vérifier la correction portable CI-B01/CI-B02 ; conserver la séparation des données source et client.",
       "roadmap_phase_id": "RP-02",
       "user_request": false
     },

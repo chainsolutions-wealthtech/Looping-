@@ -27,3 +27,6 @@ Les lacunes de capture sont explicites dans le ledger. Il ne s’agit pas d’un
 
 ## Reprise
 Après validation de la porte d’entrée choisie : lire PROJECT_CONTEXT, STATUS, le pointeur mémoire, CHECKPOINT, les demandes concernées, la méthode et la phase de roadmap correspondante. Réobserver le HEAD en ligne et réconcilier tout mouvement avant écriture. Les références externes à MCP et Loop sont des sources ; elles ne transfèrent ni gouvernance ni autorité à Looping-.
+
+## Route de découverte
+La baseline qualifiée et ses limites ont pour propriétaire [docs/baseline/BASELINE.json](../baseline/BASELINE.json), avec inventaire, qualification et diagnostic reliés depuis son [index](../baseline/README.md). L’action globale se lit dans NEXT_ACTION ; la découverte achevée ne clôt pas le gate CI.

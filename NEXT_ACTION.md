@@ -1,22 +1,27 @@
 # NEXT_ACTION — Point de reprise unique
 
 ```text
-NEXT_ACTION = DISCOVER_PROJECT_BASELINE
-STATE = IN_PROGRESS
+NEXT_ACTION = SPECIFY_DOCUMENT_CONSTITUTION_WORKFLOW
+STATE = READY
 ```
 
 ## Action
-Poursuivre la qualification de la baseline de Looping- à partir de la mémoire canonique et de la roadmap RP-02 : comparer les sources, l’architecture initiale, les mécanismes réellement présents et les blocages CI. Examiner la frontière source/client avant de proposer un correctif ; ne pas recopier aveuglément les états source-only manquants.
+Définir le contrat W1 de constitution et coordination documentaire à partir de la baseline qualifiée, des sources et des autorités existantes. Travail documentaire uniquement : connaître le squelette attendu, comparer l’existant, attribuer un propriétaire à chaque information, inscrire les relations entre documents et registres, définir leurs entrées/sorties et leur reprise.
 
-Le contexte, la méthode, le registre des demandes et l’architecture documentaire sont désormais renseignés. Les observations exactes et la publication du lot se reprennent dans docs/memory/CHECKPOINT.json. Réobserver HEAD, permissions et modifications concurrentes avant toute écriture. Le premier contrat à détailler ensuite est W1, constitution et coordination documentaire.
+## Entrées et prérequis
+- Lire PROJECT_CONTEXT, STATUS, BASELINE, SOURCE_QUALIFICATION, WORK_METHOD, REQUESTS et la correspondance des workflows.
+- Baseline capturée avec défauts connus selon ADR-0003 ; ne pas la présenter comme une CI verte.
+- Utiliser WORK-SPEC-W1-001 dans le registre natif ; aucun claim ou droit n’est transféré par cette référence.
+- Réobserver HEAD et permissions, puis réconcilier toute modification avant écriture.
 
 ## Done when
-- sources et propositions qualifiées avec provenance et contradictions explicites ;
-- profil technique sélectionné ou explicitement différé ;
-- serveur, domaine, répertoire et base observés ou laissés non résolus avec leur justification ;
-- contexte, architecture, risques, dépendances et critères métier suffisamment définis ;
-- baseline HEAD/CI et défauts hérités enregistrés, sans fausse réussite ;
-- conditions de passage vers le premier contrat W1 établies ;
-- première action fonctionnelle suivante définie sans créer une seconde file.
+- cas dépôt nouveau et projet existant décrits séparément ;
+- fichiers obligatoires, conditionnels, modèles, autorités et adaptateurs distingués ;
+- responsabilités, hiérarchie, relations de coordination et rattachements aux registres explicites ;
+- entrées, prérequis, étapes, sorties, erreurs, retours et critères de reprise observables ;
+- méthode de création/réutilisation sans perte et contrôle d’intégrité définis ;
+- demandes et critères de validation reliés au contrat, avec état SPECIFIED tant qu’il n’est pas implémenté ;
+- mémoire, preuves et prochaine action mises à jour sans seconde queue.
 
-La présente entrée ne ferme pas WORK-DISCOVER-001 et n’accorde aucune autorité code ou infrastructure.
+## Limites
+Cette action ne répare pas les workflows GSCC/GACR, n’active pas le moteur et ne déploie rien. Les défauts CI restent ouverts et le critère GREEN de LOOP-INIT-001 reste insatisfait.

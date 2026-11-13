@@ -46,5 +46,14 @@
     "NO_SECRET_IN_REPOSITORY",
     "MCP_DIRECT_PREFERRED_SSH_FALLBACK",
     "PROVISIONING_REQUIRES_AUTHORITY"
-  ]
+  ],
+  "discovery_disposition": {
+    "status": "EXPLICITLY_DEFERRED_UNRESOLVED",
+    "decided_at": "2026-11-13T07:47:09+00:00",
+    "reason": "No application deployment is required for the documentary increment; repository MCP binding is unconfigured and no runtime was queried.",
+    "decision_ref": "docs/adr/ADR-0003-qualified-project-baseline.md",
+    "runtime_observed": false,
+    "mcp_ping_attempted": false,
+    "revisit_at": "RP-04_OR_AUTHORIZED_RUNTIME_DISCOVERY"
+  }
 }

@@ -1,0 +1,2286 @@
+{
+  "schema_version": "1.0.0",
+  "repository": "chainsolutions-wealthtech/Looping-",
+  "snapshot_commit_sha": "e8fed08594726e3506bd1903877a5815ad68da9b",
+  "snapshot_tree_sha": "a8edff9fb01a4f1d5a92b2c50749f0692ef2f092",
+  "observed_at": "2026-11-13T07:47:09+00:00",
+  "scope": "COMPLETE_RECURSIVE_GIT_TREE_AT_PINNED_AUDIT_COMMIT",
+  "output_boundary": "The snapshot predates U11 capture and this report; the containing output commit is not part of its own input inventory.",
+  "truncated": false,
+  "counts": {
+    "files": 378,
+    "python_files": 176,
+    "workflow_files": 14,
+    "archived_files_under_intake_sources": 16
+  },
+  "files": [
+    {
+      "path": ".github/ISSUE_TEMPLATE/bug_report.yml",
+      "git_blob_sha": "586221b148bc99501b5bc64b293a44ad36b0ef39",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/change_request.yml",
+      "git_blob_sha": "b971a22b4483181c22b1cc1912fca12396698ac9",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/governed-local-entry.yml",
+      "git_blob_sha": "8d35ade00ad0590a2c674b02305f553bf9808040",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": ".github/PULL_REQUEST_TEMPLATE.md",
+      "git_blob_sha": "2e969be8088f8c7ee5cf9f7473c2dc6910ca5dcc",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": ".github/copilot-instructions.md",
+      "git_blob_sha": "7c21418a6434de3ca98dac744f22932ea3213aaf",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": ".github/workflows/governance-auto-bootstrap.yml",
+      "git_blob_sha": "a6ca82ee364f56f3e25671a7ee36d3c7a7a6a561",
+      "mode": "100644",
+      "category": "GITHUB_WORKFLOW"
+    },
+    {
+      "path": ".github/workflows/governance-ci.yml",
+      "git_blob_sha": "7e66da1fce55080c876c17a7c7022ba34cef8884",
+      "mode": "100644",
+      "category": "GITHUB_WORKFLOW"
+    },
+    {
+      "path": ".github/workflows/governed-agent-continuity-relay.yml",
+      "git_blob_sha": "56f2a0e73b9fa3e845b60c3f811cf734532e5ad4",
+      "mode": "100644",
+      "category": "GITHUB_WORKFLOW"
+    },
+    {
+      "path": ".github/workflows/governed-execution.yml",
+      "git_blob_sha": "f6d2796774b7e7737d0d1bf90d08b6910c75dbec",
+      "mode": "100644",
+      "category": "GITHUB_WORKFLOW"
+    },
+    {
+      "path": ".github/workflows/governed-local-entry.yml",
+      "git_blob_sha": "bc1d0b69863e2b4d4e1d0f4817edeeb132ac7739",
+      "mode": "100644",
+      "category": "GITHUB_WORKFLOW"
+    },
+    {
+      "path": ".github/workflows/gscc-admission-gate.yml",
+      "git_blob_sha": "cbdd492d22dd37e216520c37f3c936bfa45c2b36",
+      "mode": "100644",
+      "category": "GITHUB_WORKFLOW"
+    },
+    {
+      "path": ".github/workflows/gscc-function-exposure-gate.yml",
+      "git_blob_sha": "3412bb3305672eaab8d48a1a0913bde7449af9a4",
+      "mode": "100644",
+      "category": "GITHUB_WORKFLOW"
+    },
+    {
+      "path": ".github/workflows/gscc-function-route-selftest.yml",
+      "git_blob_sha": "da0b3dd9f5fa89a1a4882a10c69f625dffd89aef",
+      "mode": "100644",
+      "category": "GITHUB_WORKFLOW"
+    },
+    {
+      "path": ".github/workflows/gscc-github-plugin-proxy.yml",
+      "git_blob_sha": "120c16446018d1f4e37e19c4ffa09d2e554b23c6",
+      "mode": "100644",
+      "category": "GITHUB_WORKFLOW"
+    },
+    {
+      "path": ".github/workflows/gscc-observable-arrival.yml",
+      "git_blob_sha": "0084061deb24b5362789ba84872a96c9e5cae983",
+      "mode": "100644",
+      "category": "GITHUB_WORKFLOW"
+    },
+    {
+      "path": ".github/workflows/gscc-provider-first-touch-ingress.yml",
+      "git_blob_sha": "51f62aae4d89aa2df35176453065c890fa7e789e",
+      "mode": "100644",
+      "category": "GITHUB_WORKFLOW"
+    },
+    {
+      "path": ".github/workflows/lab-entry.yml",
+      "git_blob_sha": "85e2cb390574735ca1079fd41ea5bd1336f2e6fc",
+      "mode": "100644",
+      "category": "GITHUB_WORKFLOW"
+    },
+    {
+      "path": ".github/workflows/repository-presence-probe.yml",
+      "git_blob_sha": "2fdaa8ab44ed2e4c9d635674afca8dce8fbadbc1",
+      "mode": "100644",
+      "category": "GITHUB_WORKFLOW"
+    },
+    {
+      "path": ".github/workflows/server-identity-secret-refresh.yml",
+      "git_blob_sha": "7122738272bea2e1d13d555d1e8c56cebe44e836",
+      "mode": "100644",
+      "category": "GITHUB_WORKFLOW"
+    },
+    {
+      "path": ".gitignore",
+      "git_blob_sha": "b8f00ddad6f8d300ec03f3cc301ee2f433702ca6",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": ".governance/TEMPLATE_MANIFEST.json",
+      "git_blob_sha": "6643fb87ef0405038e0905b8ef6cf2f9811428be",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/access-plan.json",
+      "git_blob_sha": "390bd5c10cf03e65c1a2d121d9cbeb41b7b595f7",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/agent-reconstruction-skeleton.json",
+      "git_blob_sha": "6fde875e99b1ac766e2d53c28aa02d961beed033",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/agent-relay/beacons.json",
+      "git_blob_sha": "8a79f2d7c9939e55534cc1640ebc10caab087eb5",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/agent-relay/config.json",
+      "git_blob_sha": "5e7515ee81330395b6840999d9601ffdee3b56e6",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/agent-relay/continuities.json",
+      "git_blob_sha": "5d4eec4af607175e0864cf5c7e21840382eacc28",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/agent-relay/correlations.json",
+      "git_blob_sha": "8a79f2d7c9939e55534cc1640ebc10caab087eb5",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/agent-relay/dispatches.json",
+      "git_blob_sha": "8a79f2d7c9939e55534cc1640ebc10caab087eb5",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/agent-relay/forensics.json",
+      "git_blob_sha": "8a79f2d7c9939e55534cc1640ebc10caab087eb5",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/agent-relay/gscc-admission-access-policy.json",
+      "git_blob_sha": "d51759c475c99a0d8e934a22b9cd39c0ba4d61f8",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/agent-relay/takeovers.json",
+      "git_blob_sha": "7a6020a32769248d99b5b8f2490542911157787f",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/bootstrap-receipt.json",
+      "git_blob_sha": "9626aa906b94e5aedc48ed67ebd9677e67af8588",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/bootstrap-state.json",
+      "git_blob_sha": "e7db4acd939506bd4b1c1a5fac5335ad65e39d50",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/canonical-memory/current.json",
+      "git_blob_sha": "0556fcc91155629920474c91ca905f993ea5b784",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/connection-intent-policy.json",
+      "git_blob_sha": "35e3a85d8b57f24baaa7c2867089b1e5d65ef2ce",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/control-plane-policy.json",
+      "git_blob_sha": "e86e6facc90b1dadd39e6215f93ff19b8d147d29",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/entry-action-policy.json",
+      "git_blob_sha": "7b8d5ec8960aec436e5457fe4e0ce737178719d7",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/gscc-entry-router.json",
+      "git_blob_sha": "863fc25b0632d3584a43f88564f5039177d83113",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/gscc-post-q1-router.json",
+      "git_blob_sha": "dc1cb839d5ad31a65f1a973f9a4318cab5cca0a4",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/gscc/mcp-capability-snapshot.json",
+      "git_blob_sha": "8304abf3aa15457599902e5a687c5785df4d161b",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/infrastructure-intent.json",
+      "git_blob_sha": "12fa71fd93e1dfa1ec41ec786ff07c03783bb6ac",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/intake/INTAKE-0001.json",
+      "git_blob_sha": "3bffb6c89bcf336e4706368f3a8495e20f688627",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/intake/INTAKE-0002.json",
+      "git_blob_sha": "3a6441e3a206b3ddea4718febe0ff9fc7770cfc7",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/intake/cursor.json",
+      "git_blob_sha": "1e0c4a7668a18a519a53ace837d154543ad803e4",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/local-entry-policy.json",
+      "git_blob_sha": "2021b529c5a2171d652a1971c6c86d9e5c64f652",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/local-entry/state.json",
+      "git_blob_sha": "58578b7a61513a04e8e30353466370e782ce380c",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/mcp-binding.json",
+      "git_blob_sha": "f6d96e9d10323654584211eb02fb32501e2e6ad6",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/mcp-connection-policy.json",
+      "git_blob_sha": "4d7488e97e436f24aedbc278322cc4926c5e1be7",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/profile.json",
+      "git_blob_sha": "4e735099c6c42d17dc3df9e33ae97a6571e77325",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/project-profile.json",
+      "git_blob_sha": "b86bf61dd5ba2aa1b230f8c2e542b793d7a9ac12",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/repository-creation-executor.json",
+      "git_blob_sha": "72610463b821083d2b171ef0e5d889c2d3eab644",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/repository-entry-gates.json",
+      "git_blob_sha": "53f852707d94bf05a5dcb775c5f4f11a5595b2e2",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/repository-scope-policy.json",
+      "git_blob_sha": "854fe1667d554c9da2791eeb24ca812ce767cadd",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/sessions/sessions.json",
+      "git_blob_sha": "41529d8fced41c0aba4b8bf781043441e322e546",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/work/claims.json",
+      "git_blob_sha": "728be6d3c18809ce9202a4acd2635a2fcc6936c0",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/work/work-items.json",
+      "git_blob_sha": "f3db2560ed377eaa2b839b7219d5c341cc48fc0f",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": ".governance/workflow-model.json",
+      "git_blob_sha": "340f01bab2d8662ed45420d6d8ba5129caf13453",
+      "mode": "100644",
+      "category": "GOVERNANCE_PROJECTION"
+    },
+    {
+      "path": "00_DIRECT_OWNER_ENTRY.md",
+      "git_blob_sha": "85125606f826dcd9b0256d3057e4663008fb1816",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "00_GSCC_ENTRY.md",
+      "git_blob_sha": "197d134dce1e0bac89b00acee551efa3c634a9a2",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "00_LAB_ENTRY.md",
+      "git_blob_sha": "0448aa6562491dbb3cf0a0fb4a0c77f569cb00c0",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "00_START_HERE.md",
+      "git_blob_sha": "c464ea582936666ca00e46e8b2bfdbfe50e05144",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "ACCEPTANCE_CRITERIA.md",
+      "git_blob_sha": "8e0ac1bb27bea55a7a049d95d89f5780d10b3329",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "AGENTS.md",
+      "git_blob_sha": "764044807a7dfecd2a1d0cf9c2ac1ac06ee21afc",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "ASSUMPTIONS.md",
+      "git_blob_sha": "7961b7d2ed0eca00f16fd6ec6b803e13daf270b3",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "git_blob_sha": "0ff5523c7db85d6df6fa7be727bd1dba31ca8381",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "CLAUDE.md",
+      "git_blob_sha": "7c21418a6434de3ca98dac744f22932ea3213aaf",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "CONSTRAINTS.md",
+      "git_blob_sha": "f6ec30998d2a1c8112d462e9320369e95adeda58",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "CURRENT_ITERATION.md",
+      "git_blob_sha": "e6aef93af454f6d4658099101a481621c11958d8",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "DEFINITION_OF_DONE.md",
+      "git_blob_sha": "c7601a46d72d0d0dab4f1dc297fa63fe29d7bacd",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "DEPENDENCIES.md",
+      "git_blob_sha": "57070e4657ace0e7dfad3b4730bef5337a2b91c1",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "GEMINI.md",
+      "git_blob_sha": "7c21418a6434de3ca98dac744f22932ea3213aaf",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "GOVERNANCE.md",
+      "git_blob_sha": "324626b612a52271de70e3630d6e92b2a9a3ad0a",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "HANDOFF.md",
+      "git_blob_sha": "705ed21598d054947a2407b6068379e2fefa027e",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "LOOP_ENGINEERING.md",
+      "git_blob_sha": "984450c1db65c51eb9429938814b2427bf8fb3c7",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "LOOP_STATE.md",
+      "git_blob_sha": "ad575be9e116c0cabced5810800c25a5f79db581",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "MATERIALIZATION.md",
+      "git_blob_sha": "8143f3f5a2ba87b0c59027c57152301dbf3fced8",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "NEXT_ACTION.md",
+      "git_blob_sha": "6acc6f95d6d31c581c3de2ce74164ec0c9597609",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "PROJECT_CONTEXT.md",
+      "git_blob_sha": "893c1e2d3ee1b5af560ab942d5d2b7c2900e530b",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "README.md",
+      "git_blob_sha": "7a868a4d6e6a827bf48dd560192c143b1c4e3e2b",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "RISKS.md",
+      "git_blob_sha": "7f61ca9b465e36565bfe3ea5904a5d3cca563bdc",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "ROADMAP.md",
+      "git_blob_sha": "9ebb55499e69bec4e4bb85a4640aa7ca1af46f27",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "SOURCE_OF_TRUTH.md",
+      "git_blob_sha": "6561fe13d77c3c83054ca7ddc95ca89b0a6a7ac9",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "STATUS.md",
+      "git_blob_sha": "33015a8391ac1b9a684e0f2d454c862c3bb0c8da",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "SUIVI.md",
+      "git_blob_sha": "3a0ee8684ce9be2331416a6c222952bd828a579e",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "TODO.md",
+      "git_blob_sha": "4a3b6662faec40b4373a5880c81b7229b460825b",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "WORK_LOG.md",
+      "git_blob_sha": "57d386121b0b75a2dbc7e6361706277da63c1b7b",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "git_blob_sha": "9cec3acb80448a96f4c7fb9880ab482ec433b579",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/AUTOMATION.md",
+      "git_blob_sha": "e4cef8c015cb465bcf4d3d6d8ad32832613a8274",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/CONNECTION_INTENT.md",
+      "git_blob_sha": "a2b227e28b158dda6a900c2b7e7df9b4922e4bb6",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/CONTROL_PLANE.md",
+      "git_blob_sha": "232e92881a93a5dd9379a263f0db9f0f3d348017",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/DECISIONS.md",
+      "git_blob_sha": "163c9d2423f8914bca4b5427b182929e8c216465",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/ENTRY_ACTION_ROUTER.md",
+      "git_blob_sha": "cd3cb5857ffcdbf92590e9884ba1a5d15cfd5460",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/EXISTING_REPOSITORY_ADOPTION.md",
+      "git_blob_sha": "a73ce1532efec65d695937ac5962d00edee5c842",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/GACR_AGENT_CONTINUITY_RELAY.md",
+      "git_blob_sha": "4d333f84edc23bd0b7c4ea5f1ee293c2b131a1ad",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/GACR_BRIDGE_CONTRACT.md",
+      "git_blob_sha": "bd1559e5577d074eed4701a7ed1b195125b48095",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/INFORMATION_INTAKE.md",
+      "git_blob_sha": "42b4b8799a7388cf27a6216956c12489f2c73237",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/INFRASTRUCTURE_BOOTSTRAP.md",
+      "git_blob_sha": "8329ca2b122895cc06c1fbb558c5ce1800b65a0c",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/LAB_EVOLUTION.md",
+      "git_blob_sha": "e29f901aa07600cbac6d0f655c4320c9f8eca96b",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/LOCAL_GOVERNED_ENTRY.md",
+      "git_blob_sha": "188e5d3ae850a13923863958f3d9b8750deb2ba3",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/MCP_REPOSITORY_BINDING.md",
+      "git_blob_sha": "8e5c2e65da15f1a3f6662599fc6d8636f20cc51f",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/MULTI_AGENT_COORDINATION.md",
+      "git_blob_sha": "8e4c8097992ae4cafd72a559e67000aa0c130954",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/PROJECT_MAPPING.md",
+      "git_blob_sha": "b896ab5317833f95525ed920549ed42e261cecaa",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/PROJECT_PROFILES.md",
+      "git_blob_sha": "2a024dd1e55fbd06002e73df0c796a7ba7c736c7",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/REPOSITORY_SCOPES.md",
+      "git_blob_sha": "19b098fa9c46d895a59df0856a5829bff7b95824",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/WORK_METHOD.md",
+      "git_blob_sha": "be1cfc98d5a26f0a261876fef2e4a78676d4ac46",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/adr/ADR-0000-template.md",
+      "git_blob_sha": "c568e8990faee5a0c01e2a56134d722906878b9f",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/adr/ADR-0001-governance-automation-v2.md",
+      "git_blob_sha": "0c4c5b189f9bff490cedcad12d3801e19b8c048f",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/adr/ADR-0002-canonical-project-memory.md",
+      "git_blob_sha": "2ac9c56aa827b6285487e5e7be92e43beefc96bd",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/intake/ADMISSION_AND_BASELINE.md",
+      "git_blob_sha": "cd21305695cdd42901c284cd18303b000e527f60",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/intake/BASE_REGISTRY.json",
+      "git_blob_sha": "dbab4f849e00f2dc290a358acccdda90a4eb3008",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/intake/CONVERSATION_INPUTS.md",
+      "git_blob_sha": "ae7045ec450a81755dd0647b062339147c8e3f77",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/intake/DIRECT_OWNER_ENTRY_EVIDENCE.json",
+      "git_blob_sha": "f92f592cc155ff27ede6f8bf4223c38c473ca286",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/intake/ENGINE_BINDING.md",
+      "git_blob_sha": "87b535ebaf3ee8f441b2bb88d4bcdabc0b1f3b3c",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/intake/INTEGRATION_CHECKPOINT.md",
+      "git_blob_sha": "218b0b44e27eaf02a52c02a0e2b9c4c5bec1c25e",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/intake/PLAN_PREPARATOIRE.md",
+      "git_blob_sha": "47fac42b992d49b159cd198c43ce7616dd281e1d",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/intake/README.md",
+      "git_blob_sha": "8b759f2e26f1cb42e249a442b7dfb79446151ab6",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/intake/REQUIREMENTS_TRACEABILITY.md",
+      "git_blob_sha": "60b5850bb86411ede7653be8270c19d27f2d6154",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/intake/SOURCE_REGISTER.json",
+      "git_blob_sha": "0315d483a0f9394b6bdce96bbefed6a80deb7bf7",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/intake/VERIFICATION.md",
+      "git_blob_sha": "d79165062d84a23c502bce5b44d717c3ec6cd8eb",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/intake/WORKFLOW_MAPPING.md",
+      "git_blob_sha": "eb8e2559e7aa00ea855ba2556910cc775ad52962",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/intake/sources/conversation/methodologie-architecture-modulaire.source.json",
+      "git_blob_sha": "71cb47cab7702f6badeff0f49ec0438fffa426e8",
+      "mode": "100644",
+      "category": "ARCHIVED_SOURCE"
+    },
+    {
+      "path": "docs/intake/sources/loop/AGENTS.source.md",
+      "git_blob_sha": "8c5e9e728f5eb29a2e0020830d4ce9afb45ea3c0",
+      "mode": "100644",
+      "category": "ARCHIVED_SOURCE"
+    },
+    {
+      "path": "docs/intake/sources/loop/README.source.md",
+      "git_blob_sha": "3cc92e2ee95dfae1a2a48884bcad4a539e43235a",
+      "mode": "100644",
+      "category": "ARCHIVED_SOURCE"
+    },
+    {
+      "path": "docs/intake/sources/loop/SOFTWARE_DESIGN_SCOPE.source.md",
+      "git_blob_sha": "1e9194468250936f1adac1b3631ae976a5ea5aba",
+      "mode": "100644",
+      "category": "ARCHIVED_SOURCE"
+    },
+    {
+      "path": "docs/intake/sources/loop/SOURCE_OF_TRUTH.source.md",
+      "git_blob_sha": "7b5ff506ed4812715e97eaa050c8c45e5da3ed96",
+      "mode": "100644",
+      "category": "ARCHIVED_SOURCE"
+    },
+    {
+      "path": "docs/intake/sources/loop/WORKFLOW_WF00.source.md",
+      "git_blob_sha": "f0c9977feeaf1f3aa7b049bfacb65cff9e73a1cf",
+      "mode": "100644",
+      "category": "ARCHIVED_SOURCE"
+    },
+    {
+      "path": "docs/intake/sources/mcp/AGENTS.source.md",
+      "git_blob_sha": "5b6cab480ad74dca23e5dd9487e362e205bd5f06",
+      "mode": "100644",
+      "category": "ARCHIVED_SOURCE"
+    },
+    {
+      "path": "docs/intake/sources/mcp/CODEX_AUTO_ANALYSIS_REQUEST.source.md",
+      "git_blob_sha": "7e2e2f00b5268c169f4f42fa2e5f92c64b2f9e0b",
+      "mode": "100644",
+      "category": "ARCHIVED_SOURCE"
+    },
+    {
+      "path": "docs/intake/sources/mcp/GPT.source.md",
+      "git_blob_sha": "4a20a75b32dfb51532fc16d5713f0a86ecc70d09",
+      "mode": "100644",
+      "category": "ARCHIVED_SOURCE"
+    },
+    {
+      "path": "docs/intake/sources/mcp/INSTALLATION_MCP_MEMORY.source.md",
+      "git_blob_sha": "e030808a490de3d643760d6415d5f11be5b080bf",
+      "mode": "100644",
+      "category": "ARCHIVED_SOURCE"
+    },
+    {
+      "path": "docs/intake/sources/mcp/LOOP_ENGINEERING_INSTRUCTIONS_DOCX_EXTRACT_20260702.source.md",
+      "git_blob_sha": "0d99fa47fb2275f5f46e586ea24ab61b2aaddfa6",
+      "mode": "100644",
+      "category": "ARCHIVED_SOURCE"
+    },
+    {
+      "path": "docs/intake/sources/mcp/LOOP_ENGINEERING_WEALTHTECH_MASTER_PLAN_20260702.source.md",
+      "git_blob_sha": "8600d9d3d0da59078c4736a71198e65e2a266ae4",
+      "mode": "100644",
+      "category": "ARCHIVED_SOURCE"
+    },
+    {
+      "path": "docs/intake/sources/mcp/LOOP_ENGINEERING_WEALTHTECH_PLAYBOOK_COMPLET_20260702.source.md",
+      "git_blob_sha": "92b45e3726588ffad100fac9b35fd97b20a305a8",
+      "mode": "100644",
+      "category": "ARCHIVED_SOURCE"
+    },
+    {
+      "path": "docs/intake/sources/mcp/MATRICE_TRACABILITE_SOURCES_EXIGENCES_TRACKS_20260702.source.md",
+      "git_blob_sha": "465444d6132938be3eb3f365c0b3fe557810823c",
+      "mode": "100644",
+      "category": "ARCHIVED_SOURCE"
+    },
+    {
+      "path": "docs/intake/sources/mcp/SUIVI_MEMORY.source.md",
+      "git_blob_sha": "6ec45846a6d7452c342241de2ba157b05164eb93",
+      "mode": "100644",
+      "category": "ARCHIVED_SOURCE"
+    },
+    {
+      "path": "docs/intake/sources/prototype/loop.py.txt",
+      "git_blob_sha": "fa00f22668da6d5fa24239b2d34e9397c0f6926f",
+      "mode": "100644",
+      "category": "ARCHIVED_SOURCE"
+    },
+    {
+      "path": "docs/labs/GRT-CONT-20261016-F1QUEUE-001.md",
+      "git_blob_sha": "4d0921f9c4e40a5542cbded659859b6728b18842",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001.md",
+      "git_blob_sha": "29f3350c40c450aaab9e2e731dd933017598ec2a",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/CHECKPOINT.json",
+      "git_blob_sha": "40dfe0f77013af30e411a6bb90a4d4eb25d426fe",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/CHRONOLOGY.json",
+      "git_blob_sha": "ac42ebf7547cdfc7e43bbd06f5b271c795540600",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/DECISIONS.json",
+      "git_blob_sha": "300cc23c151e2c8c050892d40986653deaca1bb2",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/LAB_IDENTITY_AND_RELEASES.json",
+      "git_blob_sha": "793a866e0911cd7cac9b2e8754f246eccb9e1146",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/MEMORY.md",
+      "git_blob_sha": "72d588eb34862274242a7d75565078b2413fcad1",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/MEMORY_IDENTITY.json",
+      "git_blob_sha": "085666027ca0fcb2b4c6d6b25ad9d47d8fd9d597",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/OBSERVATIONS.json",
+      "git_blob_sha": "b96283ddbf571cbcb76807105433cb771d644684",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/OWNER_INSTRUCTIONS.json",
+      "git_blob_sha": "4d87a59cf4cdaf85bdfcf908051f5310e6f15f43",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/POOL_GACR_LINK_REQUIREMENT.json",
+      "git_blob_sha": "9d541f56ca1d966332c673fdfeb182e7a5411c1d",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/REFERENCE_POST_F1_CONTINUITY_20261007.md",
+      "git_blob_sha": "00f4719b424cbfb6409e8e6c99d97893294765fd",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/TASK_CANDIDATES.json",
+      "git_blob_sha": "74a44a57845203d5658d4da41a42463778e76b35",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/WORKFLOW_EVIDENCE.json",
+      "git_blob_sha": "e7ed512aa16576230d07f14c9904adb603976a91",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001_DISPATCHER_AUDIT.md",
+      "git_blob_sha": "540a769c715ff70454393be6d97558bce0fc54c6",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/labs/GRT-CONT-20261017-LABENTRY-001.md",
+      "git_blob_sha": "0a4d27ca262c675d12074bcd52c4f276e0757651",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/labs/GRT-CONT-20261017-LABENTRY-001/POOL.json",
+      "git_blob_sha": "ad9cc28f19ef42d45f57829639f32d76ff627a09",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/labs/GRT-CONT-20261017-LABENTRY-001/QUEUE.json",
+      "git_blob_sha": "5693aea8fc849c0faee9e44133af15e5e96a2d15",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/labs/GRT-CONT-20261017-LABENTRY-001/REGISTRY.json",
+      "git_blob_sha": "fb63cb3efb93a2328883aabb240bb28ec6dc01c6",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/memory/ACTIONS.json",
+      "git_blob_sha": "05de83ba6bd35cd8c497def5043b69848002840a",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/memory/CHECKPOINT.json",
+      "git_blob_sha": "a5def85f01c311fcdcb4d474c8400a7fa5237281",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/memory/CONVERSATION_LEDGER.json",
+      "git_blob_sha": "62ba8fcb78be9413f9587f5769fa963c2e1fea35",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/memory/DIRECT_ENTRY_EVIDENCE.json",
+      "git_blob_sha": "98813795b1406d50be3a849241f55c6349457bea",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/memory/README.md",
+      "git_blob_sha": "e841bc7ff33c4f67cba2ceea9286ed895dabc9c5",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/memory/REQUESTS.json",
+      "git_blob_sha": "dcb8c1357fddc202b8829c7b6ba15f143bb683a0",
+      "mode": "100644",
+      "category": "DOCUMENT_OR_CONFIGURATION"
+    },
+    {
+      "path": "docs/memory/sources/A01.md",
+      "git_blob_sha": "5e7d7677a832276a20aaed6ddbf651edaa73de6b",
+      "mode": "100644",
+      "category": "ARCHIVED_SOURCE"
+    },
+    {
+      "path": "docs/memory/sources/A02.md",
+      "git_blob_sha": "f8638b65eb848934c54528824ec10a15e12d7dbc",
+      "mode": "100644",
+      "category": "ARCHIVED_SOURCE"
+    },
+    {
+      "path": "docs/memory/sources/U10.json",
+      "git_blob_sha": "72ce84f34b3281603efca222466eb5ef532831c1",
+      "mode": "100644",
+      "category": "ARCHIVED_SOURCE"
+    },
+    {
+      "path": "plugins/gscc-github-mcp/.env.example",
+      "git_blob_sha": "ba19b2edebd7da07cd4a85370832580c95798cf9",
+      "mode": "100644",
+      "category": "PROVIDER_ADAPTER_SOURCE"
+    },
+    {
+      "path": "plugins/gscc-github-mcp/Dockerfile",
+      "git_blob_sha": "771eae76c08e58f7e4e7b70ea778fa3e8be6ea26",
+      "mode": "100644",
+      "category": "PROVIDER_ADAPTER_SOURCE"
+    },
+    {
+      "path": "plugins/gscc-github-mcp/README.md",
+      "git_blob_sha": "b296684c13edc4b541486ef9119cd60c2ce22bce",
+      "mode": "100644",
+      "category": "PROVIDER_ADAPTER_SOURCE"
+    },
+    {
+      "path": "plugins/gscc-github-mcp/requirements.txt",
+      "git_blob_sha": "a348e91c9db301d58d162f09ba1ea5b20e9960ae",
+      "mode": "100644",
+      "category": "PROVIDER_ADAPTER_SOURCE"
+    },
+    {
+      "path": "plugins/gscc-github-mcp/server.py",
+      "git_blob_sha": "73d806b535e31f1325e684f30601e8704002f565",
+      "mode": "100644",
+      "category": "PROVIDER_ADAPTER_SOURCE"
+    },
+    {
+      "path": "plugins/gscc-github-mcp/test_server.py",
+      "git_blob_sha": "3fd221115d4d7ba70a0221a52e8ec4c6eea6ee5d",
+      "mode": "100644",
+      "category": "PROVIDER_ADAPTER_SOURCE"
+    },
+    {
+      "path": "schemas/bootstrap-receipt.schema.json",
+      "git_blob_sha": "2bcc1831f629626250f0955a81a6a197e57aff8e",
+      "mode": "100644",
+      "category": "SCHEMA"
+    },
+    {
+      "path": "schemas/connection-intent.schema.json",
+      "git_blob_sha": "4f1d3ed706755ef4713215c4961a30c407550e1d",
+      "mode": "100644",
+      "category": "SCHEMA"
+    },
+    {
+      "path": "schemas/entry-action.schema.json",
+      "git_blob_sha": "b1f16455e56780c8b1160b87a2d83df5de08d153",
+      "mode": "100644",
+      "category": "SCHEMA"
+    },
+    {
+      "path": "schemas/execution-package.schema.json",
+      "git_blob_sha": "9537516fba7f442f123be1047ae2c426415b3e40",
+      "mode": "100644",
+      "category": "SCHEMA"
+    },
+    {
+      "path": "schemas/gacr-bridge-contract.schema.json",
+      "git_blob_sha": "f4fa5733eb8b90e1eccda08ab1a373d7d93aaa92",
+      "mode": "100644",
+      "category": "SCHEMA"
+    },
+    {
+      "path": "schemas/gacr-continuity-coordination.schema.json",
+      "git_blob_sha": "7be02f32f2085000b6599d76528bebf012662b08",
+      "mode": "100644",
+      "category": "SCHEMA"
+    },
+    {
+      "path": "schemas/gacr-state.schema.json",
+      "git_blob_sha": "e32f3af3e5f2d2ec3cb44f7216299d947817dd2d",
+      "mode": "100644",
+      "category": "SCHEMA"
+    },
+    {
+      "path": "schemas/gacr-telemetry.schema.json",
+      "git_blob_sha": "b5abcdb13e8030a18414c25248bffcbbb6632cc3",
+      "mode": "100644",
+      "category": "SCHEMA"
+    },
+    {
+      "path": "schemas/governed-execution-package.schema.json",
+      "git_blob_sha": "d2104bb9394276cdf113dc919b4b75dd83131dbf",
+      "mode": "100644",
+      "category": "SCHEMA"
+    },
+    {
+      "path": "schemas/governed-handoff.schema.json",
+      "git_blob_sha": "91171bce76eb67737ae73321d2a99ebeb4d9d231",
+      "mode": "100644",
+      "category": "SCHEMA"
+    },
+    {
+      "path": "schemas/governed-request.schema.json",
+      "git_blob_sha": "7bad3127b894029de2056154323d4f6e6ed6421e",
+      "mode": "100644",
+      "category": "SCHEMA"
+    },
+    {
+      "path": "schemas/gscc-access-grant.schema.json",
+      "git_blob_sha": "5d65200d9c1d2da354c4922cb754782c1bfee08d",
+      "mode": "100644",
+      "category": "SCHEMA"
+    },
+    {
+      "path": "schemas/gscc-admission-access-policy.schema.json",
+      "git_blob_sha": "53ffdb4bc73352ed6a2113bb76438f459d9cf98a",
+      "mode": "100644",
+      "category": "SCHEMA"
+    },
+    {
+      "path": "schemas/gscc-admission-envelope.schema.json",
+      "git_blob_sha": "a9888e357e4463b5e81b6bb674751ffdcf2e50b3",
+      "mode": "100644",
+      "category": "SCHEMA"
+    },
+    {
+      "path": "schemas/gscc-admission-receipt.schema.json",
+      "git_blob_sha": "27c0bde9c5fdd7c449e706dc694a012d3ba0259a",
+      "mode": "100644",
+      "category": "SCHEMA"
+    },
+    {
+      "path": "schemas/gscc-function-exposure-receipt.schema.json",
+      "git_blob_sha": "06f942371f62a04564dfa156d0dbb4b696f0f5b1",
+      "mode": "100644",
+      "category": "SCHEMA"
+    },
+    {
+      "path": "schemas/gscc-message.schema.json",
+      "git_blob_sha": "ed7b5cc31fd31269dbe0ce7d5e125aa2856e2956",
+      "mode": "100644",
+      "category": "SCHEMA"
+    },
+    {
+      "path": "schemas/gscc-owner-f1-admission-receipt.schema.json",
+      "git_blob_sha": "ce2d52d9cf7402a9a80389cfdb372bbf29b7a522",
+      "mode": "100644",
+      "category": "SCHEMA"
+    },
+    {
+      "path": "schemas/infrastructure-intent.schema.json",
+      "git_blob_sha": "2aedd7407c38476d39ca1ab51b1ca29e49260155",
+      "mode": "100644",
+      "category": "SCHEMA"
+    },
+    {
+      "path": "schemas/intake.schema.json",
+      "git_blob_sha": "52a028c206a138fde5a6624441f13ea12487a8c2",
+      "mode": "100644",
+      "category": "SCHEMA"
+    },
+    {
+      "path": "schemas/local-entry-receipt.schema.json",
+      "git_blob_sha": "164549f4e8a825e34ddfd5526cddde309169edc4",
+      "mode": "100644",
+      "category": "SCHEMA"
+    },
+    {
+      "path": "schemas/local-entry-request.schema.json",
+      "git_blob_sha": "42d6e6252d7792ec16ce87d316755d9e233e9db7",
+      "mode": "100644",
+      "category": "SCHEMA"
+    },
+    {
+      "path": "schemas/loop-state.schema.json",
+      "git_blob_sha": "95c1485079d85d3c99cdb0af13d35eb93c226600",
+      "mode": "100644",
+      "category": "SCHEMA"
+    },
+    {
+      "path": "schemas/mcp-binding.schema.json",
+      "git_blob_sha": "60e9ead39b55c152950a80241942a435a1af50fe",
+      "mode": "100644",
+      "category": "SCHEMA"
+    },
+    {
+      "path": "schemas/next-action.schema.json",
+      "git_blob_sha": "cc22e2e627b7c049b58c8db96626546ea68c2451",
+      "mode": "100644",
+      "category": "SCHEMA"
+    },
+    {
+      "path": "schemas/project-profile.schema.json",
+      "git_blob_sha": "4ef9a6ff213431e6f295861198c2355152f58d78",
+      "mode": "100644",
+      "category": "SCHEMA"
+    },
+    {
+      "path": "schemas/project-state.schema.json",
+      "git_blob_sha": "36848a15c4b50e47f3dd73e69c3513f0eb1a7297",
+      "mode": "100644",
+      "category": "SCHEMA"
+    },
+    {
+      "path": "schemas/repository-scope.schema.json",
+      "git_blob_sha": "4f06761252be61d90234f3c13e17c217a5e71e5f",
+      "mode": "100644",
+      "category": "SCHEMA"
+    },
+    {
+      "path": "schemas/session-checkpoint.schema.json",
+      "git_blob_sha": "c1f9736a64245dda50a9f56300716fb7a2f0e367",
+      "mode": "100644",
+      "category": "SCHEMA"
+    },
+    {
+      "path": "schemas/session-handoff.schema.json",
+      "git_blob_sha": "afbf9753436bece869645b7196cde7059b3bc7b9",
+      "mode": "100644",
+      "category": "SCHEMA"
+    },
+    {
+      "path": "schemas/session.schema.json",
+      "git_blob_sha": "42e409e5e6173d2a89ee0398900c9ec3e828bd70",
+      "mode": "100644",
+      "category": "SCHEMA"
+    },
+    {
+      "path": "schemas/work-claim.schema.json",
+      "git_blob_sha": "ff2d329c7b76f9f63366f94ad9d0eedcea7c15a9",
+      "mode": "100644",
+      "category": "SCHEMA"
+    },
+    {
+      "path": "schemas/work-item.schema.json",
+      "git_blob_sha": "073f05f2b10319d43344206b561e1c032cde0902",
+      "mode": "100644",
+      "category": "SCHEMA"
+    },
+    {
+      "path": "scripts/adaptive_question_planner.py",
+      "git_blob_sha": "16fbfa05a6ca22b6c0d68ccdb81140bc2a6beadd",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/adopt_existing_repository.py",
+      "git_blob_sha": "4fb427d35686c2760fdb7241dcb8f50c5622f78a",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/auto_bootstrap.py",
+      "git_blob_sha": "c3960581310976c7621feeb82e6c202145edd3dc",
+      "mode": "100755",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/chatgpt_github_surface_instrumentation.py",
+      "git_blob_sha": "18892468c29b6aabf14d4f4d654a16b5479097e9",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/control_plane_create_repository.py",
+      "git_blob_sha": "d6f407ff58c4d067c840747c62ac51053a725753",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/control_plane_issue_bridge.py",
+      "git_blob_sha": "0e73bb1ef0b2a4b1963788f0998cca2e5de12055",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/control_plane_local_command.py",
+      "git_blob_sha": "a87664fe4962cc5aaa305896efb8e64e6dc66935",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/control_plane_local_start.py",
+      "git_blob_sha": "3e4cb89b1799a4fc3e0a95a04b621cfa70ca2836",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/control_plane_provision_mcp_credential.py",
+      "git_blob_sha": "632eb260e393f5a0a64d48bbfacd51acdc5ebfe0",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/control_plane_server_identity_secret_facts.py",
+      "git_blob_sha": "98e44ae2ebb7932bc2c99f39b262f4e332db185b",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/control_plane_server_identity_secret_metadata.py",
+      "git_blob_sha": "66c760628a0547341402fa42e25e97e61a9ce2cd",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/control_plane_upgrade_local_entry.py",
+      "git_blob_sha": "25283bcdce27f3f4b9ffe22eafdfd955ad910f54",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/finalize_bootstrap.py",
+      "git_blob_sha": "ac3fea2d51997c3898164638e8bb03e694f1efec",
+      "mode": "100755",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/first_touch_agent_transport_extractor.py",
+      "git_blob_sha": "102427576c5d5d1ef8b921a77769e80db7ec0f6b",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/first_touch_connection_completeness.py",
+      "git_blob_sha": "890ea6680e07f07c067929234919dd9fd402e77b",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/first_touch_entry_contract.py",
+      "git_blob_sha": "7e2e00a798166fc9e6dc122985e5b37d2facf73b",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/first_touch_exhaustive_collector.py",
+      "git_blob_sha": "914bf017cfdaaa8123ec8871062f63d0467fb9f9",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/first_touch_expected_field_registry.py",
+      "git_blob_sha": "66220ccc5c60652c7da9f77d3db9e9e9f17b8f29",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/first_touch_field_block_gate.py",
+      "git_blob_sha": "5f257a926bf09e0b809d8b04fcc55b6402d2b8a7",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/first_touch_state_artifact.py",
+      "git_blob_sha": "e9478d458e8ba42fcaefce71f816c03af764577b",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gacr_agent_reconstruction.py",
+      "git_blob_sha": "49e2d7864baa66065e5c749b45820ce91fc9dae2",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gacr_agent_telemetry.py",
+      "git_blob_sha": "9ffe73300f7c72b6c8cdec094026e0165e3ba93f",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gacr_auto_attach.py",
+      "git_blob_sha": "dfb2b786f2bf8556cb3d25b7f99e5ec24e3da0e2",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gacr_bridge_notifier.py",
+      "git_blob_sha": "26a1d51abcc21521f851a7ed99ef1f8102f573b3",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gacr_capacity_dispatch.py",
+      "git_blob_sha": "dda617aff88dc68470c9c5c546c38359c36b96c5",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gacr_client_emitter.py",
+      "git_blob_sha": "f52be25a7a6c3dacd79f55607a3c8f4c0c0ce7e1",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gacr_continuity_bus.py",
+      "git_blob_sha": "7203aeca1b5b578e6e898f8e064d105fb3bbbe67",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gacr_continuity_coordination.py",
+      "git_blob_sha": "486dad9922a00dbc9a177a1658aefde890f61d42",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gacr_e2e_takeover_harness.py",
+      "git_blob_sha": "a31c9fa79ee42e29c591f6c4bde19073c3af362c",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gacr_host_issue_ingress.py",
+      "git_blob_sha": "161dadfff25086683a1f4c3dd41aa382d50bfbb9",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gacr_owner_alias.py",
+      "git_blob_sha": "14c1c72ead3737d40e06792e90edd41e2d0a9b9c",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gacr_owner_role.py",
+      "git_blob_sha": "d41d51fbacb73f6bc32907c332342084b1f65c4f",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gacr_workflow_bridge.py",
+      "git_blob_sha": "40cad7e30137f69916b4ad556d8a42ef2f3a60d6",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/governance_agent.py",
+      "git_blob_sha": "8c5ea9a33eddd63926c6ed118be10b5ba5709bdb",
+      "mode": "100755",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/governed_agent_continuity_relay.py",
+      "git_blob_sha": "1790741d5f8c959b056bb15459c1879b38d39a62",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/governed_execution_engine.py",
+      "git_blob_sha": "75576bf441264a5c63c2980fce8d50ededc1576a",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/governed_execution_package_compiler.py",
+      "git_blob_sha": "59b13811864363e3c3e49a145b9e4d6137fd2ee8",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/governed_execution_workflow_bridge.py",
+      "git_blob_sha": "07e5e35826a98816c0307cf92c323afe7243e099",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/governed_github_read_connector.py",
+      "git_blob_sha": "3d6a60c63064b18b514b80b46e017c17ef84e441",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/governed_hold_review.py",
+      "git_blob_sha": "46d1f20bf6af10fb27f64d7a616643e231a01f10",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/governed_loop_execution_adapter.py",
+      "git_blob_sha": "9cfe648fce4f8eaa4abc48b1cd3a22eee473d34e",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/governed_plan_reconciliation.py",
+      "git_blob_sha": "4249af7e3229881c934a3bc82b485bb63a61d294",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/governed_project_execution_blueprint.py",
+      "git_blob_sha": "d6a46a150f725abfa0fe2c32e7274abf7e962937",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/governed_request.py",
+      "git_blob_sha": "3934f6700bb84e446d76d1b0c0379db7f8c8a0b6",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gscc/__init__.py",
+      "git_blob_sha": "91a6540015c74ca77b95cc4c27138e1e5b552c85",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gscc/admission.py",
+      "git_blob_sha": "5bad83f3f6019a432e45e8b845e98f45f2c12858",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gscc/admission_access_policy.py",
+      "git_blob_sha": "2c18929430ceb8ef34939f98e3a590720558871d",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gscc/admission_harvester.py",
+      "git_blob_sha": "7a50d8de35267d7ae50c58602613a098dbba6851",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gscc/capability_projection.py",
+      "git_blob_sha": "609b6d9666f124feecf9681785af1c50c756bc0c",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gscc/first_touch_handoff.py",
+      "git_blob_sha": "dec8a62a67264284d543d03611af3f8394615684",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gscc/first_touch_store.py",
+      "git_blob_sha": "55ee9eabf490933ddb12c59b80001b4c41f6beaa",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gscc/gacr_compat.py",
+      "git_blob_sha": "e600bf4dc7b59ec52177e912eb5dfecb18c85392",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gscc/gse_projection.py",
+      "git_blob_sha": "5fb4e60420288b92d2770a125882f845fd86fed0",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gscc/instrumentation.py",
+      "git_blob_sha": "86e525d441f933df161bfe3009eaac322162dbed",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gscc/protocol.py",
+      "git_blob_sha": "a20e52b496fd06819211168677b3d2345c91fdd2",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gscc/session_endpoint.py",
+      "git_blob_sha": "a2e9d7c667c2b59a8b9ebc89d3a5bf17241e4205",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gscc/transport.py",
+      "git_blob_sha": "0aeb48c2e2acd66b7b158be43ba21d29a05d7e98",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gscc_arrival_identity.py",
+      "git_blob_sha": "8ab8e9f5486f523a17f06886456c75cdab9f66a7",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gscc_control_issue_ingress.py",
+      "git_blob_sha": "64a1e709bffdf67e42f0cc56e0dd431720d6d007",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gscc_entry_router.py",
+      "git_blob_sha": "bc57b6dfc2a7a27706c9dadc8a276ac9f07323c6",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gscc_function_exposure_gate.py",
+      "git_blob_sha": "789d3a4f54674e9d95f4f3017686d1cadb7d921f",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gscc_gacr/__init__.py",
+      "git_blob_sha": "952f3c8f69dd295fff9e084e33dc6139dbb46ac8",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gscc_gacr/admission_gse_projection.py",
+      "git_blob_sha": "49454dfbc0f6d3cd6dd2065a5396d0a4eea7af22",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gscc_gacr/contract.py",
+      "git_blob_sha": "fc84254131d4ae3a39ced0b02dddeb73a6626741",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gscc_gacr/control_adapter.py",
+      "git_blob_sha": "1225958d8127523d04df32100ac4f125dd579bef",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gscc_gacr/fake_session_endpoint.py",
+      "git_blob_sha": "c1164ff5d548b60b7cb0c1ff6bb04296ece93adc",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gscc_gacr/gse_projection.py",
+      "git_blob_sha": "d9c79c2c6c8590db57832b8aa362449e2b7e4e93",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gscc_gacr/issue_control_bridge.py",
+      "git_blob_sha": "037cee6bb087cb849be30106c6771c8ee661d929",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gscc_gacr/real_session_endpoint_adapter.py",
+      "git_blob_sha": "ed402ff4afed155e8bbf73785b5123d09f2db105",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gscc_observable_arrival.py",
+      "git_blob_sha": "9f4bb47916ed9d9224ed6360b77764e6d37dcd51",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gscc_owner_f1.py",
+      "git_blob_sha": "2ea20c20c142ec5b0f43174cdb94e86cd295ea43",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gscc_persisted_entry_pipeline.py",
+      "git_blob_sha": "e88e8fd3b3463826813ff11550121c76bd55561d",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gscc_post_q1_gate_router.py",
+      "git_blob_sha": "f0e4dd79b68ea1fcc97422ac206ef3ac9aca2c2f",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gscc_q12_renewal.py",
+      "git_blob_sha": "465c592dbf3338f9692ef35d30b2c26aeb98e89d",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gscc_session_runtime.py",
+      "git_blob_sha": "01fa9dbe72663b884b527c323c5204bc341223ac",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gse/__init__.py",
+      "git_blob_sha": "718c77ecac0d2207389a6147fcc801d088f28391",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/gse/session_state_engine.py",
+      "git_blob_sha": "d1a9a31cf6be9b6df35d316ad83293d76e799f42",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/initialize_governance.py",
+      "git_blob_sha": "71636a76c04a65c1045c78312fc5d340acc727d9",
+      "mode": "100755",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/lab_entry_bootstrap.py",
+      "git_blob_sha": "79efa1782c9fe6997e4fe6ef3916d5c87c5e2f67",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/local_entry_apply_baseline.py",
+      "git_blob_sha": "8251a9c3e0d53e92067be7fbd6466d9fdc62694b",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/local_entry_issue_bridge.py",
+      "git_blob_sha": "e98bc78aa2e22d8418f72e9dbf9027d4479c4d3f",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/local_governed_entry.py",
+      "git_blob_sha": "c9a9bf442b60a20ba8babadcd3d7da9941e7bc8a",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/mcp_repository_discovery.py",
+      "git_blob_sha": "4b98274e6e3e39e020245fbcc3ff0e10329b4828",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/provider_first_tool_hook.py",
+      "git_blob_sha": "dd4e291739f2197aa095c4ba2cfa5ff019047e80",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/provider_first_touch_evidence.py",
+      "git_blob_sha": "cd37c923cb4040ba2577b97c8f133772cf609d85",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/provider_first_touch_ingress.py",
+      "git_blob_sha": "462fcb20d62357cd7698c8424ee71f46807b326d",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/provider_first_touch_repository_enrichment.py",
+      "git_blob_sha": "40a5a6600a4cd43efd2daa84514d4b99b578f188",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/repository_entry_router.py",
+      "git_blob_sha": "2802d15ce7b14a6fe995ae564eb2482f5456f462",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_adaptive_question_catalogue.py",
+      "git_blob_sha": "827c11c347ab0785028a2004d32d1bdea318ce68",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_agent_entry_autodiscovery.py",
+      "git_blob_sha": "9fe6bca69c2792cfc3a50229cad838ddc0a6eb93",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_bootstrap_consistency.py",
+      "git_blob_sha": "5d557320872914268d8d45f4d611e1d0fea7ad0f",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_case1_closure_integrity.py",
+      "git_blob_sha": "3d8e9a8498f14a93083b5405d1139066d9916e22",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_chatgpt_github_surface_instrumentation.py",
+      "git_blob_sha": "37d42d6ebdeb53ec805be39409808fb3296fbd18",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_connection_intent.py",
+      "git_blob_sha": "28beb733a0f623266c1c2b56377873c49fb10f52",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_control_plane_issue_contract.py",
+      "git_blob_sha": "40c20a78b6bfa655978d354bff2855d83a51cdab",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_control_plane_knowledge_base.py",
+      "git_blob_sha": "0da6b70cfaf35832a96c8f493716f365f28cdf45",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_control_plane_request.py",
+      "git_blob_sha": "e66a72dac25391c73f1a9b6984d942df68281697",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_control_plane_server_identity_secret_facts.py",
+      "git_blob_sha": "1bb3edab63ac69873d4388f2013c4b62f6a6eaa9",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_control_plane_server_identity_secret_metadata.py",
+      "git_blob_sha": "f90ddcb4637102f971b9253c103557c7a1c46796",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_direct_owner_entry.py",
+      "git_blob_sha": "95d06edd186640ae6ab6d777f378a609dc0e9dd3",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_entry_action_router.py",
+      "git_blob_sha": "39780c02b21125e679f34699958e7afcbb6890d4",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_first_touch_agent_transport_extractor.py",
+      "git_blob_sha": "3738d44571f7a4bb6430478801171f36baec0efe",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_first_touch_capture_basic.py",
+      "git_blob_sha": "4e407da75b3ace06ae83849b4c969f737e70639f",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_first_touch_connection_completeness.py",
+      "git_blob_sha": "1e4129f3fba1e38bedafbd25f41a2fd0093827ac",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_first_touch_entry_contract.py",
+      "git_blob_sha": "09f75da5228c588112f8dda6bd126e1525ec8c65",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_first_touch_expected_field_registry.py",
+      "git_blob_sha": "c8da941d1b3260b6f926b2123c8440654a0e39dc",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_first_touch_field_block_gate.py",
+      "git_blob_sha": "0c76296a9e41b1e97d910cffebfe450e0e617afe",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_first_touch_state_artifact_persistence.py",
+      "git_blob_sha": "6128cc7622a0ef446224913dd2861bf133baaeb5",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gacr_agent_reconstruction.py",
+      "git_blob_sha": "a9214c580a3c08f630844c453b28b3d23f746f30",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gacr_agent_telemetry.py",
+      "git_blob_sha": "67f6f8222a3829a749493693fe378636ebe3e821",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gacr_auto_attach.py",
+      "git_blob_sha": "07dd8648cf4f806b597eeb3460a49c6125cc295d",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gacr_capacity_dispatch.py",
+      "git_blob_sha": "1df152dbcb5d5d981f625c6f9df993598156d25c",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gacr_client_emitter.py",
+      "git_blob_sha": "0862d84e17ad14846a9365cb83d43cb06ab11139",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gacr_continuity_bus.py",
+      "git_blob_sha": "7b9f5617c71ad6af02e4bf44858b9b7fd485cf00",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gacr_continuity_coordination.py",
+      "git_blob_sha": "cd788723623bf37e189cb86610ae33b5421a9edc",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gacr_correlator_dispatcher_takeover_integration.py",
+      "git_blob_sha": "19a22600c02591024e8c06184c5c97b3d7e8716a",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gacr_dispatch_namespace_alignment.py",
+      "git_blob_sha": "96cf21d7a7210183fd232302885f112b1d85ceb0",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gacr_host_issue_ingress.py",
+      "git_blob_sha": "ab1a36f545e71648199952f569910468597287e2",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gacr_host_issue_workflow.py",
+      "git_blob_sha": "f201add83febe81a6d0aeb47671a32ca39c025cb",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gacr_liveness_progress_context.py",
+      "git_blob_sha": "c6fc53df637e88479049f79ed0b2ffc7ae00d519",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gacr_owner_alias.py",
+      "git_blob_sha": "4bd201625f957d6cfea1a33307fd1ce2b32ce6b8",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gacr_owner_role.py",
+      "git_blob_sha": "bf60db46b8ef3ca7ae3876fde38ea214b4ae88de",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gacr_presence_first.py",
+      "git_blob_sha": "9dc35361da707c4db0e808db97ac7e66c7fb3867",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_governance_model_integrity.py",
+      "git_blob_sha": "6fd40ebf17e825296f6347beea206c06922b1e9c",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_governed_agent_continuity_relay.py",
+      "git_blob_sha": "fc277e0efa8d2086690d660be64664d4997e8ab7",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_governed_execution_engine.py",
+      "git_blob_sha": "accfb8e15377674382a3ade033bb993d5892d251",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_governed_execution_package_compiler.py",
+      "git_blob_sha": "f8514efa9e1aa5ec496736cb1a77f7b74fc0b2d9",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_governed_execution_workflow.py",
+      "git_blob_sha": "c747c0635436a156f510560b2a4c51802f556242",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_governed_github_read_connector.py",
+      "git_blob_sha": "ab1a2bcccf7c5304f2a4b58aeec490241c5ab548",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_governed_hold_review.py",
+      "git_blob_sha": "44158ee8cef3012284e9bdd2e7b7372c0bae597e",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_governed_plan_reconciliation.py",
+      "git_blob_sha": "00253bdb90a8dc3e24a74c6d37cea60b984f2502",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_governed_project_execution_dag.py",
+      "git_blob_sha": "739152afdd82e11e93e64bc1c1c2523280c1f7fc",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gscc_admission.py",
+      "git_blob_sha": "4131f276d924e4f2a429d7748a9d6353f811967a",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gscc_admission_access_policy.py",
+      "git_blob_sha": "b0b2032212da3637fc35ab01fdaa290c3e16a3d7",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gscc_admission_gse_projection.py",
+      "git_blob_sha": "a2846df3e5693cadd0d39da59f5316e28b9ce33c",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gscc_admission_harvester.py",
+      "git_blob_sha": "ecd9d593f9632fb22b744fee3196bf6d12936ceb",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gscc_admission_harvester_import_parity.py",
+      "git_blob_sha": "b12b864298e0fab39137a4a3a4b9f7c05475bc8a",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gscc_entry_router.py",
+      "git_blob_sha": "ccbbab98ef148311a9cdfa8c5fad8ded7d3bb62d",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gscc_first_touch_handoff.py",
+      "git_blob_sha": "fd01f1f9e219322d6c72ada7d1f935890a9efd98",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gscc_full_admission_qualification.py",
+      "git_blob_sha": "53b4f02f5c8f7225cc49675fff9b412ab66c4777",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gscc_function_exposure_gate.py",
+      "git_blob_sha": "a6c4a075f0a04b40d5248d6463b981ceebb211bd",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gscc_gacr_bidirectional_control.py",
+      "git_blob_sha": "0977d98cde999c71f710b9fb3a5cb87b47e92f13",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gscc_gacr_contract_authority.py",
+      "git_blob_sha": "df38204620cd1638a807aecd0e68aafed281ed95",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gscc_gacr_gse_projection.py",
+      "git_blob_sha": "e53eef50866836e39ac8fc059fe87d756e98bcdd",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gscc_gse_gacr_e2e.py",
+      "git_blob_sha": "15f0eb36a48821364ad31feddbf7551610071c31",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gscc_gse_gacr_realignment_matrix.py",
+      "git_blob_sha": "5d5fa60b4cc4c581fb45ec8f717eaaf7bc981a76",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gscc_issue_control_bridge.py",
+      "git_blob_sha": "5d72f94afada6551b54e4b83e7db36d1c0d0e1b2",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gscc_new_candidate_alias.py",
+      "git_blob_sha": "f7315cc61461ade03892e84f0292af5f5ba6fdc5",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gscc_observable_arrival.py",
+      "git_blob_sha": "e84c725ac7f72151dab1feed1ad221201f197170",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gscc_owner_f1.py",
+      "git_blob_sha": "e3940c42c07ffe03662ced8a67b851605c537788",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gscc_per_arrival_identity_session_runtime.py",
+      "git_blob_sha": "f33eba899733280fa5ecf773c9d761e905d3dfee",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gscc_persisted_entry_pipeline.py",
+      "git_blob_sha": "0d81d3c06215696cb585ba1514caafa60a3b7158",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gscc_post_q1_gate_router.py",
+      "git_blob_sha": "d457d9174e8928dedcebf1e851e89cf01ab950e1",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gscc_pre_entry_contract.py",
+      "git_blob_sha": "459faafb8a45a2aebef8ba7157c141320e7edebc",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_gscc_q12_renewal.py",
+      "git_blob_sha": "1a47dc77d1ae29bd051668e256db6c5a7f4ca73c",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_identity_secret_lifecycle.py",
+      "git_blob_sha": "fe39124d6f070371adbb624d94e1fc4d9331bbfb",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_lab_entry_bootstrap.py",
+      "git_blob_sha": "36b776ab0d85fe835fe4d042b806a737f0387b1d",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_local_governed_entry.py",
+      "git_blob_sha": "41c827434ea7caf162e8ca7704d92429f97b335d",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_master_documentation_integrity.py",
+      "git_blob_sha": "ed9462be0952af549c3bfcbbec8ba2b69da91393",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_mcp_both_ssh_fallback.py",
+      "git_blob_sha": "52352952d9ad218c9fdd1c1dbb77ce0e04151520",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_mcp_credential_provisioning.py",
+      "git_blob_sha": "be29439a1ba3f8069aed85daacc2df9278408be0",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_provider_first_tool_hook.py",
+      "git_blob_sha": "4d4e84e57e189b43e2acebf39b0155cc683ab791",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_provider_first_touch_ingress.py",
+      "git_blob_sha": "656abe2855e6ad7796008f958d1f4c5624f55001",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_provider_first_touch_repository_enrichment.py",
+      "git_blob_sha": "6d0199b11036b3751a7121174dfc8bce9f77f067",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_repository_adoption.py",
+      "git_blob_sha": "058159c981d11a2ae64e1d01bc0f8fa53351f836",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_repository_creation_executor.py",
+      "git_blob_sha": "5d89bbc6d1e21de1a78a6bbf7219f5363ca0adc1",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_repository_scope.py",
+      "git_blob_sha": "557a95d5bea9f284e67a8d9f966bfd05120c5b22",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_server_identity_secret_refresh_workflow.py",
+      "git_blob_sha": "de08028693e8532ec4c937d1c9f19b50eb329dab",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_server_knowledge_model.py",
+      "git_blob_sha": "e6890ea9247e33b3ef24f2c7ba4ce57538e7e068",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/test_upgrade_session_head_migration.py",
+      "git_blob_sha": "282292533e25128e129f3ea7bd76431f6c126e3c",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/validate_governance.py",
+      "git_blob_sha": "4aaa0e2dd31a3f438cc60344ac4a62472d62adec",
+      "mode": "100755",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "scripts/validate_namespace_work_registry.py",
+      "git_blob_sha": "d6558f5f0932a7d57ea7520979384db537a2e292",
+      "mode": "100644",
+      "category": "PYTHON_SCRIPT_OR_TEST"
+    },
+    {
+      "path": "tests/fixtures/gscc-function-route-package.json",
+      "git_blob_sha": "b255480388c67dbb2424d1d1734209f216a84fdb",
+      "mode": "100644",
+      "category": "TEST_SOURCE"
+    },
+    {
+      "path": "tests/gse/test_session_state_engine.py",
+      "git_blob_sha": "a0977f3dcb6027e6c412070fe3e431aa07cd81aa",
+      "mode": "100644",
+      "category": "TEST_SOURCE"
+    },
+    {
+      "path": "tests/test_gscc_core.py",
+      "git_blob_sha": "28199093648d3970374fa42abe0ce0818cac504f",
+      "mode": "100644",
+      "category": "TEST_SOURCE"
+    }
+  ]
+}

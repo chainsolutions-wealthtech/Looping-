@@ -63,3 +63,6 @@ Historique Git append-only, pas de force-push ni réécriture. Une correction r�
 
 ## Architectural constraints and open decisions
 Conserver la base en huit familles, la frontière source/client du template et l’indépendance des autorités. Ne pas restaurer aveuglément dans le client les fichiers source-only manquants qui bloquent la CI. Restent ouverts : contrats détaillés W1, cahier des charges, schéma exécutable BASE, règles de classement et d’impact, critères du prototype, profil technique et topologie. Tout choix qui invalide une décision antérieure exige un ADR.
+
+## Baseline de l’architecture observée
+Le snapshot complet, les composants présents et leurs limites sont possédés par docs/baseline/BASELINE.json. Le plugin GSCC GitHub MCP est présent en source avec son Dockerfile ; il n’est pas attesté construit ou déployé pour Looping-. Les défauts d’appels vers les ressources source-only sont analysés dans CI_COMPATIBILITY. Le prochain travail précise W1, sans activer le modèle cible.

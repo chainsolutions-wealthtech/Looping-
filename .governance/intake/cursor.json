@@ -1,11 +1,9 @@
 {
   "schema_version": "1.0.0",
   "latest_sequence": 3,
-  "reconciled_through_sequence": 2,
-  "canonical_revision": 3,
-  "work_revision": 1,
-  "pending_intake_ids": [
-    "INTAKE-0003"
-  ],
-  "last_reconciliation_digest": "e160c0f69ca5f9c51413b756a8f2f452b0c2adec975fea9f14ee4ccbf563f3d0"
+  "reconciled_through_sequence": 3,
+  "canonical_revision": 4,
+  "work_revision": 2,
+  "pending_intake_ids": [],
+  "last_reconciliation_digest": "37580a1e5bf453bdac939d704d0f1c1661393d0b1206258e37bcc1b7a91c4dd6"
 }

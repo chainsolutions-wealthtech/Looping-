@@ -2,21 +2,33 @@
 
 ## Repository governance
 
-- [ ] Project initialized.
-- [ ] Source-of-truth hierarchy explicit.
-- [ ] Architecture documented.
-- [ ] Baseline captured.
-- [ ] CI / validation strategy defined.
+- [x] Project initialized.
+- [x] Source-of-truth hierarchy explicit.
+- [x] Architecture documented.
+- [x] Baseline captured.
+- [x] CI / validation strategy defined.
 - [ ] No unresolved placeholders.
-- [ ] First project-specific acceptance criteria added.
-- [ ] Project profile discovered or explicitly deferred without inventing implementation.
-- [ ] Server/domain/directory/database state observed or left explicitly unresolved.
+- [x] First project-specific acceptance criteria added.
+- [x] Project profile discovered or explicitly deferred without inventing implementation.
+- [x] Server/domain/directory/database state observed or left explicitly unresolved.
 - [ ] Server access route resolved as direct MCP, SSH fallback, or unavailable.
 - [ ] Agent connection intent resolved before mutable dispatch.
 
 ## Project acceptance
 
-TO_INITIALIZE
+| Critère | État à la découverte | Propriétaire de preuve |
+|---|---|---|
+| Sources et base identifiées avec provenance | QUALIFIED_WITH_LIMITS | SOURCE_QUALIFICATION et ledger |
+| Mémoire et registre de demandes présents | DOCUMENTED | Mémoire, REQUESTS et checkpoint |
+| Profil et infrastructure explicitement différés | DOCUMENTED_DEFERRED | ADR-0003 et projections |
+| Contexte, architecture, risques et dépendances initiaux | DOCUMENTED | Propriétaires à la racine et ARCHITECTURE |
+| Baseline HEAD/CI capturée et échecs qualifiés | CAPTURED_WITH_KNOWN_DEFECTS | BASELINE et CI_COMPATIBILITY |
+| Contrat W1 complet et traçable | PENDING | WORK-SPEC-W1-001 et NEXT_ACTION |
+| Moteur BASE raccordé et boucle démontrée | NOT_IMPLEMENTED_OR_VERIFIED | Phases RP-05/RP-06 |
+| CI complète et itération initiale GREEN | OPEN_BLOCKED | Runs exacts et CURRENT_ITERATION |
+| Runtime, livraison et exploitation vérifiés | NOT_ATTESTED | Gates propres aux lots futurs |
+
+Les sections suivantes sont héritées du template et portent ses références historiques. Leurs cases cochées ne constituent pas une certification de cette instance ; les critères de Looping- ci-dessus et les runs du checkpoint portent l’état actuel.
 
 
 ## Central control plane acceptance

@@ -20,14 +20,14 @@
 
 ## Project instance first work
 
-- [ ] Resolve or explicitly defer the project profile in `.governance/project-profile.json`.
+- [x] Resolve or explicitly defer the project profile in `.governance/project-profile.json`.
 - [ ] Discover deployment target and access state in `.governance/infrastructure-intent.json`.
 - [x] Complete `PROJECT_CONTEXT.md`.
 - [x] Describe architecture in `docs/ARCHITECTURE.md`.
-- [ ] Define project acceptance criteria.
-- [ ] Identify initial risks and dependencies.
-- [ ] Capture project baseline and CI.
-- [ ] Replace generic baseline discovery with the first project-specific unique action.
+- [x] Define project acceptance criteria.
+- [x] Identify initial risks and dependencies.
+- [x] Capture project baseline and CI.
+- [x] Replace generic baseline discovery with the first project-specific unique action.
 
 
 ## V2.2 entry workflow layer
@@ -63,3 +63,6 @@ Le propriétaire détaillé est [docs/memory/REQUESTS.json](docs/memory/REQUESTS
 - Achever la qualification historique et les limites de capture : LOOP-REQ-005 / LOOP-REQ-015.
 - Poursuivre la baseline et caractériser les blocages de portabilité : LOOP-FIND-001.
 - Détailler les contrats de workflows puis le raccordement moteur : LOOP-REQ-003/004/007/008.
+
+## Découverte qualifiée et restant
+La baseline est possédée par docs/baseline/BASELINE.json. Le travail suivant est la spécification W1 ; les correctifs CI-B01/CI-B02 restent ouverts dans leur propriétaire, ainsi que les lacunes historiques. Les cases de découverte cochées ne signifient ni infrastructure observée ni CI complète réussie.

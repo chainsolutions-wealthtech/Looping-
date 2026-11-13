@@ -46,5 +46,13 @@
     "IMPLEMENTED_NE_DEPLOYED",
     "DEPLOYED_NE_PRODUCTION_VERIFIED",
     "DISCOVERY_PRECEDES_ACTIVATION"
-  ]
+  ],
+  "discovery_disposition": {
+    "status": "EXPLICITLY_DEFERRED",
+    "decided_at": "2026-11-13T07:47:09+00:00",
+    "reason": "Application profile depends on the detailed requirements and engine contracts; this increment is repository discovery and documentary design.",
+    "decision_ref": "docs/adr/ADR-0003-qualified-project-baseline.md",
+    "revisit_at": "RP-04",
+    "selected_stack_activated": false
+  }
 }
