@@ -159,7 +159,7 @@
     {
       "gate_id": "BASE-G07",
       "criterion": "Prochaine action unique et registre natif cohérents",
-      "result": "PASS_PREPARED",
+      "result": "PASS_REMOTE_VERIFIED",
       "evidence": [
         "NEXT_ACTION.md",
         ".governance/work/work-items.json",
@@ -281,7 +281,158 @@
   "next_action": "SPECIFY_DOCUMENT_CONSTITUTION_WORKFLOW",
   "verification": {
     "local": "PASS: inventory, gates, native-work uniqueness, references, revisions, JSON/textual checks",
-    "remote_publication": "PENDING",
-    "full_ci": "BLOCKED_KNOWN_BASELINE"
+    "remote_publication": "VERIFIED",
+    "full_ci": "FAILURE_KNOWN_PORTABILITY_DEFECTS",
+    "verified_at": "2026-11-13T07:53:59+00:00",
+    "published_commit_sha": "3ef82febc03d3452a6c740eb7f04b15e012ff103",
+    "published_tree_sha": "98d4ef3ab959e39ce83dfbd79a8ffd33d482440d",
+    "matched_blobs": 34,
+    "principal_readbacks": 13,
+    "scope_comparison": {
+      "added": 8,
+      "modified": 27,
+      "removed": 0,
+      "compared_prepared_blobs": 34,
+      "audit_head": "e8fed08594726e3506bd1903877a5815ad68da9b"
+    },
+    "workflow_runs_on_published_commit": [
+      {
+        "id": 43388641535,
+        "name": "Governance CI",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/chainsolutions-wealthtech/Looping-/actions/runs/43388641535",
+        "head_sha": "3ef82febc03d3452a6c740eb7f04b15e012ff103"
+      },
+      {
+        "id": 43388641249,
+        "name": "Governance Auto Bootstrap",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/chainsolutions-wealthtech/Looping-/actions/runs/43388641249",
+        "head_sha": "3ef82febc03d3452a6c740eb7f04b15e012ff103"
+      },
+      {
+        "id": 43388641216,
+        "name": "Governed Agent Continuity Relay",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/chainsolutions-wealthtech/Looping-/actions/runs/43388641216",
+        "head_sha": "3ef82febc03d3452a6c740eb7f04b15e012ff103"
+      },
+      {
+        "id": 43388641344,
+        "name": "GSCC Function Exposure Gate",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/chainsolutions-wealthtech/Looping-/actions/runs/43388641344",
+        "head_sha": "3ef82febc03d3452a6c740eb7f04b15e012ff103"
+      },
+      {
+        "id": 43388641333,
+        "name": "GSCC Observable Arrival Gateway",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/chainsolutions-wealthtech/Looping-/actions/runs/43388641333",
+        "head_sha": "3ef82febc03d3452a6c740eb7f04b15e012ff103"
+      },
+      {
+        "id": 43388641839,
+        "name": "GSCC Function Route Selftest",
+        "status": "completed",
+        "conclusion": "skipped",
+        "url": "https://github.com/chainsolutions-wealthtech/Looping-/actions/runs/43388641839",
+        "head_sha": "3ef82febc03d3452a6c740eb7f04b15e012ff103"
+      }
+    ],
+    "job_results": [
+      {
+        "run_id": 43388641535,
+        "run_name": "Governance CI",
+        "job_id": 131762989019,
+        "conclusion": "failure",
+        "failed_steps": [
+          "Test first-touch field block gate database"
+        ],
+        "passed_steps": [
+          "Set up job",
+          "Run actions/checkout@v4",
+          "Run actions/setup-python@v5",
+          "Validate governed repository structure",
+          "Compile governance scripts",
+          "Test GSCC core protocol and SessionEndpoint",
+          "Test exhaustive first-touch capture",
+          "Post Run actions/checkout@v4",
+          "Complete job"
+        ]
+      },
+      {
+        "run_id": 43388641216,
+        "run_name": "Governed Agent Continuity Relay",
+        "job_id": 131762988292,
+        "conclusion": "failure",
+        "failed_steps": [
+          "Validate GACR state"
+        ],
+        "passed_steps": [
+          "Set up job",
+          "Run actions/checkout@v4",
+          "Run actions/setup-python@v5",
+          "Capture exact base HEAD",
+          "Execute GACR command",
+          "Refresh capacity-aware work offers",
+          "Run continuity mini-loop",
+          "Deliver pending GSCC control commands",
+          "Reconcile continuity delivery projection",
+          "Persist optional external GACR delivery state",
+          "Post Run actions/checkout@v4",
+          "Complete job"
+        ]
+      },
+      {
+        "run_id": 43388641333,
+        "run_name": "GSCC Observable Arrival Gateway",
+        "job_id": 131762989267,
+        "conclusion": "failure",
+        "failed_steps": [
+          "Materialize first-touch field block gate database"
+        ],
+        "passed_steps": [
+          "Set up job",
+          "Run actions/checkout@v4",
+          "Run actions/setup-python@v5",
+          "Capture exhaustive first-touch evidence",
+          "Restore previous GSCC GSE First Touch state",
+          "Post Run actions/checkout@v4",
+          "Complete job"
+        ]
+      }
+    ],
+    "error_lines": [
+      {
+        "run_id": 43388641535,
+        "job_id": 131762989019,
+        "lines": [
+          "2026-11-13T07:50:37.0072846Z GOVERNANCE_VALIDATION_PASS: instantiated repository mode v2",
+          "2026-11-13T07:50:37.5500692Z FileNotFoundError: [Errno 2] No such file or directory: '/home/runner/work/Looping-/Looping-/.governance/control-plane-db/007_first_touch_field_block_gate.sql'"
+        ]
+      },
+      {
+        "run_id": 43388641216,
+        "job_id": 131762988292,
+        "lines": [
+          "2026-11-13T07:50:37.7276925Z FileNotFoundError: [Errno 2] No such file or directory: '/home/runner/work/Looping-/Looping-/.governance/control-plane-state/namespace-work-registry.json'"
+        ]
+      },
+      {
+        "run_id": 43388641333,
+        "job_id": 131762989267,
+        "lines": [
+          "2026-11-13T07:50:41.3066825Z FileNotFoundError: [Errno 2] No such file or directory: '/home/runner/work/Looping-/Looping-/.governance/control-plane-db/007_first_touch_field_block_gate.sql'"
+        ]
+      }
+    ],
+    "governance_structure": "PASS",
+    "proof_boundary": "Results apply to the published baseline commit. The follow-up containing this evidence does not invent its own SHA or future CI."
   }
 }

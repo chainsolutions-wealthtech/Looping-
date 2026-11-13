@@ -90,3 +90,13 @@ Les entrées suivantes doivent documenter les changements durables, décisions, 
 - WORK-SPEC-W1-001 est le candidat documentaire unique ; prochaine action SPECIFY_DOCUMENT_CONSTITUTION_WORKFLOW.
 - LOOP-INIT-001 et son critère GREEN restent ouverts ; aucun code, workflow, claim, session, secret ou serveur modifié.
 - Vérification et publication du lot : docs/memory/CHECKPOINT.json ; ne pas confondre préparation et preuve distante.
+
+## 2026-11-13T07:53:59+00:00 — Vérification de la baseline publiée
+
+- Commit : `3ef82febc03d3452a6c740eb7f04b15e012ff103` ; arbre `98d4ef3ab959e39ce83dfbd79a8ffd33d482440d`.
+- Contrôle : 34 blobs conformes et 13 contenus principaux relus ; huit ajouts et vingt-sept modifications depuis le SHA d’audit, aucune suppression dans ce lot.
+- Governance CI 43388641535 : structure et compilation réussies, arrêt sur la migration first-touch 007.
+- Continuity Relay 43388641216 : assertion de namespace non portable ; Observable Arrival 43388641333 : migration 007 absente.
+- Exposure Gate et Auto Bootstrap réussis ; Route Selftest SKIPPED. Aucun GREEN global déclaré.
+- WORK-DISCOVER-001 résolu pour la qualification ; WORK-SPEC-W1-001 reste l’unique candidat documentaire prêt.
+- Détail : docs/baseline/BASELINE.json ; reprise : docs/memory/CHECKPOINT.json.

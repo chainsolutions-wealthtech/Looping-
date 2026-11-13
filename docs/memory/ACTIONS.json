@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "repository": "chainsolutions-wealthtech/Looping-",
-  "updated_at": "2026-11-13T07:47:09+00:00",
+  "updated_at": "2026-11-13T07:53:59+00:00",
   "role": "MATERIAL_ACTION_EVIDENCE_LEDGER",
   "event_timestamp_rule": "null quand la date originale n’est pas exposée ; recorded_at date uniquement l’enregistrement.",
   "actions": [
@@ -180,14 +180,28 @@
     {
       "action_id": "LOOP-ACT-014",
       "kind": "QUALIFIED_DISCOVERY_TRANSITION",
-      "result": "DOCUMENTED_PENDING_REMOTE_VERIFICATION",
+      "result": "VERIFIED",
       "description": "Qualification, reports, critères et passage documentaire préparés sans fermer les gates CI.",
       "evidence_refs": [
         "docs/baseline/BASELINE.json",
-        "docs/adr/ADR-0003-qualified-project-baseline.md"
+        "docs/adr/ADR-0003-qualified-project-baseline.md",
+        "https://github.com/chainsolutions-wealthtech/Looping-/commit/3ef82febc03d3452a6c740eb7f04b15e012ff103"
       ],
       "event_timestamp": null,
       "recorded_at": "2026-11-13T07:47:09+00:00",
+      "provider_session_ref": null
+    },
+    {
+      "action_id": "LOOP-ACT-015",
+      "kind": "BASELINE_PUBLICATION_READBACK",
+      "result": "VERIFIED_WITH_OPEN_CI_DEFECTS",
+      "description": "Baseline publiée ; 34 blobs et 13 contenus relus ; structure validée ; défauts first-touch/namespace toujours observés.",
+      "evidence_refs": [
+        "docs/baseline/BASELINE.json",
+        "docs/memory/CHECKPOINT.json"
+      ],
+      "event_timestamp": null,
+      "recorded_at": "2026-11-13T07:53:59+00:00",
       "provider_session_ref": null
     }
   ]

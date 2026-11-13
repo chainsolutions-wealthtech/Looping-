@@ -20,3 +20,6 @@ La CI complète reste en échec sur les défauts de portabilité client CI-B01/C
 
 ## Mémoire et historique
 U11 poursuit l’action globale depuis la mémoire canonique. Les textes et les actions disponibles restent enregistrés ; les lacunes historiques restent visibles. L’attestation bootstrap concerne son commit d’initialisation historique, pas la readiness actuelle. Reprise : docs/memory/CHECKPOINT.json, puis NEXT_ACTION.
+
+## Vérification de publication
+Le lot de baseline `3ef82febc03d3452a6c740eb7f04b15e012ff103` a été relu sur GitHub : 34 blobs et 13 contenus principaux conformes. La structure passe en CI ; les défauts de portabilité restent ouverts. Le checkpoint et BASELINE possèdent les preuves détaillées.

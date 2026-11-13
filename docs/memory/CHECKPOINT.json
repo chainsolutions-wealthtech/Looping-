@@ -53,12 +53,21 @@
   ],
   "verification": {
     "local_checks": "PASS: inventory/gates, IDs, native work, revisions and textual integrity",
-    "remote_publication": "PENDING",
-    "full_ci": "BLOCKED_KNOWN_BASELINE",
+    "remote_publication": "VERIFIED",
+    "full_ci": "FAILURE_KNOWN_PORTABILITY_DEFECTS",
     "audit_commit_sha": "e8fed08594726e3506bd1903877a5815ad68da9b",
-    "baseline_ref": "docs/baseline/BASELINE.json"
+    "baseline_ref": "docs/baseline/BASELINE.json",
+    "verified_at": "2026-11-13T07:53:59+00:00",
+    "verified_commit_sha": "3ef82febc03d3452a6c740eb7f04b15e012ff103",
+    "verified_tree_sha": "98d4ef3ab959e39ce83dfbd79a8ffd33d482440d",
+    "matched_prepared_blobs": 34,
+    "principal_file_readbacks": 13,
+    "governance_structure": "PASS",
+    "detailed_evidence_ref": "docs/baseline/BASELINE.json"
   },
   "authority_limit": "Documentary checkpoint, not a GSCC receipt, GACR session checkpoint or runtime attestation.",
-  "current_input_head_for_evidence_write": "6895981eade110765e518e9dac65499cc7456156",
-  "entry_evidence_locator": "entry"
+  "current_input_head_for_evidence_write": "3ef82febc03d3452a6c740eb7f04b15e012ff103",
+  "entry_evidence_locator": "entry",
+  "completed_work_item": "WORK-DISCOVER-001",
+  "next_work_item": "WORK-SPEC-W1-001"
 }

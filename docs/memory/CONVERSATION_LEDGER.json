@@ -3,13 +3,13 @@
   "ledger_id": "LOOP-CONVERSATION-001",
   "id_namespace": "REPOSITORY_LOCAL_NOT_PROVIDER_NATIVE",
   "repository": "chainsolutions-wealthtech/Looping-",
-  "updated_at": "2026-11-13T07:47:09+00:00",
+  "updated_at": "2026-11-13T07:53:59+00:00",
   "provider_conversation_ref": null,
   "coverage": {
     "user_source_blocks": 11,
     "prior_consolidated_source": "docs/intake/sources/conversation/methodologie-architecture-modulaire.source.json",
     "historical_sources": "docs/intake/SOURCE_REGISTER.json",
-    "assistant_records": 8,
+    "assistant_records": 11,
     "completeness": "AVAILABLE_PROJECT_MATERIAL_WITH_KNOWN_GAPS",
     "known_gaps": [
       "Les anciens messages assistant antérieurs à la fenêtre disponible ne sont pas tous accessibles comme messages bruts.",
@@ -247,6 +247,37 @@
       "message_timestamp": null,
       "status": "PROGRESS_MESSAGE",
       "order": 6
+    },
+    {
+      "message_id": "C07",
+      "speaker": "assistant",
+      "responds_to": "U11",
+      "source_text": "Les livrables de découverte sont préparés : inventaire au SHA d’audit, qualification des sources, diagnostic CI, risques, dépendances et critères initiaux. Le profil technique et l’infrastructure sont explicitement différés, avec leur justification.\n\nLa résolution proposée reste bornée à « baseline capturée avec défauts connus ». La CI complète et le critère GREEN restent ouverts. L’action documentaire suivante est la spécification de W1, dans le registre de travaux existant.",
+      "source_text_sha256": "a4cbcc1c5e114de89e1c2faa337162a411efd4f9284d0d558118eff13536aba7",
+      "message_timestamp": null,
+      "status": "PROGRESS_MESSAGE",
+      "order": 7
+    },
+    {
+      "message_id": "C08",
+      "speaker": "assistant",
+      "responds_to": "U11",
+      "source_text": "Le lot de découverte est publié et relu sur GitHub. `WORK-DISCOVER-001` est résolu comme capture et qualification de la baseline ; W1 est maintenant l’unique travail documentaire prêt dans le registre natif.\n\nLes contrôles de structure passent. Les deux défauts de portabilité restent ouverts, et la CI complète reste en échec. Je rattache ces résultats au checkpoint pour terminer la reprise proprement.",
+      "source_text_sha256": "38f9579017dab68f2f26c273880a7776010ad6cb89d60fdb615e2a28b9efcc8c",
+      "message_timestamp": null,
+      "status": "PROGRESS_MESSAGE",
+      "order": 8
+    },
+    {
+      "message_id": "A03",
+      "speaker": "assistant",
+      "responds_to": "U11",
+      "source_ref": "docs/memory/sources/A03.md",
+      "source_text_sha256": "f6e7d19e5686e66023e1b55b9fef846e4f1397c8427c717a8da29e4a849f1d80",
+      "message_timestamp": null,
+      "status": "PREPARED_FOR_DELIVERY_AFTER_FINAL_REMOTE_VERIFICATION",
+      "delivery_observed_at": null,
+      "qualification": "Réponse préparée avant émission ; aucun horodatage natif ou accusé fournisseur inventé."
     }
   ],
   "action_log": "docs/memory/ACTIONS.json"
