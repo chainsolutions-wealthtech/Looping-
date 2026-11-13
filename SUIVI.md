@@ -100,3 +100,13 @@ Les entrées suivantes doivent documenter les changements durables, décisions, 
 - Exposure Gate et Auto Bootstrap réussis ; Route Selftest SKIPPED. Aucun GREEN global déclaré.
 - WORK-DISCOVER-001 résolu pour la qualification ; WORK-SPEC-W1-001 reste l’unique candidat documentaire prêt.
 - Détail : docs/baseline/BASELINE.json ; reprise : docs/memory/CHECKPOINT.json.
+
+## 2026-11-13T22:58:28+00:00 — Complément de mémoire et vérification des identifiants de continuité
+
+- Entrée observée : `d901df90cac6a52e0264c4a0369b86a07c6f300b` ; acteur Patricked-code avec droits natifs pull/push.
+- Ledger conservé : LOOP-CONVERSATION-001 ; checkpoint conservé : LOOP-BASELINE-001.
+- Questions U12 à U14 et réponses visibles A04/A05 ajoutées ; A06 préparée pour livraison après relecture distante.
+- INTAKE-0004 réconcilié comme MEMORY ; canonical_revision=5, work_revision=2.
+- Projection de continuités GACR relue vide ; aucun continuity_id, session ou claim créé.
+- WORK-SPEC-W1-001 et la prochaine action SPECIFY_DOCUMENT_CONSTITUTION_WORKFLOW sont inchangés.
+- Les dates natives indisponibles restent null ; les textes sont conservés en JSON lorsque nécessaire pour préserver leurs espaces Markdown.

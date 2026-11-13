@@ -2,9 +2,9 @@
   "schema_version": "1.0.0",
   "repository": "chainsolutions-wealthtech/Looping-",
   "canonical_branch": "main",
-  "canonical_revision": 4,
+  "canonical_revision": 5,
   "work_revision": 2,
-  "observed_head_sha": "3ef82febc03d3452a6c740eb7f04b15e012ff103",
+  "observed_head_sha": "d901df90cac6a52e0264c4a0369b86a07c6f300b",
   "current_checkpoint": "docs/memory/CHECKPOINT.json",
   "current_handoff": null,
   "next_action": "SPECIFY_DOCUMENT_CONSTITUTION_WORKFLOW",
@@ -12,7 +12,7 @@
     "Full CI/release: CI-B01 and CI-B02 remain open",
     "Historical coverage incomplete; runtime deferred"
   ],
-  "freshness": "BASELINE_POST_PUBLICATION_VERIFIED_WITH_OPEN_CI_DEFECTS",
+  "freshness": "CONVERSATION_CAPTURE_RECONCILED",
   "bootstrap_attestation_subject_sha": "4900f36b8aecc6cea8d7f77179f079d635c0a924",
   "attestation_model": "CHILD_COMMIT_ATTESTS_INITIALIZATION_COMMIT",
   "memory_index": "docs/memory/README.md",
@@ -32,7 +32,7 @@
     "next_action": "NEXT_ACTION.md",
     "baseline": "docs/baseline/BASELINE.json"
   },
-  "last_reviewed_at": "2026-11-13T07:47:09+00:00",
+  "last_reviewed_at": "2026-11-13T22:58:28+00:00",
   "head_semantics": "observed_head_sha is the pre-write observed input; the containing Git commit is the output artifact, never a fabricated self-SHA.",
   "last_verified_head_sha": "3ef82febc03d3452a6c740eb7f04b15e012ff103",
   "last_verified_at": "2026-11-13T07:53:59+00:00"

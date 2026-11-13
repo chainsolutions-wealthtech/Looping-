@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0.0",
+  "intake_id": "INTAKE-0004",
+  "sequence": 4,
+  "status": "RECONCILED",
+  "source_type": "chatgpt",
+  "source_id": "docs/memory/CONVERSATION_LEDGER.json",
+  "source_message_ids": [
+    "U12",
+    "U13",
+    "U14"
+  ],
+  "source_digest": "920de0142a81fd68b30499f709e07096aa610288e3850cbfe27d6cbfe49e7b14",
+  "observed_at": "2026-11-13T22:58:28+00:00",
+  "summary": "Compléter la mémoire des échanges récents de statut, objectif et identification de la continuité, sans modifier le travail W1 ni créer de continuité GACR.",
+  "disposition": "MEMORY",
+  "reviewed_at": "2026-11-13T22:58:28+00:00",
+  "canonical_effect": true,
+  "work_effect": false,
+  "review": {
+    "method": "DIRECT_OWNER_MEMORY_BACKFILL",
+    "authority_source": "U10 — autorisation persistante de conserver les échanges projet",
+    "scope": "Capture de questions/réponses et clarification des identifiants existants ; aucune nouvelle exigence fonctionnelle ou tâche.",
+    "entry_route": "00_DIRECT_OWNER_ENTRY.md",
+    "selection_source": "U09",
+    "actor": "Patricked-code",
+    "observed_permissions": {
+      "admin": true,
+      "maintain": true,
+      "pull": true,
+      "push": true,
+      "triage": true
+    },
+    "observed_head": "d901df90cac6a52e0264c4a0369b86a07c6f300b",
+    "role": "PLANNER_AGENT",
+    "connection_intent": "CONTEXT_INTAKE",
+    "helper_command_executed": false,
+    "gacr_continuity_created": false
+  }
+}

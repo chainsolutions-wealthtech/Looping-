@@ -10,7 +10,7 @@
 - Work-DISCOVER: `DONE — capture/qualification only`
 - Native next work item: `WORK-SPEC-W1-001 — READY — DOCUMENTATION_ONLY`
 - Next action: `SPECIFY_DOCUMENT_CONSTITUTION_WORKFLOW`
-- Mémoire : canonical_revision=4 ; work_revision=2 ; trois intakes réconciliés.
+- Mémoire : canonical_revision=5 ; work_revision=2 ; quatre intakes réconciliés.
 
 ## Périmètre qualifié
 Les sources, l’inventaire au SHA d’audit, le contexte, l’architecture initiale, les risques, dépendances et critères de projet sont documentés. Le profil applicatif et l’infrastructure sont explicitement différés. Le détail est possédé par docs/baseline/BASELINE.json et ses sous-documents ; le checkpoint porte la preuve de publication.

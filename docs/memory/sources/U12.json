@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0.0",
+  "source_id": "U12",
+  "kind": "USER_QUESTION",
+  "repository": "chainsolutions-wealthtech/Looping-",
+  "source_text": "Tu en est où ? ",
+  "interpretation": "Demande de statut du travail et du dépôt.",
+  "observed_at": "2026-11-13T22:58:28+00:00",
+  "message_timestamp": null,
+  "provider_conversation_ref": null,
+  "capture_method": "Visible conversation context; not a provider-native export or invented timestamp."
+}

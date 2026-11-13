@@ -3,20 +3,21 @@
   "ledger_id": "LOOP-CONVERSATION-001",
   "id_namespace": "REPOSITORY_LOCAL_NOT_PROVIDER_NATIVE",
   "repository": "chainsolutions-wealthtech/Looping-",
-  "updated_at": "2026-11-13T07:53:59+00:00",
+  "updated_at": "2026-11-13T22:58:28+00:00",
   "provider_conversation_ref": null,
   "coverage": {
-    "user_source_blocks": 11,
+    "user_source_blocks": 14,
     "prior_consolidated_source": "docs/intake/sources/conversation/methodologie-architecture-modulaire.source.json",
     "historical_sources": "docs/intake/SOURCE_REGISTER.json",
-    "assistant_records": 11,
+    "assistant_records": 17,
     "completeness": "AVAILABLE_PROJECT_MATERIAL_WITH_KNOWN_GAPS",
     "known_gaps": [
       "Les anciens messages assistant antérieurs à la fenêtre disponible ne sont pas tous accessibles comme messages bruts.",
       "Les dates originales des messages et identifiants privés fournisseur ne sont pas exposés.",
       "Les actions non attestées par les sources ou GitHub ne sont pas reconstituées comme des faits."
     ],
-    "future_capture": "Écriture par les agents pendant leur travail ; aucun collecteur permanent de conversations n’est installé."
+    "future_capture": "Écriture par les agents pendant leur travail ; aucun collecteur permanent de conversations n’est installé.",
+    "captured_through_user_message": "U14"
   },
   "user_messages": [
     {
@@ -164,6 +165,36 @@
       "message_timestamp": null,
       "timestamp_status": "UNAVAILABLE",
       "capture": "VERBATIM_JSON_SOURCE_BLOCK"
+    },
+    {
+      "message_id": "U12",
+      "speaker": "user",
+      "sequence": 12,
+      "source_ref": "docs/memory/sources/U12.json",
+      "source_text_sha256": "1c53c7c7f6dfc38d3ee33caeb9fd839cb46b0432474b85e66734cf57b43be086",
+      "message_timestamp": null,
+      "timestamp_status": "UNAVAILABLE",
+      "capture": "VISIBLE_TEXT_JSON_SOURCE_BLOCK"
+    },
+    {
+      "message_id": "U13",
+      "speaker": "user",
+      "sequence": 13,
+      "source_ref": "docs/memory/sources/U13.json",
+      "source_text_sha256": "01fe5fbfa4ead7ab2e6ad34be5069e0aeddc187b013250559be9e9df065a49c4",
+      "message_timestamp": null,
+      "timestamp_status": "UNAVAILABLE",
+      "capture": "VISIBLE_TEXT_JSON_SOURCE_BLOCK"
+    },
+    {
+      "message_id": "U14",
+      "speaker": "user",
+      "sequence": 14,
+      "source_ref": "docs/memory/sources/U14.json",
+      "source_text_sha256": "b32d2aaf70a5af1f10bf560ac7a0dbbef631c5e27dd33dce5a374970c20b1de7",
+      "message_timestamp": null,
+      "timestamp_status": "UNAVAILABLE",
+      "capture": "VISIBLE_TEXT_JSON_SOURCE_BLOCK"
     }
   ],
   "assistant_messages": [
@@ -275,10 +306,82 @@
       "source_ref": "docs/memory/sources/A03.md",
       "source_text_sha256": "f6e7d19e5686e66023e1b55b9fef846e4f1397c8427c717a8da29e4a849f1d80",
       "message_timestamp": null,
-      "status": "PREPARED_FOR_DELIVERY_AFTER_FINAL_REMOTE_VERIFICATION",
-      "delivery_observed_at": null,
-      "qualification": "Réponse préparée avant émission ; aucun horodatage natif ou accusé fournisseur inventé."
+      "status": "RESPONSE_VISIBLE_IN_CONVERSATION",
+      "delivery_observed_at": "2026-11-13T22:58:28+00:00",
+      "qualification": "Réponse précédente visible ; heure native d’émission non exposée."
+    },
+    {
+      "message_id": "C09",
+      "speaker": "assistant",
+      "responds_to": "U12",
+      "source_text": "Je vérifie le dernier état enregistré sur GitHub pour te donner un point précis sur ce qui est terminé, ce qui reste bloqué et la prochaine action.",
+      "source_text_sha256": "d16f49b0a1fa550aa2744e1204ceaa74c206ed77bcc5d259edbb45543008c15b",
+      "message_timestamp": null,
+      "status": "PROGRESS_MESSAGE",
+      "order": 9
+    },
+    {
+      "message_id": "C10",
+      "speaker": "assistant",
+      "responds_to": "U14",
+      "source_text": "Je vérifie le checkpoint et le registre GitHub pour te donner l’identifiant exact de continuité et son rattachement, sans le confondre avec une session MCP.",
+      "source_text_sha256": "3d78c21d01b8c5da4c62f33b2f99e84d012757eee1d00af91a0f69964deef9b1",
+      "message_timestamp": null,
+      "status": "PROGRESS_MESSAGE",
+      "order": 10
+    },
+    {
+      "message_id": "C11",
+      "speaker": "assistant",
+      "responds_to": "U14",
+      "source_text": "Le registre existe bien sous l’identifiant `LOOP-CONVERSATION-001`, avec le checkpoint `LOOP-BASELINE-001`. Il s’arrête toutefois à l’instruction U11 : nos derniers échanges n’y sont pas encore archivés. Je les ajoute maintenant en conservant ces identifiants et la même prochaine action.",
+      "source_text_sha256": "81ee75eee6f0874064fb5a82e83a3734e91a83f73caeeb9f69f2007250bbf83b",
+      "message_timestamp": null,
+      "status": "PROGRESS_MESSAGE",
+      "order": 11
+    },
+    {
+      "message_id": "A04",
+      "speaker": "assistant",
+      "responds_to": "U12",
+      "source_ref": "docs/memory/sources/A04.json",
+      "source_encoding": "source-text-json/v1",
+      "source_text_sha256": "e5dd64390b7370075f92ae2ce6a7b4c72ee773a55e8fc945af049e85a42eeb26",
+      "message_timestamp": null,
+      "status": "RESPONSE_VISIBLE_IN_CONVERSATION",
+      "delivery_observed_at": "2026-11-13T22:58:28+00:00"
+    },
+    {
+      "message_id": "A05",
+      "speaker": "assistant",
+      "responds_to": "U13",
+      "source_ref": "docs/memory/sources/A05.json",
+      "source_encoding": "source-text-json/v1",
+      "source_text_sha256": "b65bf23d89c57d79d28059763fc2d2c550b429bf57b3d8389f50bb5004a05b52",
+      "message_timestamp": null,
+      "status": "RESPONSE_VISIBLE_IN_CONVERSATION",
+      "delivery_observed_at": "2026-11-13T22:58:28+00:00"
+    },
+    {
+      "message_id": "A06",
+      "speaker": "assistant",
+      "responds_to": "U14",
+      "source_ref": "docs/memory/sources/A06.md",
+      "source_encoding": "utf-8",
+      "source_text_sha256": "9aedfb560138adb48951ef5959c9e8d4876a9b9f9b5e66117bef58a76fcb95fd",
+      "message_timestamp": null,
+      "status": "PREPARED_FOR_DELIVERY_AFTER_REMOTE_VERIFICATION",
+      "delivery_observed_at": null
     }
   ],
-  "action_log": "docs/memory/ACTIONS.json"
+  "action_log": "docs/memory/ACTIONS.json",
+  "continuity_reference": {
+    "kind": "REPOSITORY_LOCAL_DOCUMENTARY_CONTINUITY",
+    "ledger_id": "LOOP-CONVERSATION-001",
+    "checkpoint_ref": "docs/memory/CHECKPOINT.json",
+    "gacr_continuity_id": null,
+    "gacr_projection_ref": ".governance/agent-relay/continuities.json",
+    "gacr_projection_items_observed": 0,
+    "observation_input_head": "d901df90cac6a52e0264c4a0369b86a07c6f300b"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "repository": "chainsolutions-wealthtech/Looping-",
-  "updated_at": "2026-11-13T07:53:59+00:00",
+  "updated_at": "2026-11-13T22:58:28+00:00",
   "role": "MATERIAL_ACTION_EVIDENCE_LEDGER",
   "event_timestamp_rule": "null quand la date originale n’est pas exposée ; recorded_at date uniquement l’enregistrement.",
   "actions": [
@@ -202,6 +202,34 @@
       ],
       "event_timestamp": null,
       "recorded_at": "2026-11-13T07:53:59+00:00",
+      "provider_session_ref": null
+    },
+    {
+      "action_id": "LOOP-ACT-016",
+      "kind": "CONTINUITY_ID_AND_COVERAGE_CHECK",
+      "result": "VERIFIED",
+      "description": "Le ledger LOOP-CONVERSATION-001, le checkpoint LOOP-BASELINE-001 et la projection GACR vide ont été relus au HEAD exact ; trois échanges récents manquaient à l’archive.",
+      "evidence_refs": [
+        "https://github.com/chainsolutions-wealthtech/Looping-/commit/d901df90cac6a52e0264c4a0369b86a07c6f300b",
+        "docs/memory/CONVERSATION_LEDGER.json",
+        ".governance/agent-relay/continuities.json"
+      ],
+      "event_timestamp": null,
+      "recorded_at": "2026-11-13T22:58:28+00:00",
+      "provider_session_ref": null
+    },
+    {
+      "action_id": "LOOP-ACT-017",
+      "kind": "CONVERSATION_MEMORY_BACKFILL",
+      "result": "DOCUMENTED",
+      "description": "U12 à U14, réponses A04/A05 et réponse A06 préparée ajoutées ; identifiants, travail W1 et registre GACR conservés.",
+      "evidence_refs": [
+        ".governance/intake/INTAKE-0004.json",
+        "docs/memory/CONVERSATION_LEDGER.json",
+        "docs/memory/CHECKPOINT.json"
+      ],
+      "event_timestamp": null,
+      "recorded_at": "2026-11-13T22:58:28+00:00",
       "provider_session_ref": null
     }
   ]

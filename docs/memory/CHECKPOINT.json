@@ -10,7 +10,7 @@
   "gacr_session_id": null,
   "claim_id": null,
   "next_action": "SPECIFY_DOCUMENT_CONSTITUTION_WORKFLOW",
-  "canonical_revision": 4,
+  "canonical_revision": 5,
   "work_revision": 2,
   "entry_evidence": "docs/baseline/BASELINE.json",
   "owners": {
@@ -69,5 +69,27 @@
   "current_input_head_for_evidence_write": "3ef82febc03d3452a6c740eb7f04b15e012ff103",
   "entry_evidence_locator": "entry",
   "completed_work_item": "WORK-DISCOVER-001",
-  "next_work_item": "WORK-SPEC-W1-001"
+  "next_work_item": "WORK-SPEC-W1-001",
+  "conversation_update": {
+    "observed_at": "2026-11-13T22:58:28+00:00",
+    "input_head": "d901df90cac6a52e0264c4a0369b86a07c6f300b",
+    "ledger_id": "LOOP-CONVERSATION-001",
+    "captured_through_user_message": "U14",
+    "new_user_messages": [
+      "U12",
+      "U13",
+      "U14"
+    ],
+    "new_assistant_responses": [
+      "A04",
+      "A05",
+      "A06"
+    ],
+    "response_A06_status": "PREPARED_FOR_DELIVERY",
+    "gacr_continuity_id": null,
+    "gacr_projection_items": 0,
+    "task_changed": false,
+    "work_revision": 2,
+    "intake": "INTAKE-0004"
+  }
 }
