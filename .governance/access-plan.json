@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "repository": "{{REPOSITORY}}",
+  "repository": "chainsolutions-wealthtech/Looping-",
   "status": "DISCOVERY_REQUIRED",
   "git": {
     "read": [

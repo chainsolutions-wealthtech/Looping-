@@ -1,11 +1,11 @@
 {
   "schema_version": "1.0.0",
-  "revision": 0,
+  "revision": 2,
   "items": [
     {
       "work_item_id": "WORK-INIT-001",
       "title": "Initialize project governance",
-      "status": "READY",
+      "status": "DONE",
       "priority": 1000,
       "sequence": 1,
       "dependencies": [],
@@ -13,6 +13,20 @@
         "governance-state"
       ],
       "next_action": "INITIALIZE_PROJECT_GOVERNANCE"
+    },
+    {
+      "work_item_id": "WORK-DISCOVER-001",
+      "title": "Discover and capture the project baseline",
+      "status": "READY",
+      "priority": 900,
+      "sequence": 2,
+      "dependencies": [
+        "WORK-INIT-001"
+      ],
+      "collision_domains": [
+        "governance-state"
+      ],
+      "next_action": "DISCOVER_PROJECT_BASELINE"
     }
   ]
 }

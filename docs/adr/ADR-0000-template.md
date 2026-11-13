@@ -1,8 +1,8 @@
 # ADR-0000 — Initialize Governed Repository
 
 - Status: `ACCEPTED`
-- Date: `{{INITIALIZED_AT}}`
-- Repository: `{{REPOSITORY}}`
+- Date: `2026-11-13T05:56:34+00:00`
+- Repository: `chainsolutions-wealthtech/Looping-`
 
 ## Context
 

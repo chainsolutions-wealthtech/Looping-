@@ -17,9 +17,9 @@
       "bootstrap_model": "SAME_GOVERNED_TEMPLATE"
     }
   },
-  "current_repository_scope": "TEMPLATE_SOURCE",
-  "target_owner": null,
-  "target_scope": "UNRESOLVED",
+  "current_repository_scope": "OWNER_AGNOSTIC",
+  "target_owner": "chainsolutions-wealthtech",
+  "target_scope": "OWNER_AGNOSTIC",
   "invariants": [
     "OWNER_SCOPE_NE_AUTHORITY",
     "NO_ORGANIZATION_ONLY_ASSUMPTION",

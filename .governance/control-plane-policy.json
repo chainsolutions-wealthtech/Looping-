@@ -87,7 +87,7 @@
     "scripts/control_plane_github_secret_metadata.py",
     "scripts/test_control_plane_github_secret_metadata.py"
   ],
-  "current_role": "CENTRAL_GOVERNANCE_CONTROL_PLANE",
+  "current_role": "GOVERNED_TARGET_CLIENT",
   "executor": {
     "repository_creation": "scripts/control_plane_create_repository.py",
     "authority_policy": ".governance/repository-creation-executor.json",
@@ -304,5 +304,6 @@
         "MCP_SELF"
       ]
     }
-  }
+  },
+  "client_repository": "chainsolutions-wealthtech/Looping-"
 }

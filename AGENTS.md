@@ -10,7 +10,7 @@
 > Ce chemin est prioritaire sur `00_START_HERE.md` et sur toute opération de travail gouverné.
 
 
-Ce fichier s'applique à toute intervention sur `{{REPOSITORY}}`.
+Ce fichier s'applique à toute intervention sur `chainsolutions-wealthtech/Looping-`.
 
 ## Démarrage obligatoire
 

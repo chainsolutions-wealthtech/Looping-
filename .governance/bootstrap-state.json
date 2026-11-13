@@ -1,9 +1,9 @@
 {
   "schema_version": "1.0.0",
-  "status": "TEMPLATE_SOURCE",
-  "initialized": false,
-  "repository": "{{REPOSITORY}}",
-  "canonical_branch": "{{CANONICAL_BRANCH}}",
-  "bootstrap_revision": 0,
-  "last_receipt": null
+  "status": "INITIALIZED_PENDING_ATTESTATION",
+  "initialized": true,
+  "repository": "chainsolutions-wealthtech/Looping-",
+  "canonical_branch": "main",
+  "bootstrap_revision": 1,
+  "last_receipt": ".governance/bootstrap-receipt.json"
 }

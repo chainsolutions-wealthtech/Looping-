@@ -1,13 +1,13 @@
 {
   "schema_version": "2.0.0",
-  "template_source": true,
-  "initialized": false,
-  "repository": "{{REPOSITORY}}",
-  "project_name": "{{PROJECT_NAME}}",
-  "project_type": "{{PROJECT_TYPE}}",
-  "owner": "{{OWNER}}",
-  "canonical_branch": "{{CANONICAL_BRANCH}}",
-  "initialized_at": "{{INITIALIZED_AT}}",
+  "template_source": false,
+  "initialized": true,
+  "repository": "chainsolutions-wealthtech/Looping-",
+  "project_name": "Looping-",
+  "project_type": "generic",
+  "owner": "@chainsolutions-wealthtech",
+  "canonical_branch": "main",
+  "initialized_at": "2026-11-13T05:56:34+00:00",
   "policies": {
     "force_push": "FORBIDDEN",
     "history_rewrite": "FORBIDDEN",
@@ -82,5 +82,6 @@
     "local_governed_entry": true,
     "first_agent_baseline_workflow": true,
     "subsequent_agent_local_routing": true
-  }
+  },
+  "initialization_mode": "TEMPLATE_BOOTSTRAP"
 }

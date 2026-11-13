@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "repository": "{{REPOSITORY}}",
+  "repository": "chainsolutions-wealthtech/Looping-",
   "status": "WAITING_FOR_FIRST_AGENT",
   "first_agent_completed": false,
   "first_agent_session_id": null,

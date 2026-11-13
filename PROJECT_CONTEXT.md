@@ -1,11 +1,11 @@
 # PROJECT_CONTEXT
 
-- Repository: `{{REPOSITORY}}`
-- Project: `{{PROJECT_NAME}}`
-- Project type: `{{PROJECT_TYPE}}`
-- Owner: `{{OWNER}}`
-- Canonical branch: `{{CANONICAL_BRANCH}}`
-- Initialized at: `{{INITIALIZED_AT}}`
+- Repository: `chainsolutions-wealthtech/Looping-`
+- Project: `Looping-`
+- Project type: `generic`
+- Owner: `@chainsolutions-wealthtech`
+- Canonical branch: `main`
+- Initialized at: `2026-11-13T05:56:34+00:00`
 
 ## Mission
 

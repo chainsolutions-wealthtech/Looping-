@@ -1,26 +1,11 @@
 # STATUS — État courant
 
-> State: `INITIALIZATION_REQUIRED`
+> State: `GOVERNANCE_INITIALIZED_BASELINE_REQUIRED`
 
-## Current baseline
+- Repository: `chainsolutions-wealthtech/Looping-`
+- Branch: `main`
+- Bootstrap input HEAD: `33fc61b984eff1ebb4341f063b0b81eae268360d`
+- Governance validation: `PENDING_ATTESTATION`
+- Next action: `DISCOVER_PROJECT_BASELINE`
 
-- Repository: `{{REPOSITORY}}`
-- Branch: `{{CANONICAL_BRANCH}}`
-- HEAD: `TO_CAPTURE`
-- Last verified CI: `NOT_RUN`
-
-## Implemented
-
-- Governance template structure.
-
-## In progress
-
-- Project initialization.
-
-## Blockers
-
-- Project context not initialized.
-
-## External status
-
-No production, deployment, compliance, legal, financial or operational status is implied by this template.
+No production, deployment, compliance, legal, financial or operational status is implied.

@@ -1,9 +1,9 @@
 {
   "schema_version": "1.0.0",
-  "repository": "{{REPOSITORY}}",
+  "repository": "chainsolutions-wealthtech/Looping-",
   "status": "PLANNED_NOT_PROVISIONED",
   "github_binding": {
-    "repository": "{{REPOSITORY}}",
+    "repository": "chainsolutions-wealthtech/Looping-",
     "status": "KNOWN"
   },
   "deployment_target": {

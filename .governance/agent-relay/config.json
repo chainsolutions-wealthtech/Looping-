@@ -155,7 +155,7 @@
     "authority_id": "CP-AGENT-RELAY-001-R6",
     "decision_id": "CPD-056",
     "transport": "GITHUB_ISSUE_COMMENT",
-    "issue_number": 115,
+    "issue_number": null,
     "issue_title": "[GACR Host Bridge] Provider event ingress",
     "comment_prefix": "/gacr-host ",
     "event_schema": "gacr-host-event/v1",
@@ -376,7 +376,7 @@
     "secret_values_persisted": false,
     "provider_private_identity_policy": "SUPPLIED_ONLY_NEVER_INVENT",
     "external_unintegrated_surface_policy": "OUTSIDE_GOVERNED_EXPOSURE_BOUNDARY",
-    "issue_number": 161,
+    "issue_number": null,
     "issue_title": "[GSCC Admission Gate] Provider event ingress",
     "source_issue_number_distributed": false,
     "client_issue_strategy": "DISABLED_UNTIL_LOCAL_NUMBER_BOUND"

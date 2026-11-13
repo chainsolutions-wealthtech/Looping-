@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0.0",
-  "repository": "{{REPOSITORY}}",
-  "canonical_branch": "{{CANONICAL_BRANCH}}",
-  "canonical_revision": 0,
-  "work_revision": 0,
-  "observed_head_sha": "TO_CAPTURE",
+  "repository": "chainsolutions-wealthtech/Looping-",
+  "canonical_branch": "main",
+  "canonical_revision": 1,
+  "work_revision": 1,
+  "observed_head_sha": "33fc61b984eff1ebb4341f063b0b81eae268360d",
   "current_checkpoint": null,
   "current_handoff": null,
-  "next_action": "INITIALIZE_PROJECT_GOVERNANCE",
+  "next_action": "DISCOVER_PROJECT_BASELINE",
   "blockers": [],
-  "freshness": "TEMPLATE_SOURCE"
+  "freshness": "INITIALIZED_PENDING_ATTESTATION"
 }

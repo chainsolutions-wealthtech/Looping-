@@ -11,14 +11,14 @@
 > ARRIVAL → 00_GSCC_ENTRY.md → explicit next authority
 > ```
 
-> Dépôt : `{{REPOSITORY}}`  
-> Projet : `{{PROJECT_NAME}}`  
-> Propriétaire : `{{OWNER}}`
+> Dépôt : `chainsolutions-wealthtech/Looping-`  
+> Projet : `Looping-`  
+> Propriétaire : `@chainsolutions-wealthtech`
 
 ## Contrat
 
 ```text
-CANONICAL_WORK_BRANCH = {{CANONICAL_BRANCH}}
+CANONICAL_WORK_BRANCH = main
 FORCE_PUSH = FORBIDDEN
 HISTORY_REWRITE = FORBIDDEN
 IMPROVEMENT_ONLY = REQUIRED

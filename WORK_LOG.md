@@ -1,9 +1,9 @@
 # WORK_LOG — Journal d'exécution
 
-## {{INITIALIZED_AT}} — Template instantiated
+## 2026-11-13T05:56:34+00:00 — Template instantiated
 
-- Repository: `{{REPOSITORY}}`
-- Canonical branch: `{{CANONICAL_BRANCH}}`
+- Repository: `chainsolutions-wealthtech/Looping-`
+- Canonical branch: `main`
 - Action: initialize governed repository
 - Result: `PENDING`
 

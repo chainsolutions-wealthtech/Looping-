@@ -1,21 +1,9 @@
 # HANDOFF — Reprise inter-agent
 
-## Current repository
+- Repository: `chainsolutions-wealthtech/Looping-`
+- Branch: `main`
+- Bootstrap input HEAD: `33fc61b984eff1ebb4341f063b0b81eae268360d`
+- Current work item: `WORK-DISCOVER-001`
+- Next action: `DISCOVER_PROJECT_BASELINE`
 
-- Repository: `{{REPOSITORY}}`
-- Branch: `{{CANONICAL_BRANCH}}`
-- HEAD: `TO_CAPTURE`
-
-## Read first
-
-Follow `00_START_HERE.md`.
-
-## Current loop
-
-- `LOOP-INIT-001`
-- State: `IN_PROGRESS`
-- Next action: `INITIALIZE_PROJECT_GOVERNANCE`
-
-## Safety
-
-Do not infer missing context. Re-read the versioned authorities and verify remote state before writing.
+Before any write: reobserve the exact online HEAD. If it moved, reconcile intervening work first.

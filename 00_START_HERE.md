@@ -11,8 +11,8 @@
 
 
 > Statut : `APPLICABLE`  
-> Dépôt : `{{REPOSITORY}}`  
-> Projet : `{{PROJECT_NAME}}`
+> Dépôt : `chainsolutions-wealthtech/Looping-`  
+> Projet : `Looping-`
 
 ## Source/control-plane special entry
 
