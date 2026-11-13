@@ -1,0 +1,53 @@
+{
+  "record_type": "DIRECT_OWNER_ENTRY_OBSERVATIONS",
+  "entry_file": "00_DIRECT_OWNER_ENTRY.md",
+  "decision": "DIRECT_OWNER_VERIFIED",
+  "observed_at": "2026-11-13T06:37:06+00:00",
+  "repository": "chainsolutions-wealthtech/Looping-",
+  "repository_id": 1456213061,
+  "branch": "main",
+  "observed_head": "86f0317905eb1eaf790e4f2f58a7e3e41735c2bf",
+  "authenticated_actor": {
+    "login": "Patricked-code",
+    "github_id": 270385782,
+    "source": "GitHub authenticated get_profile"
+  },
+  "permissions": {
+    "admin": true,
+    "maintain": true,
+    "push": true,
+    "pull": true,
+    "triage": true,
+    "source": "GitHub get_repo for target"
+  },
+  "branch_observation": {
+    "protected": false,
+    "source": "GitHub branches/main"
+  },
+  "role_declaration": "INTAKER",
+  "connection_intent": "INFORMATION_INTAKE",
+  "authorization_sources": [
+    "CONVERSATION_INPUTS.md#u08",
+    "CONVERSATION_INPUTS.md#u09"
+  ],
+  "source_text": "Oui je confirme l'entrée 00_direct",
+  "interpretation": "Confirmation explicite de la porte B nommée dans la question précédente, pour le seul intake documentaire préparé.",
+  "policy_source_blob_sha": "85125606f826dcd9b0256d3057e4663008fb1816",
+  "allowed_modified_existing_paths": [
+    "SUIVI.md",
+    ".governance/intake/cursor.json"
+  ],
+  "allowed_added_paths": [
+    "docs/intake/**",
+    ".governance/intake/INTAKE-0001.json"
+  ],
+  "gscc_receipt_issued": false,
+  "gacr_session_claimed": false,
+  "server_authority_granted": false,
+  "scope_reconciliation": {
+    "inherited_projection_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+    "target_resolved_by": "Explicit owner target, local GOVERNANCE.md and native GitHub repository facts",
+    "cli_router_used": false,
+    "projection_not_used_as_permission": "The inherited source-repository literal is recorded for later review; actual authorization was checked on Looping- under the documented ChatGPT direct route."
+  }
+}

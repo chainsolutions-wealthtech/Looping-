@@ -1,9 +1,11 @@
 {
   "schema_version": "1.0.0",
-  "latest_sequence": 0,
+  "latest_sequence": 1,
   "reconciled_through_sequence": 0,
   "canonical_revision": 0,
   "work_revision": 0,
-  "pending_intake_ids": [],
+  "pending_intake_ids": [
+    "INTAKE-0001"
+  ],
   "last_reconciliation_digest": null
 }

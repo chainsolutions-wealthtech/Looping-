@@ -1,0 +1,287 @@
+#!/usr/bin/env python3
+"""Local, non-destructive, append-only design traceability prototype (v0.1).
+
+Not an autonomous implementation agent, a production deployment tool, or a security control.
+"""
+from __future__ import annotations
+
+import argparse
+import contextlib
+from datetime import datetime, timezone
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import sys
+import tempfile
+import uuid
+
+DIR = ".loop-engineering"
+EVENTS = "events.jsonl"
+CONFIG = "project.json"
+RELATIONS = {"originates_from", "clarifies", "refines", "supersedes", "contradicts", "depends_on", "belongs_to", "implements", "exposes", "consumes", "tested_by", "verified_by", "planned_in", "approved_by", "blocks", "derived_from"}
+CATEGORIES = {"SOURCE", "INTENTION", "REQUIREMENT", "DECISION", "MODEL", "ARCHITECTURE", "PLAN", "TEST", "OPERATIONS", "GOVERNANCE", "OTHER"}
+SECRET_PATTERNS = (
+    re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----", re.I),
+    re.compile(r"\b(?:password|passwd|api[_-]?key|secret|token)\s*[:=]\s*\S+", re.I),
+    re.compile(r"\b(?:ghp_|gho_|github_pat_|sk-proj-|sk-)[A-Za-z0-9_\-]{12,}"),
+)
+
+
+def utc_now():
+    return datetime.now(timezone.utc).isoformat(timespec="seconds")
+
+
+def canonical(obj):
+    return json.dumps(obj, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+
+
+def digest(evt):
+    return hashlib.sha256(canonical({k: v for k, v in evt.items() if k != "hash"}).encode("utf-8")).hexdigest()
+
+
+def ensure_clean(s):
+    for p in SECRET_PATTERNS:
+        if p.search(s):
+            raise ValueError("Motif pouvant contenir un secret détecté : ingestion refusée. Masquez les valeurs sensibles.")
+
+
+def where(args):
+    p = Path(args.target).expanduser().resolve()
+    if not p.is_dir():
+        raise ValueError(f"Répertoire cible introuvable : {p}")
+    return p / DIR
+
+
+def load_config(folder):
+    cp = folder / CONFIG
+    if not cp.is_file():
+        raise ValueError("Pas de configuration Loop Engineering. Lancez init, sans remplacer un dossier étranger.")
+    with cp.open(encoding="utf-8") as f:
+        return json.load(f)
+
+
+def load_events(folder):
+    load_config(folder)
+    path = folder / EVENTS
+    if not path.is_file():
+        raise ValueError("Journal d'événements manquant. Pas de reconstruction automatique risquée.")
+    result = []
+    with path.open(encoding="utf-8") as f:
+        for index, line in enumerate(f, start=1):
+            if not line.strip():
+                raise ValueError(f"Ligne vide interdite : {index}")
+            try:
+                result.append(json.loads(line))
+            except json.JSONDecodeError as e:
+                raise ValueError(f"JSON invalide à la ligne {index}: {e}") from e
+    return result
+
+
+def check_events(events):
+    previous = "GENESIS"
+    ids = set()
+    byid = {}
+    for i, event in enumerate(events, 1):
+        if not isinstance(event, dict) or set(event) != {"id", "timestamp", "kind", "payload", "prev_hash", "hash"}:
+            raise ValueError(f"Structure événement invalide, ligne {i}")
+        if event["id"] in ids:
+            raise ValueError(f"ID événement dupliqué : {event['id']}")
+        if event["prev_hash"] != previous or digest(event) != event["hash"]:
+            raise ValueError(f"Chaîne d'intégrité invalide à la ligne {i} ({event['id']})")
+        if event["kind"] not in {"INSTRUCTION", "CLASSIFICATION", "RELATION"}:
+            raise ValueError(f"Type inconnu à la ligne {i}")
+        if not isinstance(event["payload"], dict):
+            raise ValueError(f"Payload invalide à la ligne {i}")
+        if event["kind"] == "INSTRUCTION":
+            required = {"text", "source", "source_type", "status"}
+            if not required.issubset(event["payload"]) or not event["payload"]["text"] or not event["payload"]["source"]:
+                raise ValueError(f"Instruction incomplet à la ligne {i}")
+        if event["kind"] == "CLASSIFICATION":
+            ref = event["payload"].get("ref")
+            if ref not in byid or byid[ref]["kind"] != "INSTRUCTION":
+                raise ValueError(f"Instruction référencée inconnue : {ref}")
+            if event["payload"].get("category") not in CATEGORIES:
+                raise ValueError("Catégorie invalide")
+        if event["kind"] == "RELATION":
+            for key in ("from", "to"):
+                if event["payload"].get(key) not in byid:
+                    raise ValueError(f"Référence {key} inconnue : {event['payload'].get(key)}")
+            if event["payload"].get("relation") not in RELATIONS:
+                raise ValueError("Type relation invalide")
+        ids.add(event["id"])
+        byid[event["id"]] = event
+        previous = event["hash"]
+    return byid
+
+
+@contextlib.contextmanager
+def exclusive(folder):
+    # Single-host advisory locking on POSIX. No distributed write guarantees.
+    lock_path = folder / ".write.lock"
+    with lock_path.open("a+") as fd:
+        if os.name == "posix":
+            import fcntl
+            fcntl.flock(fd.fileno(), fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            if os.name == "posix":
+                fcntl.flock(fd.fileno(), fcntl.LOCK_UN)
+
+
+def append_event(folder, kind, payload):
+    with exclusive(folder):
+        events = load_events(folder)
+        check_events(events)  # Refuse writes when the existing history is inconsistent.
+        previous = events[-1]["hash"] if events else "GENESIS"
+        eid = f"EVT-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}-{uuid.uuid4().hex[:12]}"
+        evt = {"id": eid, "timestamp": utc_now(), "kind": kind, "payload": payload, "prev_hash": previous}
+        evt["hash"] = digest(evt)
+        with (folder / EVENTS).open("a", encoding="utf-8") as fd:
+            fd.write(canonical(evt) + "\n")
+            fd.flush()
+            os.fsync(fd.fileno())
+    return eid
+
+
+def init(args):
+    folder = where(args)
+    if folder.exists() and not (folder / CONFIG).exists():
+        raise ValueError("Un dossier .loop-engineering non reconnu existe déjà : aucune modification effectuée.")
+    if folder.exists():
+        load_config(folder)
+        print("Déjà initialisé; aucun fichier remplacé.")
+        return
+    root = folder.parent
+    existing = [p for p in root.iterdir() if p.name not in (DIR, ".git")]
+    folder.mkdir(exist_ok=False)
+    cfg = {"schema_version": "0.1", "initialized_at": utc_now(),
+           "mode_candidate": "EXISTING_CANDIDATE" if existing else "NEW_CANDIDATE",
+           "mode_confirmed": False, "existing_top_level_entries": len(existing),
+           "note": "Mode indicatif : confirmer après inventaire documentaire et technique."}
+    with (folder / CONFIG).open("x", encoding="utf-8") as f:
+        json.dump(cfg, f, indent=2, ensure_ascii=False)
+        f.write("\n")
+    (folder / EVENTS).touch(exist_ok=False)
+    (folder / "generated").mkdir()
+    print(f"Initialisé : {folder}\nMode indicatif : {cfg['mode_candidate']} (non confirmé)")
+
+
+def ingest(args):
+    folder = where(args)
+    for val in (args.text, args.source, args.source_type):
+        ensure_clean(val)
+    eid = append_event(folder, "INSTRUCTION", {"text": args.text, "source": args.source, "source_type": args.source_type,
+                                               "status": "CAPTURED_UNVERIFIED"})
+    print(f"Instruction enregistrée sans interprétation : {eid}")
+
+
+def classify(args):
+    folder = where(args)
+    events = load_events(folder)
+    byid = check_events(events)
+    if args.ref not in byid or byid[args.ref]["kind"] != "INSTRUCTION":
+        raise ValueError("Référence instruction inconnue")
+    ensure_clean(args.rationale)
+    eid = append_event(folder, "CLASSIFICATION", {"ref": args.ref, "category": args.category,
+                                                   "rationale": args.rationale, "status": "PROPOSED_NOT_APPROVED"})
+    print(f"Classification proposée (non approuvée) : {eid}")
+
+
+def link(args):
+    folder = where(args)
+    byid = check_events(load_events(folder))
+    if args.origin == args.destination:
+        raise ValueError("Un événement ne peut pas se référencer lui-même")
+    for ref in (args.origin, args.destination):
+        if ref not in byid:
+            raise ValueError(f"Référence inconnue : {ref}")
+    ensure_clean(args.rationale)
+    eid = append_event(folder, "RELATION", {"from": args.origin, "to": args.destination,
+                                             "relation": args.relation, "rationale": args.rationale,
+                                             "status": "PROPOSED_NOT_APPROVED"})
+    print(f"Relation enregistrée : {eid}")
+
+
+def validate(args):
+    folder = where(args)
+    events = load_events(folder)
+    check_events(events)
+    print(f"Structure, chaîne de hash et références vérifiées : {len(events)} événements.\n"
+          "Attention : n'atteste ni la vérité des sources ni une conformité réglementaire.")
+
+
+def status(args):
+    folder = where(args)
+    cfg = load_config(folder)
+    events = load_events(folder)
+    check_events(events)
+    counter = {kind: sum(e["kind"] == kind for e in events) for kind in ("INSTRUCTION", "CLASSIFICATION", "RELATION")}
+    print(json.dumps({"mode_candidate": cfg["mode_candidate"], "mode_confirmed": cfg["mode_confirmed"],
+                      "events": len(events), "counts": counter}, indent=2, ensure_ascii=False))
+
+
+def export(args):
+    folder = where(args)
+    with exclusive(folder):
+        events = load_events(folder)
+        check_events(events)
+        lines = ["# Traçabilité calculée (non approuvée)", "", "> Cette sortie est dérivée du journal local. Elle n'a pas autorité sur les sources historiques ni les décisions.", "", "| ID | Type | Source / Référence | Objet |", "|---|---|---|---|"]
+        for e in events:
+            p = e["payload"]
+            if e["kind"] == "INSTRUCTION":
+                target = p["text"].replace("|", "\\|").replace("\n", " ")[:140]
+                related = p["source"].replace("|", "\\|")[:100]
+            elif e["kind"] == "CLASSIFICATION":
+                target = p["category"] + " (proposé)"
+                related = p["ref"]
+            else:
+                target = p["relation"] + " -> " + p["to"]
+                related = p["from"]
+            lines.append(f"| `{e['id']}` | {e['kind']} | {related} | {target} |")
+        path = folder / "generated" / "TRACEABILITY_MATRIX.md"
+        path.parent.mkdir(exist_ok=True)
+        with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=path.parent, prefix=".trace-", delete=False) as tmp:
+            tmp.write("\n".join(lines) + "\n")
+            temporary = Path(tmp.name)
+        os.replace(temporary, path)  # generated file only; never touches original sources.
+    print(f"Vue dérivée actualisée : {path}")
+
+
+def parser():
+    p = argparse.ArgumentParser(description="Prototype Loop Engineering — conception logiciel et web")
+    sub = p.add_subparsers(dest="command", required=True)
+    for cmd, fn in [("init", init), ("ingest", ingest), ("classify", classify), ("link", link),
+                    ("validate", validate), ("status", status), ("export", export)]:
+        s = sub.add_parser(cmd)
+        s.add_argument("--target", required=True, help="Dossier projet existant sur le disque")
+        s.set_defaults(func=fn)
+        if cmd == "ingest":
+            s.add_argument("--source", required=True, help="Provenance explicite")
+            s.add_argument("--source-type", required=True, choices=["conversation", "document", "repository", "code", "observation", "other"])
+            s.add_argument("--text", required=True, help="Texte original, sans secrets")
+        elif cmd == "classify":
+            s.add_argument("--ref", required=True, help="ID d'événement INSTRUCTION")
+            s.add_argument("--category", required=True, choices=sorted(CATEGORIES))
+            s.add_argument("--rationale", required=True)
+        elif cmd == "link":
+            s.add_argument("--origin", required=True)
+            s.add_argument("--destination", required=True)
+            s.add_argument("--relation", required=True, choices=sorted(RELATIONS))
+            s.add_argument("--rationale", required=True)
+    return p
+
+
+def main():
+    args = parser().parse_args()
+    try:
+        args.func(args)
+    except (ValueError, OSError, KeyError, TypeError) as e:
+        print(f"ERREUR: {e}", file=sys.stderr)
+        raise SystemExit(2)
+
+
+if __name__ == "__main__":
+    main()

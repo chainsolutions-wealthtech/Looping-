@@ -1,0 +1,596 @@
+{
+  "schema_version": "1.0.0",
+  "registry_id": "BASE",
+  "registry_version": 1,
+  "role": "DERIVED_REFERENCE_PROJECTION",
+  "canonical_effect": false,
+  "work_effect": false,
+  "designation": "Base désignée par l’utilisateur dans la source U06 ; portée d’application à qualifier par projet.",
+  "source_ref": "SRC-CONVERSATION-CONSOLIDATED",
+  "nodes": [
+    {
+      "id": "BASE",
+      "parent": null,
+      "label": "Base de référence de conception modulaire",
+      "kind": "root",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-01",
+      "parent": "BASE",
+      "label": "Concepts fondamentaux",
+      "kind": "family",
+      "provenance": "Partie 1",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-02",
+      "parent": "BASE",
+      "label": "Principes directeurs",
+      "kind": "family",
+      "provenance": "Partie 2",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-03",
+      "parent": "BASE",
+      "label": "Approches méthodologiques",
+      "kind": "family",
+      "provenance": "Partie 3",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-04",
+      "parent": "BASE",
+      "label": "Outils et technologies",
+      "kind": "family",
+      "provenance": "Partie 4",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-05",
+      "parent": "BASE",
+      "label": "Modèles et design patterns",
+      "kind": "family",
+      "provenance": "Partie 5",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-06",
+      "parent": "BASE",
+      "label": "Étapes clés pour structurer le système",
+      "kind": "family",
+      "provenance": "Partie 6",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-07",
+      "parent": "BASE",
+      "label": "Structure combinée globale",
+      "kind": "family",
+      "provenance": "Partie 7",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-08",
+      "parent": "BASE",
+      "label": "Combinaisons spécifiques adaptées",
+      "kind": "family",
+      "provenance": "Partie 8",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-01-01",
+      "parent": "BASE-01",
+      "label": "Atomic Design",
+      "kind": "base_entry",
+      "provenance": "Partie 1, entrée 1",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-01-02",
+      "parent": "BASE-01",
+      "label": "Domain-Driven Design (DDD)",
+      "kind": "base_entry",
+      "provenance": "Partie 1, entrée 2",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-01-03",
+      "parent": "BASE-01",
+      "label": "Microservices",
+      "kind": "base_entry",
+      "provenance": "Partie 1, entrée 3",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-01-04",
+      "parent": "BASE-01",
+      "label": "Event-Driven Architecture (EDA)",
+      "kind": "base_entry",
+      "provenance": "Partie 1, entrée 4",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-01-05",
+      "parent": "BASE-01",
+      "label": "Hexagonal Architecture",
+      "kind": "base_entry",
+      "provenance": "Partie 1, entrée 5",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-02-01",
+      "parent": "BASE-02",
+      "label": "Modularité",
+      "kind": "base_entry",
+      "provenance": "Partie 2, entrée 1",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-02-02",
+      "parent": "BASE-02",
+      "label": "Réutilisabilité",
+      "kind": "base_entry",
+      "provenance": "Partie 2, entrée 2",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-02-03",
+      "parent": "BASE-02",
+      "label": "Inversion des dépendances",
+      "kind": "base_entry",
+      "provenance": "Partie 2, entrée 3",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-02-04",
+      "parent": "BASE-02",
+      "label": "Single Responsibility Principle (SRP)",
+      "kind": "base_entry",
+      "provenance": "Partie 2, entrée 4",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-02-05",
+      "parent": "BASE-02",
+      "label": "Cohésion élevée",
+      "kind": "base_entry",
+      "provenance": "Partie 2, entrée 5",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-02-06",
+      "parent": "BASE-02",
+      "label": "Couplage faible",
+      "kind": "base_entry",
+      "provenance": "Partie 2, entrée 6",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-03-01",
+      "parent": "BASE-03",
+      "label": "Clean Architecture",
+      "kind": "base_entry",
+      "provenance": "Partie 3, entrée 1",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-03-02",
+      "parent": "BASE-03",
+      "label": "CQRS (Command Query Responsibility Segregation)",
+      "kind": "base_entry",
+      "provenance": "Partie 3, entrée 2",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-03-03",
+      "parent": "BASE-03",
+      "label": "API-First Development",
+      "kind": "base_entry",
+      "provenance": "Partie 3, entrée 3",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-03-04",
+      "parent": "BASE-03",
+      "label": "DevOps et CI/CD",
+      "kind": "base_entry",
+      "provenance": "Partie 3, entrée 4",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-04-01",
+      "parent": "BASE-04",
+      "label": "Kubernetes",
+      "kind": "base_entry",
+      "provenance": "Partie 4, entrée 1",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-04-02",
+      "parent": "BASE-04",
+      "label": "Docker",
+      "kind": "base_entry",
+      "provenance": "Partie 4, entrée 2",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-04-03",
+      "parent": "BASE-04",
+      "label": "Message Brokers (ex. Kafka, RabbitMQ)",
+      "kind": "base_entry",
+      "provenance": "Partie 4, entrée 3",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-04-04",
+      "parent": "BASE-04",
+      "label": "GraphQL / REST",
+      "kind": "base_entry",
+      "provenance": "Partie 4, entrée 4",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-04-05",
+      "parent": "BASE-04",
+      "label": "ORMs (ex. Hibernate, Sequelize)",
+      "kind": "base_entry",
+      "provenance": "Partie 4, entrée 5",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-05-01",
+      "parent": "BASE-05",
+      "label": "Factory Pattern",
+      "kind": "base_entry",
+      "provenance": "Partie 5, entrée 1",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-05-02",
+      "parent": "BASE-05",
+      "label": "Singleton Pattern",
+      "kind": "base_entry",
+      "provenance": "Partie 5, entrée 2",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-05-03",
+      "parent": "BASE-05",
+      "label": "Observer Pattern",
+      "kind": "base_entry",
+      "provenance": "Partie 5, entrée 3",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-05-04",
+      "parent": "BASE-05",
+      "label": "Circuit Breaker Pattern",
+      "kind": "base_entry",
+      "provenance": "Partie 5, entrée 4",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-06-01",
+      "parent": "BASE-06",
+      "label": "Analyse et modélisation initiale",
+      "kind": "stage_group",
+      "provenance": "Partie 6, sous-partie 6.1",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-06-01-01",
+      "parent": "BASE-06-01",
+      "label": "Identifier les domaines métiers (DDD) et leurs contextes délimités.",
+      "kind": "action",
+      "provenance": "Sous-partie 6.1, action 1",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-06-01-02",
+      "parent": "BASE-06-01",
+      "label": "Définir les composants atomiques et modulaires pour le frontend (Atomic Design).",
+      "kind": "action",
+      "provenance": "Sous-partie 6.1, action 2",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-06-01-03",
+      "parent": "BASE-06-01",
+      "label": "Décrire les flux de données et leurs événements (EDA).",
+      "kind": "action",
+      "provenance": "Sous-partie 6.1, action 3",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-06-02",
+      "parent": "BASE-06",
+      "label": "Structuration et organisation",
+      "kind": "stage_group",
+      "provenance": "Partie 6, sous-partie 6.2",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-06-02-01",
+      "parent": "BASE-06-02",
+      "label": "Appliquer les principes de modularité et découplage pour chaque couche (frontend, backend, infrastructure).",
+      "kind": "action",
+      "provenance": "Sous-partie 6.2, action 1",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-06-02-02",
+      "parent": "BASE-06-02",
+      "label": "Structurer les modules backend en microservices indépendants.",
+      "kind": "action",
+      "provenance": "Sous-partie 6.2, action 2",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-06-02-03",
+      "parent": "BASE-06-02",
+      "label": "Orchestrer les interactions entre services avec des événements (EDA) ou des APIs bien définies (API-First).",
+      "kind": "action",
+      "provenance": "Sous-partie 6.2, action 3",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-06-03",
+      "parent": "BASE-06",
+      "label": "Infrastructure et automatisation",
+      "kind": "stage_group",
+      "provenance": "Partie 6, sous-partie 6.3",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-06-03-01",
+      "parent": "BASE-06-03",
+      "label": "Conteneuriser chaque module avec Docker.",
+      "kind": "action",
+      "provenance": "Sous-partie 6.3, action 1",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-06-03-02",
+      "parent": "BASE-06-03",
+      "label": "Utiliser Kubernetes pour gérer les déploiements et la scalabilité.",
+      "kind": "action",
+      "provenance": "Sous-partie 6.3, action 2",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-06-03-03",
+      "parent": "BASE-06-03",
+      "label": "Mettre en place des pipelines CI/CD pour automatiser les tests et les déploiements.",
+      "kind": "action",
+      "provenance": "Sous-partie 6.3, action 3",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-06-04",
+      "parent": "BASE-06",
+      "label": "Tests et itérations",
+      "kind": "stage_group",
+      "provenance": "Partie 6, sous-partie 6.4",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-06-04-01",
+      "parent": "BASE-06-04",
+      "label": "Tester chaque composant et module de manière isolée (tests unitaires).",
+      "kind": "action",
+      "provenance": "Sous-partie 6.4, action 1",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-06-04-02",
+      "parent": "BASE-06-04",
+      "label": "Valider les interactions entre modules (tests d’intégration).",
+      "kind": "action",
+      "provenance": "Sous-partie 6.4, action 2",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-06-04-03",
+      "parent": "BASE-06-04",
+      "label": "Optimiser la structure pour réduire les dépendances inutiles.",
+      "kind": "action",
+      "provenance": "Sous-partie 6.4, action 3",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-07-01",
+      "parent": "BASE-07",
+      "label": "Frontend (Atomic Design)",
+      "kind": "structure_view",
+      "provenance": "Partie 7, Frontend (Atomic Design)",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-07-02",
+      "parent": "BASE-07",
+      "label": "Backend (DDD + Microservices)",
+      "kind": "structure_view",
+      "provenance": "Partie 7, Backend (DDD + Microservices)",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-07-03",
+      "parent": "BASE-07",
+      "label": "Infrastructure",
+      "kind": "structure_view",
+      "provenance": "Partie 7, Infrastructure",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-08-01",
+      "parent": "BASE-08",
+      "label": "Atomic Design + DDD + Microservices",
+      "kind": "combination",
+      "provenance": "Partie 8, combinaison 1",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-08-02",
+      "parent": "BASE-08",
+      "label": "Atomic Design + Clean Architecture + Kubernetes",
+      "kind": "combination",
+      "provenance": "Partie 8, combinaison 2",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    },
+    {
+      "id": "BASE-08-03",
+      "parent": "BASE-08",
+      "label": "DDD + EDA + CQRS",
+      "kind": "combination",
+      "provenance": "Partie 8, combinaison 3",
+      "source_ref": "SRC-CONVERSATION-INPUTS#U06"
+    }
+  ],
+  "relations": [
+    {
+      "from": "BASE-06-01-01",
+      "type": "mobilise",
+      "to": "BASE-01-02"
+    },
+    {
+      "from": "BASE-06-01-02",
+      "type": "mobilise",
+      "to": "BASE-01-01"
+    },
+    {
+      "from": "BASE-06-01-03",
+      "type": "mobilise",
+      "to": "BASE-01-04"
+    },
+    {
+      "from": "BASE-06-02-01",
+      "type": "applique",
+      "to": "BASE-02-01"
+    },
+    {
+      "from": "BASE-06-02-01",
+      "type": "applique",
+      "to": "BASE-02-06"
+    },
+    {
+      "from": "BASE-06-02-02",
+      "type": "mobilise",
+      "to": "BASE-01-03"
+    },
+    {
+      "from": "BASE-06-02-03",
+      "type": "mobilise",
+      "to": "BASE-01-04"
+    },
+    {
+      "from": "BASE-06-02-03",
+      "type": "mobilise",
+      "to": "BASE-03-03"
+    },
+    {
+      "from": "BASE-06-03-01",
+      "type": "utilise",
+      "to": "BASE-04-02"
+    },
+    {
+      "from": "BASE-06-03-02",
+      "type": "utilise",
+      "to": "BASE-04-01"
+    },
+    {
+      "from": "BASE-06-03-03",
+      "type": "mobilise",
+      "to": "BASE-03-04"
+    },
+    {
+      "from": "BASE-06-04-03",
+      "type": "applique",
+      "to": "BASE-02-06"
+    },
+    {
+      "from": "BASE-07-01",
+      "type": "présente",
+      "to": "BASE-01-01"
+    },
+    {
+      "from": "BASE-07-02",
+      "type": "présente",
+      "to": "BASE-01-02"
+    },
+    {
+      "from": "BASE-07-02",
+      "type": "présente",
+      "to": "BASE-01-03"
+    },
+    {
+      "from": "BASE-07-02",
+      "type": "présente",
+      "to": "BASE-01-04"
+    },
+    {
+      "from": "BASE-07-03",
+      "type": "présente",
+      "to": "BASE-04-02"
+    },
+    {
+      "from": "BASE-07-03",
+      "type": "présente",
+      "to": "BASE-04-01"
+    },
+    {
+      "from": "BASE-07-03",
+      "type": "présente",
+      "to": "BASE-04-03"
+    },
+    {
+      "from": "BASE-08-01",
+      "type": "associe",
+      "to": "BASE-01-01"
+    },
+    {
+      "from": "BASE-08-01",
+      "type": "associe",
+      "to": "BASE-01-02"
+    },
+    {
+      "from": "BASE-08-01",
+      "type": "associe",
+      "to": "BASE-01-03"
+    },
+    {
+      "from": "BASE-08-02",
+      "type": "associe",
+      "to": "BASE-01-01"
+    },
+    {
+      "from": "BASE-08-02",
+      "type": "associe",
+      "to": "BASE-03-01"
+    },
+    {
+      "from": "BASE-08-02",
+      "type": "associe",
+      "to": "BASE-04-01"
+    },
+    {
+      "from": "BASE-08-03",
+      "type": "associe",
+      "to": "BASE-01-02"
+    },
+    {
+      "from": "BASE-08-03",
+      "type": "associe",
+      "to": "BASE-01-04"
+    },
+    {
+      "from": "BASE-08-03",
+      "type": "associe",
+      "to": "BASE-03-02"
+    }
+  ],
+  "source_sha256": "4cf0823bb093f05212a32b80c4ce0f7870284576299ee4d19aa27ac8545026bc",
+  "source_encoding": "source-text-json/v1",
+  "source_container_sha256": "f95ff16fbdc17ba8eec977e377106abd30b5ac1c15e3d0039faf61102edb3b48"
+}

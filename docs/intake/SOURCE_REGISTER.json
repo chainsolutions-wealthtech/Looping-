@@ -1,0 +1,260 @@
+{
+  "schema_version": "1.0.0",
+  "role": "INTAKE_SOURCE_INDEX",
+  "target_repository": "chainsolutions-wealthtech/Looping-",
+  "observed_at": "2026-11-13T06:37:06+00:00",
+  "source_count": 17,
+  "scope": "Informations de projet accessibles dans la conversation et références effectivement lues ; aucune exhaustivité des autres conversations présumée.",
+  "canonical_effect": false,
+  "work_effect": false,
+  "sources": [
+    {
+      "source_id": "SRC-CONVERSATION-CONSOLIDATED",
+      "path": "docs/intake/sources/conversation/methodologie-architecture-modulaire.source.json",
+      "origin": {
+        "type": "ChatGPT Library",
+        "library_file_id": "libfile_56c1b11f653c819195bd633a81f72227",
+        "modified_at": "2026-11-13T05:54:34.166873Z",
+        "source_size_bytes": 87477
+      },
+      "role": "SOURCE_AND_PROPOSALS_SNAPSHOT",
+      "sha256": "f95ff16fbdc17ba8eec977e377106abd30b5ac1c15e3d0039faf61102edb3b48",
+      "size_bytes": 89467,
+      "container_format": "source-text-json/v1",
+      "content_sha256": "4cf0823bb093f05212a32b80c4ce0f7870284576299ee4d19aa27ac8545026bc",
+      "decoded_size_bytes": 87477,
+      "text_field": "text"
+    },
+    {
+      "source_id": "SRC-PROTOTYPE",
+      "path": "docs/intake/sources/prototype/loop.py.txt",
+      "origin": {
+        "type": "ChatGPT Library",
+        "library_file_id": "libfile_e1f41ffdae288191a73a0d5546aa3cad"
+      },
+      "role": "REFERENCE_NOT_INSTALLED",
+      "duplicate_alias": "loop(1).py; texte identique lors de la lecture précédente",
+      "sha256": "7f3edc087f4985069f27571b46f47830872fd529b8343763e1e42e78b4034816",
+      "size_bytes": 12487
+    },
+    {
+      "source_id": "SRC-MCP-INSTRUCTIONS",
+      "path": "docs/intake/sources/mcp/LOOP_ENGINEERING_INSTRUCTIONS_DOCX_EXTRACT_20260702.source.md",
+      "origin": {
+        "type": "GitHub",
+        "repository": "Patricked-code/MCP",
+        "ref": "c775709fdaf490eef2e1d43345e0b26e460a072c",
+        "path": "memory/LOOP_ENGINEERING_INSTRUCTIONS_DOCX_EXTRACT_20260702.md",
+        "blob_sha": "0d99fa47fb2275f5f46e586ea24ab61b2aaddfa6"
+      },
+      "role": "HISTORICAL_REFERENCE_ONLY",
+      "sha256": "fcec56ba06f3d86012115e9760e89903bf28f4ea099dc5f1b79a8580299552d6",
+      "size_bytes": 30447,
+      "git_blob_match": true
+    },
+    {
+      "source_id": "SRC-MCP-MASTER",
+      "path": "docs/intake/sources/mcp/LOOP_ENGINEERING_WEALTHTECH_MASTER_PLAN_20260702.source.md",
+      "origin": {
+        "type": "GitHub",
+        "repository": "Patricked-code/MCP",
+        "ref": "c775709fdaf490eef2e1d43345e0b26e460a072c",
+        "path": "memory/LOOP_ENGINEERING_WEALTHTECH_MASTER_PLAN_20260702.md",
+        "blob_sha": "8600d9d3d0da59078c4736a71198e65e2a266ae4"
+      },
+      "role": "HISTORICAL_REFERENCE_ONLY",
+      "sha256": "0cbe5fc8d72b79bec696228218636fd122967087aa76013311c24b4c99c99010",
+      "size_bytes": 16507,
+      "git_blob_match": true
+    },
+    {
+      "source_id": "SRC-MCP-PLAYBOOK",
+      "path": "docs/intake/sources/mcp/LOOP_ENGINEERING_WEALTHTECH_PLAYBOOK_COMPLET_20260702.source.md",
+      "origin": {
+        "type": "GitHub",
+        "repository": "Patricked-code/MCP",
+        "ref": "c775709fdaf490eef2e1d43345e0b26e460a072c",
+        "path": "memory/LOOP_ENGINEERING_WEALTHTECH_PLAYBOOK_COMPLET_20260702.md",
+        "blob_sha": "92b45e3726588ffad100fac9b35fd97b20a305a8"
+      },
+      "role": "HISTORICAL_REFERENCE_ONLY",
+      "sha256": "44d5be17520a74934a6b9dae5903225cfda40fe3013bc44cf72b39748dbfd210",
+      "size_bytes": 14940,
+      "git_blob_match": true
+    },
+    {
+      "source_id": "SRC-MCP-MATRIX",
+      "path": "docs/intake/sources/mcp/MATRICE_TRACABILITE_SOURCES_EXIGENCES_TRACKS_20260702.source.md",
+      "origin": {
+        "type": "GitHub",
+        "repository": "Patricked-code/MCP",
+        "ref": "c775709fdaf490eef2e1d43345e0b26e460a072c",
+        "path": "memory/MATRICE_TRACABILITE_SOURCES_EXIGENCES_TRACKS_20260702.md",
+        "blob_sha": "465444d6132938be3eb3f365c0b3fe557810823c"
+      },
+      "role": "HISTORICAL_REFERENCE_ONLY",
+      "sha256": "6f69ea84200a9bb00e3b97d61bc590203c058262056986a32bf85289079d808e",
+      "size_bytes": 10649,
+      "git_blob_match": true
+    },
+    {
+      "source_id": "SRC-MCP-REQUEST",
+      "path": "docs/intake/sources/mcp/CODEX_AUTO_ANALYSIS_REQUEST.source.md",
+      "origin": {
+        "type": "GitHub",
+        "repository": "Patricked-code/MCP",
+        "ref": "c775709fdaf490eef2e1d43345e0b26e460a072c",
+        "path": "memory/CODEX_AUTO_ANALYSIS_REQUEST.md",
+        "blob_sha": "7e2e2f00b5268c169f4f42fa2e5f92c64b2f9e0b"
+      },
+      "role": "HISTORICAL_REFERENCE_ONLY",
+      "sha256": "95e6de151e511c44decf5e2f6a1fd8c113e7c3f20be39b44a104b2a362cd17b1",
+      "size_bytes": 1874,
+      "git_blob_match": true
+    },
+    {
+      "source_id": "SRC-MCP-MEMORY",
+      "path": "docs/intake/sources/mcp/SUIVI_MEMORY.source.md",
+      "origin": {
+        "type": "GitHub",
+        "repository": "Patricked-code/MCP",
+        "ref": "c775709fdaf490eef2e1d43345e0b26e460a072c",
+        "path": "memory/SUIVI_MEMORY.md",
+        "blob_sha": "6ec45846a6d7452c342241de2ba157b05164eb93"
+      },
+      "role": "HISTORICAL_REFERENCE_ONLY",
+      "sha256": "92fd335ea817d6d968c5977d8b7a1d09adeee22aaf6765da0e68b3641cc2c237",
+      "size_bytes": 16004,
+      "git_blob_match": true
+    },
+    {
+      "source_id": "SRC-MCP-INSTALLATION",
+      "path": "docs/intake/sources/mcp/INSTALLATION_MCP_MEMORY.source.md",
+      "origin": {
+        "type": "GitHub",
+        "repository": "Patricked-code/MCP",
+        "ref": "c775709fdaf490eef2e1d43345e0b26e460a072c",
+        "path": "memory/INSTALLATION_MCP_MEMORY.md",
+        "blob_sha": "e030808a490de3d643760d6415d5f11be5b080bf"
+      },
+      "role": "HISTORICAL_REFERENCE_ONLY",
+      "sha256": "37294ec1ba89045dc3077fdea627d883c8b0d0e630f04b9f8dafb72251c454d2",
+      "size_bytes": 2366,
+      "git_blob_match": true
+    },
+    {
+      "source_id": "SRC-MCP-GPT",
+      "path": "docs/intake/sources/mcp/GPT.source.md",
+      "origin": {
+        "type": "GitHub",
+        "repository": "Patricked-code/MCP",
+        "ref": "c775709fdaf490eef2e1d43345e0b26e460a072c",
+        "path": "GPT.md",
+        "blob_sha": "4a20a75b32dfb51532fc16d5713f0a86ecc70d09"
+      },
+      "role": "HISTORICAL_REFERENCE_ONLY",
+      "sha256": "df71c366aa9145a87e09177541a639d6d33ffcfd06f251252116a686fa337ff9",
+      "size_bytes": 4971,
+      "git_blob_match": true
+    },
+    {
+      "source_id": "SRC-MCP-AGENTS",
+      "path": "docs/intake/sources/mcp/AGENTS.source.md",
+      "origin": {
+        "type": "GitHub",
+        "repository": "Patricked-code/MCP",
+        "ref": "c775709fdaf490eef2e1d43345e0b26e460a072c",
+        "path": "AGENTS.md",
+        "blob_sha": "5b6cab480ad74dca23e5dd9487e362e205bd5f06"
+      },
+      "role": "HISTORICAL_REFERENCE_ONLY",
+      "sha256": "f33a679dfd4d3769926734d6d5ac4a2d99a822bc255b575f9b4e41d150dd4543",
+      "size_bytes": 22084,
+      "git_blob_match": true
+    },
+    {
+      "source_id": "SRC-LOOP-README",
+      "path": "docs/intake/sources/loop/README.source.md",
+      "origin": {
+        "type": "GitHub",
+        "repository": "chainsolutions-wealthtech/Loop",
+        "ref": "07a35de18de9bbe46022aa87eaafe1ed1898350a",
+        "blob_sha": "3cc92e2ee95dfae1a2a48884bcad4a539e43235a"
+      },
+      "role": "EXTERNAL_REFERENCE_NOT_TARGET_AUTHORITY",
+      "sha256": "2e8b485a2127a064fd081f9ef9eba29a00dc4837e223549085a0ae6f452ef21b",
+      "size_bytes": 1517,
+      "git_blob_match": true
+    },
+    {
+      "source_id": "SRC-LOOP-SOURCE_OF_TRUTH",
+      "path": "docs/intake/sources/loop/SOURCE_OF_TRUTH.source.md",
+      "origin": {
+        "type": "GitHub",
+        "repository": "chainsolutions-wealthtech/Loop",
+        "ref": "9db9727ddd6c9e6ead7c5dcaa44db8c6afad780e",
+        "blob_sha": "7b5ff506ed4812715e97eaa050c8c45e5da3ed96"
+      },
+      "role": "EXTERNAL_REFERENCE_NOT_TARGET_AUTHORITY",
+      "sha256": "b8416f5b720f6586233753f231acc18c3f7ff4a69623530ba9a6999bb492ccae",
+      "size_bytes": 1981,
+      "git_blob_match": true
+    },
+    {
+      "source_id": "SRC-LOOP-AGENTS",
+      "path": "docs/intake/sources/loop/AGENTS.source.md",
+      "origin": {
+        "type": "GitHub",
+        "repository": "chainsolutions-wealthtech/Loop",
+        "ref": "9db9727ddd6c9e6ead7c5dcaa44db8c6afad780e",
+        "blob_sha": "8c5e9e728f5eb29a2e0020830d4ce9afb45ea3c0"
+      },
+      "role": "EXTERNAL_REFERENCE_NOT_TARGET_AUTHORITY",
+      "sha256": "73c5131524ed07d4e66d0ba5af824a45f5033c891c75f52c4dbd7acae858f9ce",
+      "size_bytes": 1514,
+      "git_blob_match": true
+    },
+    {
+      "source_id": "SRC-LOOP-WORKFLOW_WF00",
+      "path": "docs/intake/sources/loop/WORKFLOW_WF00.source.md",
+      "origin": {
+        "type": "GitHub",
+        "repository": "chainsolutions-wealthtech/Loop",
+        "ref": "9db9727ddd6c9e6ead7c5dcaa44db8c6afad780e",
+        "blob_sha": "f0c9977feeaf1f3aa7b049bfacb65cff9e73a1cf"
+      },
+      "role": "EXTERNAL_REFERENCE_NOT_TARGET_AUTHORITY",
+      "sha256": "f983059c033ca4e872d551f1b6f555145364d07ba807cfcaa924b4d60694156b",
+      "size_bytes": 1722,
+      "git_blob_match": true
+    },
+    {
+      "source_id": "SRC-LOOP-SOFTWARE_DESIGN_SCOPE",
+      "path": "docs/intake/sources/loop/SOFTWARE_DESIGN_SCOPE.source.md",
+      "origin": {
+        "type": "GitHub",
+        "repository": "chainsolutions-wealthtech/Loop",
+        "ref": "9db9727ddd6c9e6ead7c5dcaa44db8c6afad780e",
+        "blob_sha": "1e9194468250936f1adac1b3631ae976a5ea5aba"
+      },
+      "role": "EXTERNAL_REFERENCE_NOT_TARGET_AUTHORITY",
+      "sha256": "1c328a586ed1aa1f2b132239607391d0287b52597b64d9b112c42e6c43d9f2f8",
+      "size_bytes": 2271,
+      "git_blob_match": true
+    },
+    {
+      "source_id": "SRC-CONVERSATION-INPUTS",
+      "path": "docs/intake/CONVERSATION_INPUTS.md",
+      "origin": {
+        "type": "Current conversation",
+        "provider_message_ids": "UNAVAILABLE",
+        "reception_date": "2026-11-13",
+        "timezone": "Europe/Paris"
+      },
+      "role": "USER_SOURCE_TEXTS",
+      "sha256": "38e48d6e39150a36dc4d4957f2f299f997726823eef70c3c9323a686330e9b22",
+      "size_bytes": 17185,
+      "content_format": "Markdown containing JSON source_text blocks"
+    }
+  ]
+}
