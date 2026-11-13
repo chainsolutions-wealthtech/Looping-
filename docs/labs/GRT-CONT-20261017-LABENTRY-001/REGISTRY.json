@@ -1,0 +1,113 @@
+{
+  "schema": "grt-development-continuity/v1",
+  "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+  "development_continuity_id": "GRT-CONT-20261017-LABENTRY-001",
+  "pool_id": "GRT-POOL-20261017-LABENTRY-001",
+  "issue": 329,
+  "pr": 330,
+  "lab_branch": "lab/lab-entry-minimum-20261017",
+  "actor": "Wealthtechinnovations",
+  "owner_verified": true,
+  "base_main_head": "221015948640ba4c8fc386d5863d089e819c5062",
+  "state": "SOURCE_BOOTSTRAP_MERGED_MAIN",
+  "activation": "MERGED_OWNER_WORKFLOW_AVAILABLE_NOT_YET_LIVE_E2E",
+  "sessions": [],
+  "session_continuity_links": [],
+  "work_claims": [],
+  "chronology": [
+    {
+      "seq": 1,
+      "event": "OWNER_REQUESTED_LAB_ENTRY_CONTRACT",
+      "at": "2026-10-17",
+      "detail": "Create minimum one-click LAB with development identity, pool, memory, PR and dispatcher-ready staged plan"
+    },
+    {
+      "seq": 2,
+      "event": "GITHUB_OWNER_VERIFIED",
+      "at": "2026-10-17",
+      "actor": "Wealthtechinnovations",
+      "identity_source": "GITHUB_NATIVE_CONNECTOR"
+    },
+    {
+      "seq": 3,
+      "event": "CANONICAL_ISSUE_CREATED",
+      "at": "2026-10-17",
+      "issue": 329
+    },
+    {
+      "seq": 4,
+      "event": "ISOLATED_BRANCH_CREATED",
+      "at": "2026-10-17",
+      "branch": "lab/lab-entry-minimum-20261017",
+      "base_head": "221015948640ba4c8fc386d5863d089e819c5062"
+    },
+    {
+      "seq": 5,
+      "event": "BOOTSTRAP_ENGINE_COMMITTED",
+      "at": "2026-10-17",
+      "commit": "eaab66dac443450f0876258c0bff3a4d9ad4201b"
+    },
+    {
+      "seq": 6,
+      "event": "WORKFLOW_TESTS_DOC_COMMITTED",
+      "at": "2026-10-17",
+      "commit": "43e62b48024caf20118dde289ccf403c2fd4bf6e"
+    },
+    {
+      "seq": 7,
+      "event": "DRAFT_CONTINUITY_PR_CREATED",
+      "at": "2026-10-17",
+      "pr": 330
+    },
+    {
+      "seq": 8,
+      "event": "FAKE_API_TEST_FIX_COMMITTED",
+      "at": "2026-10-17",
+      "commit": "613c4712b8a1072afd31555692a1a98a4432d3a2"
+    },
+    {
+      "seq": 9,
+      "event": "POOL_AND_CHRONOLOGY_REGISTRY_STAGED",
+      "at": "2026-10-16T22:54:55.604Z",
+      "stage": "PENDING_REVIEW"
+    },
+    {
+      "seq": 10,
+      "event": "OWNER_REQUESTS_POST_F1_LAB_CONTINUITY_INTEGRATION",
+      "at": "2026-10-19",
+      "reference": "F1 recovery PR #332 merged; free-choice PR #335 merged; integration requires real GACR relationship"
+    },
+    {
+      "seq": 11,
+      "at": "2026-10-19",
+      "event": "OWNER_LAB_BOOTSTRAP_PR_MERGED",
+      "commit": "066900103120e4f121fe7c52c76bff07e1887758",
+      "proof": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/pull/330",
+      "live_workflow_dispatch_e2e": "NOT_ATTESTED"
+    }
+  ],
+  "latest_verified_head": "613c4712b8a1072afd31555692a1a98a4432d3a2",
+  "unique_next_action": "LIVE_OWNER_LAB_WORKFLOW_DISPATCH_TEST_AND_CANONICAL_GACR_BINDING_VERIFICATION",
+  "post_f1_entry": {
+    "choice": "LAB_EVOLUTION",
+    "origin": "OWNER_AUTHENTICATED_GITHUB_WORKFLOW",
+    "is_a_new_entry_door": false,
+    "requires_dispatcher_offer_for_lab_setup": false,
+    "requires_dispatcher_claim_for_lab_setup": false,
+    "gacr_identity_binding": "PENDING_VERIFIED_SESSION",
+    "native_write": "GITHUB_AUTHENTICATED_OPERATION_ONLY",
+    "owner_and_project_scope_verified_by_executor": true,
+    "initial_task_assigned": false
+  },
+  "merge_commit_sha": "066900103120e4f121fe7c52c76bff07e1887758",
+  "integration_head": "f4f6c38a5917dba42238eec3dbaad7a1e088ed7e",
+  "workflow_activation": {
+    "on_main": true,
+    "source_pr": 330,
+    "source_merge_commit": "066900103120e4f121fe7c52c76bff07e1887758",
+    "tests": "GOVERNANCE_CI_AND_GSCC_WORKFLOWS_SUCCESS_ON_INTEGRATION_HEAD",
+    "real_lab_workflow_dispatch_e2e": "NOT_EXECUTED",
+    "gacr_pool_session_membership": "REQUIRES_VERIFIED_REAL_AGENT_ID_AND_SESSION",
+    "test_f1_owner_issue": 337
+  }
+}

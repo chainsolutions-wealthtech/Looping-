@@ -1,0 +1,139 @@
+# GOVERNANCE — Contrat supérieur du dépôt
+
+> **PRE-ENTRY ABSOLUE**
+>
+> `00_GSCC_ENTRY.md` is the first repository authority for every arriving agent or API-driven tool surface.
+> This file is not an alternative entry point. It becomes applicable only after the pre-entry path has authorized continuation.
+>
+> Before any mutation or normal governed work:
+>
+> ```text
+> ARRIVAL → 00_GSCC_ENTRY.md → explicit next authority
+> ```
+
+> Dépôt : `{{REPOSITORY}}`  
+> Projet : `{{PROJECT_NAME}}`  
+> Propriétaire : `{{OWNER}}`
+
+## Contrat
+
+```text
+CANONICAL_WORK_BRANCH = {{CANONICAL_BRANCH}}
+FORCE_PUSH = FORBIDDEN
+HISTORY_REWRITE = FORBIDDEN
+IMPROVEMENT_ONLY = REQUIRED
+ZERO_REGRESSION = REQUIRED
+PERSISTENT_MEMORY = REQUIRED
+LOOP_ENGINEERING = REQUIRED
+READ_EXISTING_BEFORE_CREATE = REQUIRED
+DOCUMENT_ROLE_ANALYSIS = REQUIRED
+DELETE_WITHOUT_PROOF = FORBIDDEN
+SIMPLIFY_WITH_INFORMATION_LOSS = FORBIDDEN
+VERIFY_BEFORE_WRITE = REQUIRED
+VERIFY_AFTER_WRITE = REQUIRED
+NEW_BRANCH_CREATION = OWNER_EXPLICIT_ONLY
+NORMAL_WORK_PR = PROJECT_DEFINED
+```
+
+## Autorité
+
+En cas de contradiction :
+1. sécurité, loi, politique supérieure et autorisation explicite ;
+2. `SOURCE_OF_TRUTH.md` ;
+3. décision durable la plus récente dans `docs/DECISIONS.md` / `docs/adr/` ;
+4. règle la plus restrictive compatible avec les autorités supérieures ;
+5. ne jamais trancher silencieusement une contradiction structurante.
+
+## Amélioration sans régression
+
+Une modification valide doit améliorer, corriger, renforcer, compléter, sécuriser, documenter ou rendre plus vérifiable l'existant.
+
+Interdictions : réécrire l'histoire, forcer un push, remplacer silencieusement une décision, casser un contrat sans migration, supprimer un test pour faire passer une modification, inventer une validation, supprimer une information utile ou créer une source de vérité concurrente.
+
+## Mémoire persistante
+
+La mémoire du projet est versionnée dans le dépôt. Une conversation, un agent ou une session ne remplace jamais cette mémoire.
+
+## États
+
+`SPECIFIED → IMPLEMENTED → TESTED → CONFIGURED → ACTIVATED → DEPLOYED → PRODUCTION_VERIFIED`
+
+Aucune étape ultérieure ne doit être déduite d'une étape antérieure sans preuve.
+
+## Opérations sensibles
+
+Toute opération irréversible, destructive, financière, réglementaire, juridique, de production, de secret, de permission élevée ou d'infrastructure critique exige l'autorité correspondante et les contrôles adaptés. Le template ne confère jamais cette autorisation.
+
+<!-- GOVERNANCE_AUTOMATION_V2 -->
+## Automation and coordination invariants
+
+```text
+OBSERVED_STATE_NE_ASSUMED_STATE = REQUIRED
+HEAD_MOVED_RECONCILIATION = REQUIRED
+SINGLE_WRITER_PER_COLLISION_DOMAIN = REQUIRED
+UNKNOWN_PROVIDER_IDENTITY = NULL_NEVER_INVENT
+INTAKE_NE_CANONICAL_MEMORY = REQUIRED
+INTAKE_NE_WORK_ITEM = REQUIRED
+CONTRADICTION = HOLD_FOR_REVIEW
+AUTOMATION_FAIL_CLOSED = REQUIRED
+RUNTIME_AUTHORITY_INFERENCE = FORBIDDEN
+PLANNED_NE_IMPLEMENTED = REQUIRED
+INFRASTRUCTURE_FACTS_REQUIRE_OBSERVATION = REQUIRED
+CREDENTIALS_IN_REPOSITORY = FORBIDDEN
+CONNECTION_INTENT_FAIL_CLOSED = REQUIRED
+CONTEXT_INTAKE_NE_CODE_PERMISSION = REQUIRED
+INTENT_NE_AUTHORITY = REQUIRED
+ENTRY_ACTION_REQUIRED = REQUIRED
+ENTRY_ACTION_NE_INTENT = REQUIRED
+ENTRY_ACTION_NE_AUTHORITY = REQUIRED
+EXISTING_REPOSITORY_ADOPTION_ADDITIVE = REQUIRED
+LAB_CANONICAL_BRANCH_PROTECTION = REQUIRED
+PERSONAL_REPOSITORY_SCOPE_SUPPORTED = REQUIRED
+CENTRAL_CONTROL_PLANE = REQUIRED
+CONTROL_PLANE_REQUEST_STATE_EXTERNAL = REQUIRED
+CONTROL_PLANE_TARGET_MUTATION = AGENT_AUTHORITY_REQUIRED
+CONTROL_PLANE_EXPLICIT_HANDOFF = REQUIRED
+CONTROL_PLANE_SINGLE_NEXT_REQUEST = REQUIRED
+OBSERVABLE_ARRIVAL_VIA_GSCC = REQUIRED
+GOVERNED_FUNCTION_EXPOSURE_VIA_GSCC = REQUIRED
+GOVERNED_FUNCTION_INVOCATION_ROUTE_VIA_GSCC = REQUIRED
+FUNCTION_GATE_ACTIONS_WORKFLOW = REQUIRED
+CATALOGUE_PRESENCE_NE_EXPOSURE_AUTHORITY = REQUIRED
+GSCC_REQUIRED_FOR_OBSERVABLE_ARRIVAL = REQUIRED
+FUNCTION_EXPOSURE_REQUIRES_GSCC_VALIDATED_RECEIPT = REQUIRED
+FUNCTION_INVOCATION_REVALIDATION = REQUIRED
+RAW_CAPABILITY_CATALOGUE_NE_EXPOSED_FUNCTION_SURFACE = REQUIRED
+UNVALIDATED_FUNCTION_EXPOSURE = FORBIDDEN
+GOVERNED_ADMISSION_BEFORE_FUNCTION_EXPOSURE = REQUIRED
+PREAUTHORIZATION_NE_REPOSITORY_ACCESS = REQUIRED
+ACCESS_GRANT_REQUIRED_BEFORE_FUNCTION_EXPOSURE = REQUIRED
+ACCESS_GRANT_NE_INVOCATION_AUTHORITY = REQUIRED
+ACCESS_GRANT_NE_MUTATION_AUTHORITY = REQUIRED
+```
+
+The generic automation layer is a repository-local coordination projection. It does not create runtime locks, deployment authority, production permission or a second source of truth.
+
+
+## Technical and infrastructure intent
+
+The generic governance core does not assert a framework, database, server, domain or deployment merely because the repository exists.
+
+A project profile may record planned defaults. Infrastructure may remain unknown, missing or unprovisioned. These are valid governed states.
+
+`DIRECT_MCP` is the preferred governed server access transport when available. `SSH` is a fallback transport, not a source of authority. Any server mutation or provisioning still requires the relevant authorization.
+
+
+## Repository entry workflows
+
+Every agent connection resolves a macro entry action before mutable dispatch. Entry action, connection intent and authority are independent gates.
+
+Existing-repository adoption is additive by default and preserves project content. Project mapping is read-only by default. Lab evolution keeps the canonical branch untouched until validated merge. The same governance template supports organization and explicitly targeted personal-account repositories.
+
+
+## Central governance control plane
+
+`chainsolutions-wealthtech/Governed-Repository-Template` is the preparation/control plane for governed cross-repository requests.
+
+The control-plane issue workflow may update only its own request issue. It must not mutate another repository directly. Target observations and authorized target actions are executed by the connected agent and returned as evidence.
+
+Interactive request state remains in the control-plane issue, not in template content. A target repository may only be entered for normal work after an explicit `HANDOFF_READY`.

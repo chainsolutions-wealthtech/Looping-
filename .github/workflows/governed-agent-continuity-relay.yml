@@ -1,0 +1,285 @@
+name: Governed Agent Continuity Relay
+
+on:
+  push:
+    branches:
+      - main
+  issue_comment:
+    types:
+      - created
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+    inputs:
+      command:
+        description: GACR command
+        required: true
+        type: choice
+        options:
+          - auto-attach
+          - scan
+          - status
+          - register
+          - heartbeat
+          - takeover-plan
+          - takeover-accept
+          - beacon
+          - correlate
+          - dispatch
+          - context
+          - forensics
+          - telemetry-status
+          - pool
+          - plan-work
+          - dispatch-work
+          - work-offer-accept
+          - control-challenge
+      agent:
+        required: false
+        type: string
+      provider:
+        required: false
+        type: choice
+        options:
+          - chatgpt
+          - claude
+          - codex
+          - github-actions
+          - human
+          - other
+      provider_ref:
+        required: false
+        type: string
+      provider_url:
+        required: false
+        type: string
+      connection_ref:
+        required: false
+        type: string
+      task_id:
+        required: false
+        type: string
+      branch:
+        required: false
+        type: string
+      pull_request:
+        required: false
+        type: string
+      standby:
+        required: false
+        type: boolean
+        default: false
+      client_instance_id:
+        required: false
+        type: string
+      agent_role:
+        required: false
+        type: string
+      capabilities:
+        description: Comma-separated declared capabilities
+        required: false
+        type: string
+      wake_channels:
+        description: Comma-separated POLL_REPOSITORY,REPOSITORY_DISPATCH,EXTERNAL_BRIDGE
+        required: false
+        type: string
+      bridge_registration_ref:
+        required: false
+        type: string
+      event_type:
+        required: false
+        type: string
+      session_id:
+        required: false
+        type: string
+      action_label:
+        required: false
+        type: string
+      evidence:
+        required: false
+        type: string
+      stalled_session_id:
+        required: false
+        type: string
+      successor_session_id:
+        required: false
+        type: string
+      reconciled_head:
+        required: false
+        type: string
+      dispatch_id:
+        required: false
+        type: string
+      availability_state:
+        required: false
+        type: string
+      availability_reason_code:
+        required: false
+        type: string
+  repository_dispatch:
+    types:
+      - gacr_auto-attach
+      - gacr_register
+      - gacr_heartbeat
+      - gacr_scan
+      - gacr_status
+      - gacr_takeover-plan
+      - gacr_takeover-accept
+      - gacr_beacon
+      - gacr_correlate
+      - gacr_dispatch
+      - gacr_context
+      - gacr_forensics
+      - gacr_telemetry-status
+      - gacr_pool
+      - gacr_plan-work
+      - gacr_dispatch-work
+      - gacr_work-offer-accept
+      - gacr_control-challenge
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: gacr-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  relay:
+    if: ${{ (github.event_name != 'push' || github.actor != 'github-actions[bot]') && (github.event_name != 'issue_comment' || startsWith(github.event.comment.body, '/gacr-host ') || startsWith(github.event.comment.body, '/gscc-control ')) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Reconcile relay ingress to latest default branch
+        if: ${{ github.event_name == 'issue_comment' || github.event_name == 'repository_dispatch' }}
+        shell: bash
+        env:
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+          git fetch origin "$DEFAULT_BRANCH"
+          git checkout --detach FETCH_HEAD
+
+      - name: Capture exact base HEAD
+        id: base
+        shell: bash
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Execute GACR command
+        id: relay
+        run: python3 scripts/gacr_workflow_bridge.py
+
+      - name: Refresh capacity-aware work offers
+        run: python3 scripts/gacr_capacity_dispatch.py dispatch-work
+
+      - name: Run continuity mini-loop
+        run: python3 scripts/gacr_continuity_bus.py tick
+
+      - name: Deliver pending GSCC control commands
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 scripts/gscc_gacr/issue_control_bridge.py deliver
+
+      - name: Reconcile continuity delivery projection
+        run: python3 scripts/gacr_continuity_bus.py tick
+
+      - name: Validate GACR state
+        run: |
+          python3 -m py_compile scripts/governed_agent_continuity_relay.py scripts/gacr_workflow_bridge.py scripts/gacr_agent_telemetry.py scripts/gacr_capacity_dispatch.py scripts/gacr_bridge_notifier.py scripts/gacr_auto_attach.py scripts/gacr_client_emitter.py scripts/gacr_host_issue_ingress.py scripts/gacr_continuity_coordination.py scripts/gacr_continuity_bus.py scripts/gscc_control_issue_ingress.py scripts/gscc_gacr/issue_control_bridge.py
+          python3 scripts/test_gacr_continuity_coordination.py
+          python3 scripts/test_gacr_continuity_bus.py
+          python3 scripts/test_gscc_issue_control_bridge.py
+          python3 scripts/validate_governance.py
+
+      - name: Persist changed relay state
+        shell: bash
+        env:
+          BASE_HEAD: ${{ steps.base.outputs.sha }}
+          TARGET_BRANCH: ${{ github.event.repository.default_branch || github.ref_name || 'main' }}
+        run: |
+          set -euo pipefail
+          if [ -f .template-source ]; then
+            paths=(
+              .governance/control-plane-state/gacr-sessions.json
+              .governance/control-plane-state/gacr-claims.json
+              .governance/control-plane-state/gacr-takeovers.json
+              .governance/control-plane-state/gacr-beacons.json
+              .governance/control-plane-state/gacr-correlations.json
+              .governance/control-plane-state/gacr-dispatches.json
+              .governance/control-plane-state/gacr-forensics.json
+              .governance/control-plane-state/gacr-continuities.json
+            )
+          else
+            paths=(
+              .governance/sessions/sessions.json
+              .governance/work/claims.json
+              .governance/agent-relay/takeovers.json
+              .governance/agent-relay/beacons.json
+              .governance/agent-relay/correlations.json
+              .governance/agent-relay/dispatches.json
+              .governance/agent-relay/forensics.json
+              .governance/agent-relay/continuities.json
+            )
+          fi
+          if git diff --quiet -- "${paths[@]}"; then
+            echo "GACR_NO_STATE_CHANGE"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "${paths[@]}"
+          git commit -m "governance: GACR ${{ steps.relay.outputs.command }}"
+
+          git fetch origin "$TARGET_BRANCH"
+          remote_head="$(git rev-parse FETCH_HEAD)"
+          if [ "$remote_head" != "$BASE_HEAD" ]; then
+            echo "HEAD_MOVED: expected=$BASE_HEAD remote=$remote_head"
+            exit 3
+          fi
+
+          git push origin "HEAD:$TARGET_BRANCH"
+
+      - name: Deliver optional external GACR wake events
+        env:
+          GACR_BRIDGE_WEBHOOK_URL: ${{ vars.GACR_BRIDGE_WEBHOOK_URL }}
+          GACR_BRIDGE_WEBHOOK_TOKEN: ${{ secrets.GACR_BRIDGE_WEBHOOK_TOKEN }}
+        run: python3 scripts/gacr_bridge_notifier.py
+
+      - name: Persist optional external GACR delivery state
+        if: ${{ always() }}
+        shell: bash
+        env:
+          TARGET_BRANCH: ${{ github.event.repository.default_branch || github.ref_name || 'main' }}
+        run: |
+          set -euo pipefail
+          if [ -f .template-source ]; then
+            paths=(.governance/control-plane-state/gacr-dispatches.json .governance/control-plane-state/gacr-continuities.json)
+          else
+            paths=(.governance/agent-relay/dispatches.json .governance/agent-relay/continuities.json)
+          fi
+          if git diff --quiet -- "${paths[@]}"; then
+            echo "GACR_NO_OUTBOUND_DELIVERY_STATE_CHANGE"
+            exit 0
+          fi
+          git fetch origin "$TARGET_BRANCH"
+          remote_head="$(git rev-parse FETCH_HEAD)"
+          local_head="$(git rev-parse HEAD)"
+          if [ "$remote_head" != "$local_head" ]; then
+            echo "HEAD_MOVED: local=$local_head remote=$remote_head"
+            exit 3
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "${paths[@]}"
+          git commit -m "governance: persist GACR outbound continuity delivery"
+          git push origin "HEAD:$TARGET_BRANCH"

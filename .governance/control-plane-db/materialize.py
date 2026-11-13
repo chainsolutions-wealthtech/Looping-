@@ -1,0 +1,623 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import re
+import sqlite3
+import sys
+import tempfile
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
+DB_ROOT = ROOT / ".governance" / "control-plane-db"
+sys.path.insert(0, str(ROOT / "scripts"))
+from control_plane_server_inventory_facts import validate_inventory_state
+from control_plane_server_identity_secret_facts import validate_initial_or_persisted_state as validate_identity_secret_state
+from first_touch_field_block_gate import insert_catalog as insert_first_touch_field_gate_catalog
+
+def jdump(value):
+    return json.dumps(value, sort_keys=True, separators=(",", ":"))
+
+def insert_case_data(conn, catalog):
+    for item in catalog["cases"]:
+        conn.execute(
+            "INSERT INTO framework_cases(case_id,label,ordinal,kind,status,source_authority) VALUES(?,?,?,?,?,?)",
+            (item["case_id"], item["label"], item["ordinal"], item["kind"], item["status"], item.get("source_authority")),
+        )
+    for item in catalog.get("modes", []):
+        conn.execute(
+            "INSERT INTO modes(mode_id,case_id,label,description,is_default) VALUES(?,?,?,?,?)",
+            (item["mode_id"], item.get("case_id"), item["label"], item.get("description"), int(item.get("is_default",0))),
+        )
+
+def insert_replay(conn, replay):
+    previous = None
+    for ordinal, phase in enumerate(replay["phases"]):
+        conn.execute(
+            "INSERT INTO case_phases(phase_id,case_id,ordinal,label,status,owner_feedback_hook,source_authority) VALUES(?,?,?,?,?,?,?)",
+            (phase["id"], replay["case_id"], ordinal, phase["name"], phase["status"], jdump(phase.get("owner_feedback")) if "owner_feedback" in phase else None, replay["authority"]),
+        )
+        for dep in phase.get("depends_on", []):
+            conn.execute("INSERT INTO phase_dependencies(phase_id,depends_on_phase_id) VALUES(?,?)",(phase["id"],dep))
+        if previous and not phase.get("depends_on") and ordinal > 0:
+            conn.execute("INSERT OR IGNORE INTO phase_dependencies(phase_id,depends_on_phase_id) VALUES(?,?)",(phase["id"],previous))
+        previous = phase["id"]
+
+def insert_questions_activities(conn, catalog):
+    for q in catalog.get("questions", []):
+        conn.execute(
+            "INSERT INTO questions(question_id,case_id,phase_id,field_key,prompt,response_type,required,required_when_json,validation_rule,source_authority) VALUES(?,?,?,?,?,?,?,?,?,?)",
+            (q["question_id"],q.get("case_id"),q.get("phase_id"),q["field_key"],q["prompt"],q["response_type"],int(q.get("required",1)),jdump(q.get("required_when")) if q.get("required_when") is not None else None,q.get("validation_rule"),q.get("source_authority")),
+        )
+        for ordinal, option in enumerate(q.get("options", [])):
+            conn.execute(
+                "INSERT INTO question_options(option_id,question_id,value_json,label,ordinal) VALUES(?,?,?,?,?)",
+                (f'{q["question_id"]}-OPT-{ordinal+1}',q["question_id"],jdump(option),str(option),ordinal+1),
+            )
+    for a in catalog.get("activities", []):
+        conn.execute(
+            "INSERT INTO activities(activity_id,case_id,phase_id,kind,label,mutation_class,required_authority,required_evidence_json,source_authority) VALUES(?,?,?,?,?,?,?,?,?)",
+            (a["activity_id"],a["case_id"],a.get("phase_id"),a["kind"],a["label"],a["mutation_class"],a.get("required_authority"),jdump(a.get("required_evidence",[])),a.get("source_authority")),
+        )
+
+def insert_runtime(conn, seed):
+    for r in seed.get("repositories", []):
+        conn.execute("INSERT INTO repositories(repository_id,full_name,role,canonical_branch,current_head_sha,source_ref) VALUES(?,?,?,?,?,?)",
+                     (r["repository_id"],r["full_name"],r["role"],r.get("canonical_branch"),r.get("current_head_sha"),r.get("source_ref")))
+    for run in seed.get("runs", []):
+        conn.execute("INSERT INTO runs(run_id,case_id,repository_id,status,current_phase_id,source_issue,started_at,completed_at,parent_run_id) VALUES(?,?,?,?,?,?,?,?,?)",
+                     (run["run_id"],run["case_id"],run.get("repository_id"),run["status"],run.get("current_phase_id"),run.get("source_issue"),run.get("started_at"),run.get("completed_at"),run.get("parent_run_id")))
+    for d in seed.get("decisions", []):
+        conn.execute("INSERT INTO decisions(decision_id,scope_type,scope_id,decision_key,value_json,status,source_ref,decided_at) VALUES(?,?,?,?,?,?,?,?)",
+                     (d["decision_id"],d["scope_type"],d["scope_id"],d["decision_key"],jdump(d["value"]),d["status"],d.get("source_ref"),d.get("decided_at")))
+    for cp in seed.get("checkpoints", []):
+        conn.execute("INSERT INTO checkpoints(checkpoint_id,run_id,phase_id,subject_head_sha,state,next_action,payload_json,source_ref,created_at) VALUES(?,?,?,?,?,?,?,?,?)",
+                     (cp["checkpoint_id"],cp.get("run_id"),cp.get("phase_id"),cp.get("subject_head_sha"),cp["state"],cp.get("next_action"),jdump(cp.get("payload",{})),cp.get("source_ref"),cp.get("created_at")))
+    for i in seed.get("intakes", []):
+        conn.execute("INSERT INTO intakes(intake_id,originating_case_id,originating_run_id,target_system,status,summary,source_ref,created_at) VALUES(?,?,?,?,?,?,?,?)",
+                     (i["intake_id"],i.get("originating_case_id"),i.get("originating_run_id"),i["target_system"],i["status"],i["summary"],i.get("source_ref"),i.get("created_at")))
+    for a in seed.get("run_answers", []):
+        conn.execute("INSERT INTO run_answers(run_answer_id,run_id,question_id,field_key,value_json,revision,source_ref,answered_at,supersedes_run_answer_id) VALUES(?,?,?,?,?,?,?,?,?)",
+                     (a["run_answer_id"],a["run_id"],a.get("question_id"),a["field_key"],jdump(a["value"]),a["revision"],a.get("source_ref"),a.get("answered_at"),a.get("supersedes_run_answer_id")))
+    for e in seed.get("run_events", []):
+        conn.execute("INSERT INTO run_events(event_id,run_id,phase_id,event_type,payload_json,source_ref,occurred_at) VALUES(?,?,?,?,?,?,?)",
+                     (e["event_id"],e.get("run_id"),e.get("phase_id"),e["event_type"],jdump(e.get("payload",{})),e.get("source_ref"),e.get("occurred_at")))
+    for ev in seed.get("evidence", []):
+        conn.execute("INSERT INTO evidence(evidence_id,run_id,phase_id,evidence_type,status,payload_json,source_ref,observed_at) VALUES(?,?,?,?,?,?,?,?)",
+                     (ev["evidence_id"],ev.get("run_id"),ev.get("phase_id"),ev["evidence_type"],ev["status"],jdump(ev.get("payload",{})),ev.get("source_ref"),ev.get("observed_at")))
+    for h in seed.get("handoffs", []):
+        conn.execute("INSERT INTO handoffs(handoff_id,run_id,checkpoint_id,status,next_action,payload_json,source_ref,created_at) VALUES(?,?,?,?,?,?,?,?)",
+                     (h["handoff_id"],h.get("run_id"),h.get("checkpoint_id"),h["status"],h.get("next_action"),jdump(h.get("payload",{})),h.get("source_ref"),h.get("created_at")))
+    for fb in seed.get("owner_feedback", []):
+        conn.execute("INSERT INTO owner_feedback(feedback_id,run_id,phase_id,feedback_class,content,effect,earliest_affected_phase_id,dependent_revalidation_json,source_ref,created_at) VALUES(?,?,?,?,?,?,?,?,?,?)",
+                     (fb["feedback_id"],fb.get("run_id"),fb.get("phase_id"),fb["feedback_class"],fb["content"],fb["effect"],fb.get("earliest_affected_phase_id"),jdump(fb.get("dependent_revalidation",[])),fb.get("source_ref"),fb.get("created_at")))
+    for art in seed.get("artifacts", []):
+        conn.execute("INSERT INTO artifacts(artifact_id,run_id,phase_id,artifact_type,path_or_ref,sha,source_ref,created_at) VALUES(?,?,?,?,?,?,?,?)",
+                     (art["artifact_id"],art.get("run_id"),art.get("phase_id"),art["artifact_type"],art["path_or_ref"],art.get("sha"),art.get("source_ref"),art.get("created_at")))
+    for auth in seed.get("canonical_authorities", []):
+        conn.execute("INSERT INTO canonical_authorities(authority_id,authority_type,canonical_path,scope,status,current_revision,source_decision_id,created_at) VALUES(?,?,?,?,?,?,?,?)",
+                     (auth["authority_id"],auth["authority_type"],auth["canonical_path"],auth["scope"],auth["status"],auth["current_revision"],auth.get("source_decision_id"),auth.get("created_at")))
+    for rev in seed.get("canonical_authority_revisions", []):
+        conn.execute("INSERT INTO canonical_authority_revisions(revision_id,authority_id,revision_number,subject_head_sha,content_sha,supersedes_revision_id,reason,source_decision_id,source_ref,created_at) VALUES(?,?,?,?,?,?,?,?,?,?)",
+                     (rev["revision_id"],rev["authority_id"],rev["revision_number"],rev.get("subject_head_sha"),rev.get("content_sha"),rev.get("supersedes_revision_id"),rev["reason"],rev.get("source_decision_id"),rev.get("source_ref"),rev.get("created_at")))
+    for ev in seed.get("canonical_memory_events", []):
+        conn.execute("INSERT INTO canonical_memory_events(event_id,event_type,scope_type,scope_id,payload_json,source_ref,occurred_at) VALUES(?,?,?,?,?,?,?)",
+                     (ev["event_id"],ev["event_type"],ev["scope_type"],ev["scope_id"],jdump(ev.get("payload",{})),ev.get("source_ref"),ev.get("occurred_at")))
+
+def insert_server_inventory(conn, inventory):
+    model = json.loads((ROOT/".governance/control-plane-state/server-knowledge-model.json").read_text(encoding="utf-8"))
+    validate_inventory_state(inventory, model)
+    for fact in inventory["facts"]:
+        conn.execute(
+            "INSERT INTO server_inventory_facts(fact_id,server_id,domain_id,slot,status,value_json,"
+            "freshness_class,observed_at,known_from_json,last_attempt_json,source_revision) "
+            "VALUES(?,?,?,?,?,?,?,?,?,?,?)",
+            (fact["fact_id"], fact["server_id"], fact["domain_id"], fact["slot"], fact["status"],
+             jdump(fact["value"]) if fact["value"] is not None else None, fact["freshness_class"],
+             fact["observed_at"], jdump(fact["known_from"]) if fact["known_from"] else None,
+             jdump(fact["last_attempt"]), inventory["revision"]),
+        )
+
+def insert_server_identity_secret_facts(conn, state):
+    validate_identity_secret_state(state)
+    for fact in state["facts"]:
+        conn.execute(
+            "INSERT INTO server_identity_secret_facts("
+            "fact_id,server_id,fact_kind,subject_id,status,metadata_json,freshness_class,"
+            "observed_at,known_from_json,last_attempt_json,source_revision"
+            ") VALUES(?,?,?,?,?,?,?,?,?,?,?)",
+            (
+                fact["fact_id"], fact["server_id"], fact["fact_kind"], fact["subject_id"],
+                fact["status"], jdump(fact["metadata"]), fact["freshness_class"],
+                fact["observed_at"], jdump(fact["known_from"]), jdump(fact["last_attempt"]),
+                state["revision"],
+            ),
+        )
+
+
+def _probe_scalar(value: str):
+    text = value.strip()
+    if len(text) >= 2 and text[0] == text[-1] == "`":
+        text = text[1:-1]
+    if text.startswith("#") and text[1:].isdigit():
+        return text, "string"
+    try:
+        parsed = json.loads(text)
+        return parsed, (
+            "null" if parsed is None else
+            "boolean" if isinstance(parsed, bool) else
+            "number" if isinstance(parsed, (int, float)) else
+            "array" if isinstance(parsed, list) else
+            "object" if isinstance(parsed, dict) else
+            "string"
+        )
+    except (json.JSONDecodeError, TypeError):
+        return text, "string"
+
+
+def _probe_observations(lines: list[str]):
+    section_ordinal = 0
+    section_heading = None
+    in_code = False
+    raw_anchor = False
+    raw_anchor_buffer: list[tuple[int, str]] = []
+    observations = []
+
+    def emit(line_number: int, key: str, value: str, kind: str):
+        parsed, value_type = _probe_scalar(value)
+        observations.append({
+            "section_ordinal": section_ordinal or None,
+            "section_heading": section_heading,
+            "key": key.strip(),
+            "value_text": value.strip(),
+            "value_json": jdump(parsed),
+            "value_type": value_type,
+            "source_line_number": line_number,
+            "source_kind": kind,
+        })
+
+    heading_re = re.compile(r"^##\s+(?:(\d+)\.\s+)?(.+?)\s*$")
+    metadata_re = re.compile(r"^>\s+([^:]+):\s*(.+?)\s*$")
+    bullet_re = re.compile(r"^-\s+([^:]+):\s*(.*?)\s*$")
+    label_re = re.compile(r"^([A-Za-z0-9_ /()#.+-]+):\s*$")
+
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        heading = heading_re.match(line)
+        if heading and not in_code:
+            section_ordinal += 1
+            section_heading = heading.group(2).strip()
+            raw_anchor = section_heading.lower() in {"raw anchor inventory", "raw inventory"}
+            i += 1
+            continue
+
+        if line.strip().startswith("```"):
+            if in_code and raw_anchor:
+                nonblank = [(n, t.strip()) for n, t in raw_anchor_buffer if t.strip()]
+                j = 0
+                while j + 1 < len(nonblank):
+                    key_line, key = nonblank[j]
+                    value_line, value = nonblank[j + 1]
+                    emit(value_line, key, value, "RAW_ANCHOR")
+                    j += 2
+                raw_anchor_buffer = []
+            in_code = not in_code
+            i += 1
+            continue
+
+        if in_code:
+            if raw_anchor:
+                raw_anchor_buffer.append((i + 1, line))
+            i += 1
+            continue
+
+        m = metadata_re.match(line)
+        if m:
+            emit(i + 1, m.group(1), m.group(2), "HEADER_METADATA")
+            i += 1
+            continue
+
+        m = bullet_re.match(line)
+        if m:
+            emit(i + 1, m.group(1), m.group(2), "BULLET_KEY_VALUE")
+            i += 1
+            continue
+
+        m = label_re.match(line)
+        if m:
+            j = i + 1
+            while j < len(lines) and not lines[j].strip():
+                j += 1
+            if j < len(lines):
+                nxt = lines[j].strip()
+                if nxt.startswith("`") and nxt.endswith("`"):
+                    emit(j + 1, m.group(1), nxt, "LABEL_VALUE")
+                    i = j + 1
+                    continue
+        i += 1
+
+    return observations
+
+
+def insert_first_touch_probes(conn):
+    probe_root = ROOT / "docs" / "control-plane" / "probes"
+    if not probe_root.exists():
+        return
+
+    for path in sorted(probe_root.glob("*.md")):
+        raw = path.read_text(encoding="utf-8")
+        lines = raw.splitlines()
+        observations = _probe_observations(lines)
+        probe_id = path.stem
+
+        by_key = {}
+        for obs in observations:
+            by_key.setdefault(obs["key"].strip().lower(), []).append(json.loads(obs["value_json"]))
+
+        def first(*keys):
+            for key in keys:
+                vals = by_key.get(key.lower())
+                if vals:
+                    return vals[0]
+            return None
+
+        correlation_key = first("Correlation key") or probe_id
+        issue = first("Original probe issue", "Created issue")
+        issue_number = None
+        if isinstance(issue, str):
+            m = re.search(r"(\d+)", issue)
+            issue_number = int(m.group(1)) if m else None
+        elif isinstance(issue, int):
+            issue_number = issue
+
+        section_headings = []
+        for line in lines:
+            m = re.match(r"^##\s+(?:(\d+)\.\s+)?(.+?)\s*$", line)
+            if m:
+                section_headings.append(m.group(2).strip())
+
+        conn.execute(
+            "INSERT INTO first_touch_probe_records("
+            "probe_id,correlation_key,source_path,status,scope,repository,original_issue_number,"
+            "original_issue_created_at,document_sha256,raw_markdown,line_count,section_count,observation_count"
+            ") VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            (
+                probe_id,
+                str(correlation_key),
+                str(path.relative_to(ROOT)),
+                first("Status"),
+                first("Scope"),
+                first("Repository"),
+                issue_number,
+                first("Original issue created at", "Created at"),
+                hashlib.sha256(raw.encode("utf-8")).hexdigest(),
+                raw,
+                len(lines),
+                len(section_headings),
+                len(observations),
+            ),
+        )
+
+        section_ordinal = 0
+        section_heading = None
+        for line_number, line in enumerate(lines, start=1):
+            m = re.match(r"^##\s+(?:(\d+)\.\s+)?(.+?)\s*$", line)
+            if m:
+                section_ordinal += 1
+                section_heading = m.group(2).strip()
+            conn.execute(
+                "INSERT INTO first_touch_probe_lines("
+                "probe_id,line_number,section_ordinal,section_heading,line_text"
+                ") VALUES(?,?,?,?,?)",
+                (probe_id, line_number, section_ordinal or None, section_heading, line),
+            )
+
+        for ordinal, obs in enumerate(observations, start=1):
+            conn.execute(
+                "INSERT INTO first_touch_probe_observations("
+                "probe_id,observation_id,section_ordinal,section_heading,observation_key,value_text,"
+                "value_json,value_type,source_line_number,source_kind"
+                ") VALUES(?,?,?,?,?,?,?,?,?,?)",
+                (
+                    probe_id,
+                    f"{probe_id}-OBS-{ordinal:04d}",
+                    obs["section_ordinal"],
+                    obs["section_heading"],
+                    obs["key"],
+                    obs["value_text"],
+                    obs["value_json"],
+                    obs["value_type"],
+                    obs["source_line_number"],
+                    obs["source_kind"],
+                ),
+            )
+
+
+def validate(conn, expected_inventory_count=0, expected_identity_secret_count=0, expected_probe_count=0):
+    conn.execute("PRAGMA foreign_key_check")
+    fk = conn.fetchall() if False else []
+    if conn.execute("PRAGMA foreign_key_check").fetchall():
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: foreign key violation")
+    cases = conn.execute("SELECT COUNT(*) FROM framework_cases WHERE kind='STRUCTURING_CASE'").fetchone()[0]
+    if cases != 4:
+        raise SystemExit(f"CONTROL_PLANE_DB_FAILED: expected 4 structuring cases, got {cases}")
+    active = conn.execute("SELECT phase_id FROM case_phases WHERE case_id='CREATE_NEW_REPOSITORY' AND status='IN_PROGRESS'").fetchall()
+    run_state = conn.execute(
+        "SELECT status,current_phase_id FROM runs WHERE run_id='CASE1-PILOT-GOUVERN'"
+    ).fetchone()
+    if run_state is None:
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: pilot run missing")
+    run_status, current_phase_id = run_state
+    if run_status == "IN_PROGRESS":
+        if len(active) != 1 or current_phase_id is None or active[0][0] != current_phase_id:
+            raise SystemExit(
+                "CONTROL_PLANE_DB_FAILED: active CASE1 phase/run mismatch: "
+                f"active={active} run_status={run_status} current_phase={current_phase_id}"
+            )
+    elif run_status == "DONE":
+        if active or current_phase_id is not None:
+            raise SystemExit(
+                "CONTROL_PLANE_DB_FAILED: completed CASE1 run must have zero active phases "
+                f"and null current_phase_id: active={active} current_phase={current_phase_id}"
+            )
+    else:
+        raise SystemExit(f"CONTROL_PLANE_DB_FAILED: unsupported CASE1 run status: {run_status}")
+    mcp_choices = [json.loads(r[0]) for r in conn.execute(
+        "SELECT value_json FROM question_options WHERE question_id='C1-Q-MCP-TRANSPORT' ORDER BY ordinal"
+    ).fetchall()]
+    if mcp_choices != ["DIRECT_MCP_TOKEN","SSH","BOTH"]:
+        raise SystemExit(f"CONTROL_PLANE_DB_FAILED: MCP choices mismatch: {mcp_choices}")
+    if conn.execute("SELECT COUNT(*) FROM questions").fetchone()[0] < 15:
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: question catalog unexpectedly small")
+    if conn.execute("SELECT COUNT(*) FROM activities").fetchone()[0] < 8:
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: activity catalog unexpectedly small")
+    for table in ["agent_sessions","agent_activity_events","canonical_authorities","canonical_authority_revisions","canonical_memory_events"]:
+        conn.execute(f"SELECT 1 FROM {table} LIMIT 1")
+    canonical_architecture = json.loads(
+        (ROOT / ".governance/control-plane-state/canonical-architecture.json").read_text(encoding="utf-8")
+    )
+    expected_arch_revision = int(canonical_architecture["current_revision"])
+    authority = conn.execute("SELECT authority_id,current_revision FROM canonical_authorities WHERE authority_id='CP-ARCH-001'").fetchone()
+    if authority != ("CP-ARCH-001", expected_arch_revision):
+        raise SystemExit(
+            "CONTROL_PLANE_DB_FAILED: canonical architecture authority missing or invalid: "
+            f"{authority}; expected revision={expected_arch_revision}"
+        )
+    revisions = conn.execute(
+        "SELECT revision_id,revision_number,supersedes_revision_id "
+        "FROM canonical_authority_revisions WHERE authority_id='CP-ARCH-001' ORDER BY revision_number"
+    ).fetchall()
+    if len(revisions) != expected_arch_revision:
+        raise SystemExit(f"CONTROL_PLANE_DB_FAILED: canonical architecture revision count mismatch: {revisions}")
+    for index, (revision_id, revision_number, supersedes_revision_id) in enumerate(revisions, start=1):
+        expected_revision_id = f"CP-ARCH-001-R{index}"
+        expected_supersedes = None if index == 1 else f"CP-ARCH-001-R{index - 1}"
+        if (revision_id, revision_number, supersedes_revision_id) != (
+            expected_revision_id,
+            index,
+            expected_supersedes,
+        ):
+            raise SystemExit(f"CONTROL_PLANE_DB_FAILED: canonical architecture revision chain mismatch: {revisions}")
+    govmodel_catalogue = json.loads(
+        (ROOT / ".governance/control-plane-state/governance-model-catalogue.json").read_text(encoding="utf-8")
+    )
+    expected_govmodel_revision = int(govmodel_catalogue["current_revision"])
+    expected_govmodel_status = govmodel_catalogue["status"]
+    govmodel = conn.execute(
+        "SELECT authority_id,current_revision,status FROM canonical_authorities WHERE authority_id='CP-GOVMODEL-001'"
+    ).fetchone()
+    if govmodel != ("CP-GOVMODEL-001", expected_govmodel_revision, expected_govmodel_status):
+        raise SystemExit(
+            "CONTROL_PLANE_DB_FAILED: governance model catalogue authority missing or invalid: "
+            f"{govmodel}; expected revision={expected_govmodel_revision} status={expected_govmodel_status}"
+        )
+    govmodel_revisions = conn.execute(
+        "SELECT revision_id,revision_number,supersedes_revision_id "
+        "FROM canonical_authority_revisions WHERE authority_id='CP-GOVMODEL-001' ORDER BY revision_number"
+    ).fetchall()
+    if len(govmodel_revisions) != expected_govmodel_revision:
+        raise SystemExit(
+            "CONTROL_PLANE_DB_FAILED: governance model catalogue revision count mismatch: "
+            f"{govmodel_revisions}"
+        )
+    for index, (revision_id, revision_number, supersedes_revision_id) in enumerate(govmodel_revisions, start=1):
+        expected_revision_id = f"CP-GOVMODEL-001-R{index}"
+        expected_supersedes = None if index == 1 else f"CP-GOVMODEL-001-R{index - 1}"
+        if (revision_id, revision_number, supersedes_revision_id) != (
+            expected_revision_id,
+            index,
+            expected_supersedes,
+        ):
+            raise SystemExit(
+                "CONTROL_PLANE_DB_FAILED: governance model catalogue revision chain mismatch: "
+                f"{govmodel_revisions}"
+            )
+    required_event_types = {row[0] for row in conn.execute("SELECT event_type FROM canonical_memory_events WHERE scope_id='CP-ARCH-001'").fetchall()}
+    if not {"ARCHITECTURE_AUTHORITY_CREATED","ARCHITECTURE_REVISION_ACCEPTED"}.issubset(required_event_types):
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: canonical architecture event history incomplete")
+    decision = conn.execute("SELECT decision_id FROM decisions WHERE decision_id='CPD-019'").fetchone()
+    if decision != ("CPD-019",):
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: continuous relational projection decision missing")
+    feedback = conn.execute("SELECT feedback_id FROM owner_feedback WHERE feedback_id='FB-20260926-DB-001'").fetchone()
+    if feedback != ("FB-20260926-DB-001",):
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: owner continuous-database requirement missing")
+    projection_events = {row[0] for row in conn.execute("SELECT event_type FROM canonical_memory_events WHERE scope_id='CONTROL_PLANE'").fetchall()}
+    if not {"OWNER_FEEDBACK_RECEIVED","DECISION_ACCEPTED"}.issubset(projection_events):
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: continuous relational projection events incomplete")
+    idn_decision = conn.execute("SELECT decision_id FROM decisions WHERE decision_id='CPD-020'").fetchone()
+    if idn_decision != ("CPD-020",):
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: identity/session routing decision missing")
+    idn_feedback = conn.execute("SELECT feedback_id FROM owner_feedback WHERE feedback_id='FB-20260926-IDN-001'").fetchone()
+    if idn_feedback != ("FB-20260926-IDN-001",):
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: identity/session routing owner feedback missing")
+    rte_decision = conn.execute("SELECT decision_id FROM decisions WHERE decision_id='CPD-021'").fetchone()
+    if rte_decision != ("CPD-021",):
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: two-stage purpose routing decision missing")
+    rte_feedback = conn.execute("SELECT feedback_id FROM owner_feedback WHERE feedback_id='FB-20260926-RTE-001'").fetchone()
+    if rte_feedback != ("FB-20260926-RTE-001",):
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: two-stage purpose routing owner feedback missing")
+    scope_decision = conn.execute("SELECT decision_id FROM decisions WHERE decision_id='CPD-022'").fetchone()
+    if scope_decision != ("CPD-022",):
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: framework product boundary decision missing")
+    scope_feedback = conn.execute("SELECT feedback_id FROM owner_feedback WHERE feedback_id='FB-20260926-SCOPE-001'").fetchone()
+    if scope_feedback != ("FB-20260926-SCOPE-001",):
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: framework product boundary feedback missing")
+    upgrade_decision = conn.execute("SELECT decision_id FROM decisions WHERE decision_id='CPD-023'").fetchone()
+    if upgrade_decision != ("CPD-023",):
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: dynamic client upgrade decision missing")
+    upgrade_event = conn.execute("SELECT event_id FROM run_events WHERE event_id='RUNEV-C1-12-UPGRADER-GAP'").fetchone()
+    if upgrade_event != ("RUNEV-C1-12-UPGRADER-GAP",):
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: client upgrader defect event missing")
+    selftest_decision = conn.execute("SELECT decision_id FROM decisions WHERE decision_id='CPD-024'").fetchone()
+    if selftest_decision != ("CPD-024",):
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: portable self-test decision missing")
+    v285_event = conn.execute("SELECT event_id FROM run_events WHERE event_id='RUNEV-C1-12-V285-PILOT-CI-FAIL'").fetchone()
+    if v285_event != ("RUNEV-C1-12-V285-PILOT-CI-FAIL",):
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: V2.8.5 pilot CI defect event missing")
+    entry_purpose = [json.loads(r[0]) for r in conn.execute(
+        "SELECT value_json FROM question_options WHERE question_id='CP-Q-ENTRY-PURPOSE' ORDER BY ordinal"
+    ).fetchall()]
+    if entry_purpose != ["WORK_ON_CONTROL_PLANE","APPLY_GOVERNANCE_CASE"]:
+        raise SystemExit(f"CONTROL_PLANE_DB_FAILED: entry purpose choices mismatch: {entry_purpose}")
+    work_kinds = [json.loads(r[0]) for r in conn.execute(
+        "SELECT value_json FROM question_options WHERE question_id='CP-Q-CONTROL-PLANE-WORK-KIND' ORDER BY ordinal"
+    ).fetchall()]
+    if work_kinds != ["CODE_IMPLEMENTATION","EXECUTE_EXISTING_TASK","ADD_OR_ENRICH_INFORMATION"]:
+        raise SystemExit(f"CONTROL_PLANE_DB_FAILED: control-plane work kinds mismatch: {work_kinds}")
+    structuring_cases = [json.loads(r[0]) for r in conn.execute(
+        "SELECT value_json FROM question_options WHERE question_id='CP-Q-STRUCTURING-CASE' ORDER BY ordinal"
+    ).fetchall()]
+    if structuring_cases != ["CREATE_NEW_REPOSITORY","ADOPT_EXISTING_REPOSITORY","MAP_EXISTING_PROJECT","LAB_EVOLUTION"]:
+        raise SystemExit(f"CONTROL_PLANE_DB_FAILED: structuring case choices mismatch: {structuring_cases}")
+    facts_count = conn.execute("SELECT COUNT(*) FROM server_inventory_facts").fetchone()[0]
+    if facts_count != expected_inventory_count:
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: server inventory projection count mismatch")
+    probe_count = conn.execute("SELECT COUNT(*) FROM first_touch_probe_records").fetchone()[0]
+    if probe_count != expected_probe_count:
+        raise SystemExit(f"CONTROL_PLANE_DB_FAILED: first-touch probe record count mismatch: {probe_count} != {expected_probe_count}")
+    if expected_probe_count:
+        probe = conn.execute(
+            "SELECT correlation_key,line_count,section_count,observation_count FROM first_touch_probe_records "
+            "WHERE probe_id='FT-PROBE-20261006-01'"
+        ).fetchone()
+        if probe is None or probe[0] != "FT-PROBE-20261006-01" or probe[1] < 400 or probe[2] < 40 or probe[3] < 80:
+            raise SystemExit(f"CONTROL_PLANE_DB_FAILED: first-touch probe projection incomplete: {probe}")
+        required_probe_keys = {
+            row[0] for row in conn.execute(
+                "SELECT observation_key FROM first_touch_probe_observations "
+                "WHERE probe_id='FT-PROBE-20261006-01'"
+            ).fetchall()
+        }
+        for required_key in {
+            "GACR_SESSION_ID",
+            "CONNECTION_REF",
+            "CLIENT_INSTANCE_ID",
+            "PROVIDER_CONVERSATION_REF",
+            "DIRECT_GITHUB_TO_CURRENT_CHATGPT_THREAD_ADDRESSABILITY_PROVEN",
+        }:
+            if required_key not in required_probe_keys:
+                raise SystemExit(
+                    f"CONTROL_PLANE_DB_FAILED: first-touch probe key missing: {required_key}"
+                )
+        source_line_count = conn.execute(
+            "SELECT COUNT(*) FROM first_touch_probe_lines WHERE probe_id='FT-PROBE-20261006-01'"
+        ).fetchone()[0]
+        if source_line_count != probe[1]:
+            raise SystemExit(
+                f"CONTROL_PLANE_DB_FAILED: probe line preservation mismatch: {source_line_count} != {probe[1]}"
+            )
+        codex_probe = conn.execute(
+            "SELECT correlation_key,line_count,section_count,observation_count FROM first_touch_probe_records "
+            "WHERE probe_id='FT-CODEX-PROBE-20261006-01'"
+        ).fetchone()
+        if codex_probe is not None:
+            if codex_probe[0] != "FT-CODEX-PROBE-20261006-01" or codex_probe[1] < 1000 or codex_probe[2] < 20 or codex_probe[3] < 400:
+                raise SystemExit(
+                    f"CONTROL_PLANE_DB_FAILED: Codex first-touch probe projection incomplete: {codex_probe}"
+                )
+            codex_required_keys = {
+                row[0] for row in conn.execute(
+                    "SELECT observation_key FROM first_touch_probe_observations "
+                    "WHERE probe_id='FT-CODEX-PROBE-20261006-01'"
+                ).fetchall()
+            }
+            for required_key in {
+                "NATIVE_CODEX_CONVERSATION_ID",
+                "NATIVE_CODEX_TASK_ID",
+                "NATIVE_CODEX_RUN_ID",
+                "NATIVE_CODEX_WORKSPACE_ID",
+                "DIRECT_REPOSITORY_TO_NATIVE_CODEX_THREAD_ADDRESSABILITY",
+                "GACR_SESSION_ID",
+                "CONNECTION_REF",
+                "CLIENT_INSTANCE_ID",
+            }:
+                if required_key not in codex_required_keys:
+                    raise SystemExit(
+                        f"CONTROL_PLANE_DB_FAILED: Codex first-touch probe key missing: {required_key}"
+                    )
+            codex_source_line_count = conn.execute(
+                "SELECT COUNT(*) FROM first_touch_probe_lines WHERE probe_id='FT-CODEX-PROBE-20261006-01'"
+            ).fetchone()[0]
+            if codex_source_line_count != codex_probe[1]:
+                raise SystemExit(
+                    "CONTROL_PLANE_DB_FAILED: Codex probe line preservation mismatch: "
+                    f"{codex_source_line_count} != {codex_probe[1]}"
+                )
+    identity_secret_count = conn.execute("SELECT COUNT(*) FROM server_identity_secret_facts").fetchone()[0]
+    if identity_secret_count != expected_identity_secret_count:
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: server identity-secret projection count mismatch")
+    print("CONTROL_PLANE_DB_VALIDATION_PASS")
+    print("cases=4")
+    print(f"questions={conn.execute('SELECT COUNT(*) FROM questions').fetchone()[0]}")
+    print(f"activities={conn.execute('SELECT COUNT(*) FROM activities').fetchone()[0]}")
+    print(f"current_phase={active[0][0] if active else 'NONE'}")
+    print(f"server_inventory_slots={facts_count}")
+    print(f"server_identity_secret_facts={identity_secret_count}")
+    print(f"first_touch_probes={probe_count}")
+    print(f"first_touch_evidence_blocks={conn.execute('SELECT COUNT(*) FROM first_touch_evidence_blocks').fetchone()[0]}")
+    print(f"first_touch_process_gates={conn.execute('SELECT COUNT(*) FROM first_touch_process_gates').fetchone()[0]}")
+
+def build(path: Path, inventory_path: Path | None = None, identity_secret_path: Path | None = None):
+    catalog = json.loads((DB_ROOT/"catalog.json").read_text(encoding="utf-8"))
+    seed = json.loads((DB_ROOT/"runtime-seed.json").read_text(encoding="utf-8"))
+    replay = json.loads((ROOT/".governance"/"control-plane-state"/"case1-replay.json").read_text(encoding="utf-8"))
+    inventory = json.loads((inventory_path or ROOT/".governance/control-plane-state/server-inventory-facts.json").read_text(encoding="utf-8"))
+    identity_secret = json.loads((identity_secret_path or ROOT/".governance/control-plane-state/server-identity-secret-facts.json").read_text(encoding="utf-8"))
+    conn = sqlite3.connect(path)
+    try:
+        for migration in sorted(DB_ROOT.glob("[0-9][0-9][0-9]_*.sql")):
+            conn.executescript(migration.read_text(encoding="utf-8"))
+        conn.execute("INSERT INTO schema_meta(key,value) VALUES('schema_version','1.6.0')")
+        insert_case_data(conn,catalog)
+        insert_replay(conn,replay)
+        insert_questions_activities(conn,catalog)
+        insert_runtime(conn,seed)
+        insert_server_inventory(conn,inventory)
+        insert_server_identity_secret_facts(conn,identity_secret)
+        insert_first_touch_probes(conn)
+        insert_first_touch_field_gate_catalog(conn)
+        conn.commit()
+        probe_count = len(list((ROOT / "docs" / "control-plane" / "probes").glob("*.md"))) if (ROOT / "docs" / "control-plane" / "probes").exists() else 0
+        validate(conn, len(inventory["facts"]), len(identity_secret["facts"]), probe_count)
+    finally:
+        conn.close()
+
+def main():
+    parser=argparse.ArgumentParser()
+    parser.add_argument("--output")
+    args=parser.parse_args()
+    if args.output:
+        path=Path(args.output).resolve()
+        path.parent.mkdir(parents=True,exist_ok=True)
+        if path.exists(): path.unlink()
+        build(path)
+        print(f"database={path}")
+    else:
+        with tempfile.TemporaryDirectory(prefix="control-plane-db-") as tmp:
+            build(Path(tmp)/"control-plane.sqlite")
+
+if __name__=="__main__":
+    main()

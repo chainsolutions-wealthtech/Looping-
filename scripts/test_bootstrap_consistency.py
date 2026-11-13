@@ -1,0 +1,229 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import json
+import os
+import shutil
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+TEST_REPOSITORY = "chainsolutions-wealthtech/governance-template-selftest"
+INPUT_HEAD = "1" * 40
+INITIALIZATION_HEAD = "2" * 40
+
+
+def run(repo: Path, *args: str, env: dict[str, str]) -> None:
+    subprocess.run([sys.executable, *args], cwd=repo, env=env, check=True)
+
+
+def read_json(repo: Path, relative: str) -> dict:
+    return json.loads((repo / relative).read_text(encoding="utf-8"))
+
+
+def main() -> None:
+    with tempfile.TemporaryDirectory(prefix="governance-bootstrap-selftest-") as tmp:
+        target = Path(tmp) / "repo"
+        shutil.copytree(
+            ROOT,
+            target,
+            ignore=shutil.ignore_patterns(".git", "__pycache__", "*.pyc"),
+        )
+
+        # Build an explicit template-source fixture so this self-test is portable
+        # when executed from either the central template or an instantiated repository.
+        (target / ".template-source").write_text("SELFTEST_TEMPLATE_SOURCE\n", encoding="utf-8")
+
+        profile_path = target / ".governance" / "profile.json"
+        profile = read_json(target, ".governance/profile.json")
+        profile.update({
+            "template_source": True,
+            "initialized": False,
+            "repository": "TO_INITIALIZE",
+            "project_name": "TO_INITIALIZE",
+            "project_type": "TO_INITIALIZE",
+            "owner": "TO_INITIALIZE",
+            "canonical_branch": "main",
+            "initialized_at": None,
+            "initialization_mode": "TEMPLATE_BOOTSTRAP",
+        })
+        profile_path.write_text(json.dumps(profile, indent=2) + "\n", encoding="utf-8")
+
+        project_profile_path = target / ".governance" / "project-profile.json"
+        project_profile = read_json(target, ".governance/project-profile.json")
+        project_profile.update({
+            "repository": "{{REPOSITORY}}",
+            "selection_status": "DISCOVERY_REQUIRED",
+            "selected_profile": None,
+            "organization_default_candidate": "chainsolutions-fullstack-web",
+        })
+        project_profile_path.write_text(json.dumps(project_profile, indent=2) + "\n", encoding="utf-8")
+
+        infrastructure_path = target / ".governance" / "infrastructure-intent.json"
+        infrastructure = read_json(target, ".governance/infrastructure-intent.json")
+        infrastructure.update({
+            "repository": "{{REPOSITORY}}",
+            "status": "PLANNED_NOT_PROVISIONED",
+        })
+        infrastructure.setdefault("github_binding", {}).update({
+            "repository": "{{REPOSITORY}}",
+            "status": "KNOWN",
+        })
+        infrastructure.setdefault("deployment_target", {}).update({
+            "server_id": None,
+            "server_status": "DISCOVERY_REQUIRED",
+            "domain": None,
+            "domain_status": "DISCOVERY_REQUIRED",
+            "directory": None,
+            "directory_status": "DISCOVERY_REQUIRED",
+            "provisioning_if_missing": "PLANNED_REQUIRES_AUTHORITY",
+        })
+        infrastructure.setdefault("runtime_intent", {}).update({
+            "project_profile_source": ".governance/project-profile.json",
+            "status": "DISCOVERY_REQUIRED",
+        })
+        infrastructure.setdefault("database_intent", {}).update({
+            "engine_candidate": "PostgreSQL",
+            "status": "PLANNED",
+        })
+        infrastructure.setdefault("server_access", {}).update({
+            "preferred": "DIRECT_MCP",
+            "fallback": "SSH",
+            "status": "UNRESOLVED",
+            "credentials_in_repository": "FORBIDDEN",
+        })
+        infrastructure_path.write_text(json.dumps(infrastructure, indent=2) + "\n", encoding="utf-8")
+
+        local_entry_path = target / ".governance" / "local-entry" / "state.json"
+        local_entry = read_json(target, ".governance/local-entry/state.json")
+        local_entry.update({
+            "repository": "{{REPOSITORY}}",
+            "status": "WAITING_FOR_FIRST_AGENT",
+            "first_agent_completed": False,
+            "first_agent_session_id": None,
+            "baseline_subject_head": None,
+            "baseline_completed_at": None,
+            "last_local_entry_issue": None,
+        })
+        local_entry_path.write_text(json.dumps(local_entry, indent=2) + "\n", encoding="utf-8")
+
+        mcp_binding_path = target / ".governance" / "mcp-binding.json"
+        mcp_binding = json.loads(mcp_binding_path.read_text(encoding="utf-8"))
+        mcp_binding.update({
+            "repository": "{{REPOSITORY}}",
+            "linked": False,
+            "status": "UNCONFIGURED",
+            "transport": None,
+            "endpoint": None,
+            "ssh_connection_profile": None,
+            "credential_names": [],
+            "discovery_status": "NOT_RUN",
+            "discovery_observed_at": None,
+            "domain_strategy": None,
+            "domain_binding": None,
+            "deployment_binding": None,
+            "project_registration_status": "UNKNOWN",
+            "write_tools_status": "DISABLED_UNTIL_REGISTERED_AND_AUTHORIZED",
+        })
+        mcp_binding_path.write_text(json.dumps(mcp_binding, indent=2) + "\n", encoding="utf-8")
+
+        access_plan_path = target / ".governance" / "access-plan.json"
+        access_plan = json.loads(access_plan_path.read_text(encoding="utf-8"))
+        access_plan["repository"] = "{{REPOSITORY}}"
+        access_plan["status"] = "DISCOVERY_REQUIRED"
+        access_plan_path.write_text(json.dumps(access_plan, indent=2) + "\n", encoding="utf-8")
+
+        workflow_model_path = target / ".governance" / "workflow-model.json"
+        workflow_model = json.loads(workflow_model_path.read_text(encoding="utf-8"))
+        workflow_model["repository"] = "{{REPOSITORY}}"
+        workflow_model["selected_model"] = None
+        workflow_model_path.write_text(json.dumps(workflow_model, indent=2) + "\n", encoding="utf-8")
+
+        env = os.environ.copy()
+        env.update({
+            "GITHUB_REPOSITORY": TEST_REPOSITORY,
+            "GITHUB_REF_NAME": "main",
+            "GITHUB_SHA": INPUT_HEAD,
+            "GITHUB_RUN_ID": "SELFTEST",
+        })
+
+        run(target, "scripts/auto_bootstrap.py", env=env)
+        if (target / ".template-source").exists():
+            raise SystemExit("SELFTEST_FAILED: template marker survived auto bootstrap")
+        for relative in ["docs/control-plane", ".governance/control-plane-state", ".governance/control-plane-db"]:
+            if (target / relative).exists():
+                raise SystemExit("SELFTEST_FAILED: source-only control-plane memory leaked into client: " + relative)
+
+        run(
+            target,
+            "scripts/finalize_bootstrap.py",
+            "--initialization-commit-sha",
+            INITIALIZATION_HEAD,
+            env=env,
+        )
+        run(target, "scripts/validate_governance.py", "--bootstrap-attestation", env=env)
+
+        receipt = read_json(target, ".governance/bootstrap-receipt.json")
+        state = read_json(target, ".governance/bootstrap-state.json")
+        memory = read_json(target, ".governance/canonical-memory/current.json")
+        status = (target / "STATUS.md").read_text(encoding="utf-8")
+        loop_state = (target / "LOOP_STATE.md").read_text(encoding="utf-8")
+        work_log = (target / "WORK_LOG.md").read_text(encoding="utf-8")
+        suivi = (target / "SUIVI.md").read_text(encoding="utf-8")
+        project_profile = read_json(target, ".governance/project-profile.json")
+        infrastructure = read_json(target, ".governance/infrastructure-intent.json")
+        intent_policy = read_json(target, ".governance/connection-intent-policy.json")
+        relay_config = read_json(target, ".governance/agent-relay/config.json")
+        portable_snapshot = read_json(target, ".governance/gscc/mcp-capability-snapshot.json")
+
+        checks = {
+            "receipt_validation": receipt.get("validation") == "PASS",
+            "receipt_subject": receipt.get("attestation_subject_sha") == INITIALIZATION_HEAD,
+            "bootstrap_status": state.get("status") == "PASS",
+            "bootstrap_subject": state.get("attestation_subject_sha") == INITIALIZATION_HEAD,
+            "memory_freshness": memory.get("freshness") == "ATTESTED",
+            "memory_subject": memory.get("bootstrap_attestation_subject_sha") == INITIALIZATION_HEAD,
+            "status_validation": "- Governance validation: `PASS`" in status,
+            "status_freshness": "- Governance freshness: `ATTESTED`" in status,
+            "status_subject": f"- Attested initialization commit: `{INITIALIZATION_HEAD}`" in status,
+            "loop_next_action": '"next_action": "DISCOVER_PROJECT_BASELINE"' in loop_state,
+            "loop_attested": '"last_verification": "GOVERNANCE_BOOTSTRAP_ATTESTED"' in loop_state,
+            "work_log_pass": "- Result: `PASS`" in work_log,
+            "work_log_attested": "- Bootstrap attestation: `PASS`" in work_log,
+            "suivi_state": "- State: `GOVERNANCE_INITIALIZED_BASELINE_REQUIRED`" in suivi,
+            "suivi_attested": "- Bootstrap attestation: `PASS`" in suivi,
+            "project_profile_repo": project_profile.get("repository") == TEST_REPOSITORY,
+            "project_profile_discovery": project_profile.get("selection_status") == "DISCOVERY_REQUIRED",
+            "project_profile_candidate": project_profile.get("organization_default_candidate") == "chainsolutions-fullstack-web",
+            "planned_node": project_profile.get("profiles", {}).get("chainsolutions-fullstack-web", {}).get("planned_stack", {}).get("backend", {}).get("runtime") == "Node.js",
+            "planned_next": project_profile.get("profiles", {}).get("chainsolutions-fullstack-web", {}).get("planned_stack", {}).get("frontend", {}).get("framework") == "Next.js",
+            "planned_postgres": project_profile.get("profiles", {}).get("chainsolutions-fullstack-web", {}).get("planned_stack", {}).get("database", {}).get("engine") == "PostgreSQL",
+            "infrastructure_repo": infrastructure.get("repository") == TEST_REPOSITORY,
+            "infrastructure_unprovisioned": infrastructure.get("status") == "PLANNED_NOT_PROVISIONED",
+            "server_discovery": infrastructure.get("deployment_target", {}).get("server_status") == "DISCOVERY_REQUIRED",
+            "directory_discovery": infrastructure.get("deployment_target", {}).get("directory_status") == "DISCOVERY_REQUIRED",
+            "direct_mcp": infrastructure.get("server_access", {}).get("preferred") == "DIRECT_MCP",
+            "ssh_fallback": infrastructure.get("server_access", {}).get("fallback") == "SSH",
+            "no_repo_credentials": infrastructure.get("server_access", {}).get("credentials_in_repository") == "FORBIDDEN",
+            "unknown_intent_closed": intent_policy.get("intents", {}).get("UNKNOWN", {}).get("may_dispatch_mutable_work") is False,
+            "information_ne_code": intent_policy.get("intents", {}).get("INFORMATION_INTAKE", {}).get("may_dispatch_mutable_work") is False,
+            "portable_snapshot_scope": portable_snapshot.get("scope") == "PORTABLE_CLIENT_PROJECTION",
+            "portable_snapshot_current": portable_snapshot.get("status") == "CURRENT" and portable_snapshot.get("catalogue", {}).get("status") == "CURRENT",
+            "portable_snapshot_has_tools": len(portable_snapshot.get("catalogue", {}).get("tools") or []) > 0,
+            "portable_snapshot_no_servers": "servers" not in portable_snapshot,
+            "portable_snapshot_no_endpoint": "endpoint" not in portable_snapshot,
+            "client_host_issue_unbound": relay_config.get("host_issue_bridge", {}).get("issue_number") is None,
+            "client_function_issue_unbound": relay_config.get("gscc_function_exposure_gate", {}).get("issue_number") is None,
+            "client_function_issue_strategy": relay_config.get("gscc_function_exposure_gate", {}).get("client_issue_strategy") == "DISABLED_UNTIL_LOCAL_NUMBER_BOUND",
+        }
+        failed = [name for name, ok in checks.items() if not ok]
+        if failed:
+            raise SystemExit("SELFTEST_FAILED: " + ", ".join(failed))
+
+        print("BOOTSTRAP_CONSISTENCY_SELFTEST_PASS")
+
+
+if __name__ == "__main__":
+    main()

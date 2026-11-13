@@ -1,0 +1,352 @@
+{
+  "title": "Governance Session",
+  "type": "object",
+  "required": [
+    "session_id",
+    "agent_identity",
+    "provider",
+    "entry_action",
+    "entry_action_provenance",
+    "connection_intent",
+    "connection_intent_provenance",
+    "repository",
+    "starting_head_sha",
+    "last_observed_head_sha",
+    "status"
+  ],
+  "properties": {
+    "session_id": {
+      "type": "string"
+    },
+    "agent_identity": {
+      "type": "string"
+    },
+    "provider": {
+      "type": "string"
+    },
+    "provider_conversation_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "provider_conversation_ref_provenance": {
+      "enum": [
+        "PROVIDED_BY_CLIENT",
+        "EXTRACTED_FROM_EXPLICIT_URL",
+        "UNAVAILABLE"
+      ]
+    },
+    "connection_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "repository": {
+      "type": "string"
+    },
+    "starting_head_sha": {
+      "type": "string"
+    },
+    "last_observed_head_sha": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "ACTIVE",
+        "STANDBY",
+        "STALLED",
+        "CLOSED"
+      ]
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "last_seen_at": {
+      "type": "string"
+    },
+    "connection_intent": {
+      "enum": [
+        "OBSERVE",
+        "CONTEXT_INTAKE",
+        "INFORMATION_INTAKE",
+        "WORK_REQUEST",
+        "CODE_CHANGE",
+        "REVIEW",
+        "INFRASTRUCTURE",
+        "UNKNOWN"
+      ]
+    },
+    "connection_intent_provenance": {
+      "enum": [
+        "PROVIDED_BY_CLIENT",
+        "DEFAULT_UNKNOWN"
+      ]
+    },
+    "entry_action": {
+      "enum": [
+        "CREATE_NEW_REPOSITORY",
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION",
+        "CONTINUE_GOVERNED_WORK",
+        "UNKNOWN"
+      ]
+    },
+    "entry_action_provenance": {
+      "enum": [
+        "PROVIDED_BY_CLIENT",
+        "DEFAULT_UNKNOWN"
+      ]
+    },
+    "provider_conversation_url": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "relay": {
+      "type": "object",
+      "required": [
+        "process",
+        "state",
+        "last_heartbeat_at",
+        "lease_expires_at"
+      ],
+      "properties": {
+        "process": {
+          "const": "GACR"
+        },
+        "state": {
+          "enum": [
+            "ACTIVE",
+            "STANDBY",
+            "SUSPECTED_STALL",
+            "STALLED",
+            "TAKEOVER_READY",
+            "HANDOFF_STALLED",
+            "CLOSED"
+          ]
+        },
+        "last_heartbeat_at": {
+          "type": "string"
+        },
+        "lease_expires_at": {
+          "type": "string"
+        },
+        "last_action": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "last_evidence": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "task_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "branch": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "pull_request": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "stalled_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "handoff_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "predecessor_session_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "successor_session_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "client_instance_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "agent_role": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "wake_channels": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "POLL_REPOSITORY",
+          "REPOSITORY_DISPATCH",
+          "EXTERNAL_BRIDGE"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "bridge_registration_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "github_actor": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "connection_fingerprint": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^GACR-FP1-[0-9a-f]{64}$",
+      "description": "Versioned operational correlation key; never a provider conversation identifier."
+    },
+    "connection_fingerprint_version": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "gacr-connection-fingerprint/v1",
+        null
+      ]
+    },
+    "presence_anchor": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": true
+    },
+    "surface_class": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "CONTROLLED_INSTRUMENTABLE",
+        "GITHUB_EVENT_VISIBLE",
+        "PROPRIETARY_SILENT",
+        null
+      ]
+    },
+    "connection_method": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "connection_envelope": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "required": [
+        "schema",
+        "surface_class",
+        "presence_event",
+        "observed_at",
+        "fields"
+      ],
+      "properties": {
+        "schema": {
+          "const": "gacr-connection-envelope/v1"
+        },
+        "surface_class": {
+          "enum": [
+            "CONTROLLED_INSTRUMENTABLE",
+            "GITHUB_EVENT_VISIBLE",
+            "PROPRIETARY_SILENT"
+          ]
+        },
+        "presence_event": {
+          "enum": [
+            "PRESENCE_FIRST_TOUCH",
+            "PRESENCE_RESUME",
+            "UNBOUND_ACTIVITY"
+          ]
+        },
+        "observed_at": {
+          "type": "string"
+        },
+        "fields": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": [
+              "value",
+              "provenance",
+              "source"
+            ],
+            "properties": {
+              "value": {},
+              "provenance": {
+                "enum": [
+                  "OBSERVABLE_BY_PLATFORM",
+                  "DECLARED_BY_AGENT_OR_CLIENT",
+                  "DERIVED_SAFE",
+                  "CORRELATED",
+                  "PROVIDER_PRIVATE_UNAVAILABLE"
+                ]
+              },
+              "source": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "github_installation_id": {
+      "type": [
+        "integer",
+        "string",
+        "null"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

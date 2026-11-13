@@ -1,0 +1,698 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chainsolutions.local/schemas/gacr-telemetry.schema.json",
+  "title": "GACR Beacon Correlation Unbound Activity Dispatch and Interruption Forensics State",
+  "type": "object",
+  "properties": {
+    "beacon": {
+      "type": "object",
+      "required": [
+        "beacon_id",
+        "observed_at",
+        "repository",
+        "source",
+        "event_type",
+        "context_digest"
+      ],
+      "properties": {
+        "beacon_id": {
+          "type": "string",
+          "pattern": "^GACR-B-[0-9a-f]{12}$"
+        },
+        "observed_at": {
+          "type": "string"
+        },
+        "repository": {
+          "type": "string"
+        },
+        "source": {
+          "enum": [
+            "GITHUB_ACTIONS",
+            "LOCAL_AGENT",
+            "EXTERNAL_BRIDGE",
+            "CLIENT_EMITTER",
+            "UNKNOWN",
+            "PRESENCE_FABRIC",
+            "CONVERSATION_CHRONICLE",
+            "EXPLICIT_CLIENT"
+          ]
+        },
+        "event_type": {
+          "type": "string"
+        },
+        "session_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "provider": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "provider_conversation_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "client_instance_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "context_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "action_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "action_label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "action_phase": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "STARTED",
+            "COMPLETED",
+            "FAILED",
+            "CANCELLED",
+            null
+          ]
+        },
+        "tool_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tool_call_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "outcome": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "written_head_sha": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "checkpoint_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "evidence_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "interruption_code": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "CLIENT_DISCONNECTED",
+            "PROVIDER_TIMEOUT",
+            "TOOL_FAILURE",
+            "AGENT_ERROR",
+            "USER_CANCELLED",
+            "NETWORK_LOSS",
+            "PROCESS_EXITED",
+            "PROVIDER_RATE_LIMIT",
+            "PROVIDER_QUOTA_EXHAUSTED",
+            "CONTEXT_LIMIT",
+            "WAITING_FOR_INPUT",
+            "DEPENDENCY_BLOCKED",
+            "UNKNOWN",
+            null
+          ]
+        },
+        "connection_fingerprint": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^GACR-FP1-[0-9a-f]{64}$"
+        },
+        "connection_envelope_digest": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "surface_class": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "CONTROLLED_INSTRUMENTABLE",
+            "GITHUB_EVENT_VISIBLE",
+            "PROPRIETARY_SILENT",
+            null
+          ]
+        },
+        "presence_event": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "PRESENCE_FIRST_TOUCH",
+            "PRESENCE_RESUME",
+            "UNBOUND_ACTIVITY",
+            null
+          ]
+        },
+        "connection_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "claim_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "github_actor": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "github_installation_id": {
+          "type": [
+            "integer",
+            "string",
+            "null"
+          ]
+        },
+        "github_workflow": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "github_run_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "github_run_attempt": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "github_job": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "availability_state": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "AVAILABLE",
+            "WAITING",
+            "BUSY",
+            "BLOCKED",
+            "RATE_LIMITED",
+            "QUOTA_BLOCKED",
+            "CHECKPOINTING",
+            "TERMINATING",
+            "UNKNOWN",
+            null
+          ]
+        },
+        "availability_reason_code": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "WAITING_FOR_WORK",
+            "WAITING_FOR_INPUT",
+            "DEPENDENCY_BLOCKED",
+            "PROVIDER_RATE_LIMIT",
+            "PROVIDER_QUOTA_EXHAUSTED",
+            "CONTEXT_LIMIT",
+            "CHECKPOINTING",
+            "TERMINATING",
+            "MANUAL_BUSY",
+            "UNKNOWN",
+            null
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "correlation": {
+      "type": "object",
+      "required": [
+        "correlation_id",
+        "beacon_id",
+        "level",
+        "reasons",
+        "candidate_session_ids"
+      ],
+      "properties": {
+        "correlation_id": {
+          "type": "string",
+          "pattern": "^GACR-C-[0-9a-f]{12}$"
+        },
+        "beacon_id": {
+          "type": "string"
+        },
+        "level": {
+          "enum": [
+            "EXACT",
+            "STRONG",
+            "PROBABLE",
+            "AMBIGUOUS",
+            "UNKNOWN"
+          ]
+        },
+        "selected_session_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "candidate_session_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "unbound_activity": {
+          "type": "object",
+          "required": [
+            "observation_id",
+            "repository",
+            "observed_at",
+            "activity_class",
+            "safe_envelope_digest",
+            "candidate_session_ids",
+            "correlation_level",
+            "reasons",
+            "status",
+            "reconciled_session_id",
+            "reconciled_at"
+          ],
+          "properties": {
+            "observation_id": {
+              "type": "string",
+              "pattern": "^GACR-B-[0-9a-f]{12}$"
+            },
+            "repository": {
+              "type": "string"
+            },
+            "observed_at": {
+              "type": "string"
+            },
+            "activity_class": {
+              "type": "string"
+            },
+            "safe_envelope_digest": {
+              "type": "string"
+            },
+            "candidate_session_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "correlation_level": {
+              "enum": [
+                "EXACT",
+                "STRONG",
+                "PROBABLE",
+                "AMBIGUOUS",
+                "UNKNOWN"
+              ]
+            },
+            "reasons": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "status": {
+              "enum": [
+                "UNBOUND",
+                "RECONCILED",
+                "SUPERSEDED"
+              ]
+            },
+            "reconciled_session_id": {
+              "type": "string"
+            },
+            "reconciled_at": {
+              "type": "string"
+            },
+            "superseded_by_session_id": {
+              "type": "string"
+            },
+            "superseded_at": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "confidence": {
+          "type": "object",
+          "required": [
+            "rule_id",
+            "class",
+            "numeric_score",
+            "auto_bind_allowed"
+          ],
+          "properties": {
+            "rule_id": {
+              "type": "string"
+            },
+            "class": {
+              "enum": [
+                "EXACT",
+                "STRONG",
+                "PROBABLE",
+                "AMBIGUOUS",
+                "UNKNOWN"
+              ]
+            },
+            "numeric_score": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "const": null
+            },
+            "auto_bind_allowed": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": true
+        },
+        "binding_status": {
+          "enum": [
+            "BOUND",
+            "UNBOUND_ACTIVITY"
+          ]
+        },
+        "provider_identity_inferred": {
+          "type": "boolean",
+          "const": false
+        },
+        "provider_conversation_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "evaluations": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "dispatch": {
+      "type": "object",
+      "required": [
+        "dispatch_id",
+        "takeover_id",
+        "target_session_id",
+        "status",
+        "delivery_modes",
+        "created_at"
+      ],
+      "properties": {
+        "dispatch_id": {
+          "type": "string",
+          "pattern": "^GACR-D-[0-9a-f]{12}$"
+        },
+        "takeover_id": {
+          "type": "string"
+        },
+        "target_session_id": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "READY",
+            "ACKNOWLEDGED",
+            "ACTIVATED",
+            "CANCELLED",
+            "EXPIRED"
+          ]
+        },
+        "delivery_modes": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "POLL_REPOSITORY",
+              "REPOSITORY_DISPATCH",
+              "EXTERNAL_BRIDGE"
+            ]
+          }
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "compatibility": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "takeover_package": {
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "forensics": {
+      "type": "object",
+      "required": [
+        "forensic_id",
+        "session_id",
+        "repository",
+        "classification",
+        "recoverability",
+        "cause",
+        "resume_point",
+        "analysis_digest"
+      ],
+      "properties": {
+        "forensic_id": {
+          "type": "string",
+          "pattern": "^GACR-F-[0-9a-f]{12}$"
+        },
+        "session_id": {
+          "type": "string"
+        },
+        "repository": {
+          "type": "string"
+        },
+        "classification": {
+          "type": "string"
+        },
+        "recoverability": {
+          "type": "string"
+        },
+        "cause": {
+          "type": "object"
+        },
+        "resume_point": {
+          "type": "object"
+        },
+        "analysis_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "additionalProperties": true
+    },
+    "unbound_activity": {
+      "type": "object",
+      "required": [
+        "observation_id",
+        "repository",
+        "observed_at",
+        "activity_class",
+        "safe_envelope_digest",
+        "candidate_session_ids",
+        "correlation_level",
+        "reasons",
+        "status",
+        "reconciled_session_id",
+        "reconciled_at"
+      ],
+      "properties": {
+        "observation_id": {
+          "type": "string",
+          "pattern": "^GACR-B-[0-9a-f]{12}$"
+        },
+        "repository": {
+          "type": "string"
+        },
+        "observed_at": {
+          "type": "string"
+        },
+        "activity_class": {
+          "type": "string"
+        },
+        "safe_envelope_digest": {
+          "type": "string"
+        },
+        "candidate_session_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "correlation_level": {
+          "enum": [
+            "EXACT",
+            "STRONG",
+            "PROBABLE",
+            "AMBIGUOUS",
+            "UNKNOWN"
+          ]
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "status": {
+          "enum": [
+            "UNBOUND",
+            "RECONCILED",
+            "SUPERSEDED"
+          ]
+        },
+        "reconciled_session_id": {
+          "type": "string"
+        },
+        "reconciled_at": {
+          "type": "string"
+        },
+        "superseded_by_session_id": {
+          "type": "string"
+        },
+        "superseded_at": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "session_signals": {
+      "type": "object",
+      "required": [
+        "session_id",
+        "last_activity_at",
+        "last_liveness_evidence_at",
+        "last_progress_at",
+        "liveness",
+        "progress"
+      ],
+      "properties": {
+        "session_id": {
+          "type": "string"
+        },
+        "last_activity_at": {
+          "type": "string"
+        },
+        "last_liveness_evidence_at": {
+          "type": "string"
+        },
+        "last_progress_at": {
+          "type": "string"
+        },
+        "liveness": {
+          "type": "object",
+          "required": [
+            "state"
+          ],
+          "properties": {
+            "state": {
+              "enum": [
+                "ACTIVE",
+                "QUIET",
+                "SUSPECTED_STALL",
+                "STALLED",
+                "UNKNOWN",
+                "TERMINAL"
+              ]
+            }
+          },
+          "additionalProperties": true
+        },
+        "progress": {
+          "type": "object",
+          "required": [
+            "state"
+          ],
+          "properties": {
+            "state": {
+              "enum": [
+                "ADVANCING",
+                "NO_RECENT_PROGRESS_EVIDENCE",
+                "BLOCKED_IF_EXPLICITLY_OBSERVED",
+                "UNKNOWN"
+              ]
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,734 @@
+{
+  "schema_version": "1.0.0",
+  "entries": [
+    {
+      "activity_id": "AAL-20260926-C1-12-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "CREATE_NEW_REPOSITORY/C1-12",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "892f793a0202cb4f69169001821014f47db45c3f",
+      "pilot_repository": "Patricked-code/Gouvern",
+      "observed_pilot_head": "3a1b7689be5aa38b4b6fdb6456526e618f9b0dd5",
+      "objective": "Recover exact stopped point and reconcile all discovered actions/tasks/remarks.",
+      "evidence_refs": [
+        "Patricked-code/Gouvern#3",
+        "Template PR #25",
+        "Template PR #26",
+        "Template PR #27",
+        "Gouvern Actions run 36262734626"
+      ],
+      "current_blocker": "INTENT_SELFTEST_FAILED: unexpected work item",
+      "discovered_tasks": [
+        "C1-12-F",
+        "C1-12-G",
+        "C1-12-H",
+        "C1-12-I",
+        "C1-12-J",
+        "C1-12-K",
+        "C1-12-L",
+        "C1-12-M",
+        "C1-12-N",
+        "C1-12-O",
+        "C1-12-P"
+      ],
+      "remarks": [
+        "Canonical memory was stale after V2.8.0 even though macro checkpoint remained correct."
+      ],
+      "proposals": [
+        "Persist agent/session activity as first-class relational records for future admin UI."
+      ],
+      "unique_next_action": "C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM"
+    },
+    {
+      "activity_id": "AAL-20260926-ARCH-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "CANONICAL_ARCHITECTURE_MEMORY_ENRICHMENT",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "3ee944eccd3e2578aaf590a2006fa452fe9ae21b",
+      "objective": "Integrate user-supplied architecture memory additively without changing live CASE 1 execution.",
+      "evidence_refs": [
+        "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+        ".governance/control-plane-state/canonical-architecture.json",
+        "docs/control-plane/IMPORTED_MEMORY_VERIFICATION.md",
+        ".governance/control-plane-db/003_canonical_authorities.sql"
+      ],
+      "discovered_tasks": [
+        "ARCH-004",
+        "ARCH-005",
+        "ARCH-006",
+        "ARCH-007",
+        "ARCH-008",
+        "ARCH-009",
+        "ARCH-010"
+      ],
+      "remarks": [
+        "Snapshot state is historical; live Git state remains authoritative.",
+        "Imported memory cannot satisfy live approval."
+      ],
+      "proposals": [
+        "Add reducer/reconstruction validation.",
+        "Formalize role/capability authorization.",
+        "Strengthen cross-projection CI.",
+        "Defer API/PostgreSQL/UI until workflow semantics stabilize."
+      ],
+      "unique_next_action": "C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM"
+    },
+    {
+      "activity_id": "AAL-20260926-DB-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "CANONICAL_MEMORY_CONTINUOUS_RELATIONAL_PROJECTION",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "acafebdf3cd3194ad6c1b3ceee4426559e2b70fe",
+      "objective": "Persist the owner's requirement that canonical memory and the relational database evolve together.",
+      "evidence_refs": [
+        "CPD-019",
+        ".governance/control-plane-policy.json",
+        ".governance/control-plane-db/runtime-seed.json",
+        "docs/control-plane/DATA_MODEL.md"
+      ],
+      "remarks": [
+        "Database construction is continuous and governed, not deferred as a separate rebuild.",
+        "Structured information not yet representable must be explicitly marked PENDING_PROJECTION."
+      ],
+      "proposals": [],
+      "unique_next_action": "C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM"
+    },
+    {
+      "activity_id": "AAL-20260926-IDN-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "IDENTITY_CONNECTION_SESSION_ROUTING",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "c3ed98126686b210e840e024d99685b67a33bf53",
+      "objective": "Persist missing automatic identity/session/routing work as canonical backlog.",
+      "evidence_refs": [
+        "docs/control-plane/TASKS.md",
+        "CPD-020",
+        "docs/control-plane/DATA_MODEL.md",
+        ".governance/control-plane-state/canonical-architecture.json"
+      ],
+      "discovered_tasks": [
+        "IDN-001",
+        "IDN-002",
+        "IDN-003",
+        "IDN-004",
+        "IDN-005",
+        "IDN-006",
+        "IDN-007",
+        "IDN-008",
+        "IDN-009",
+        "IDN-010",
+        "IDN-011",
+        "IDN-012",
+        "IDN-013"
+      ],
+      "remarks": [
+        "GitHub actor/login/user-id/permission can be observed.",
+        "Current stable session-id/resume behavior exists but is not automatically triggered by merely arriving on the repository."
+      ],
+      "proposals": [
+        "Introduce principal, connection, governed-session and authority snapshot registries additively."
+      ],
+      "unique_next_action": "C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM"
+    },
+    {
+      "activity_id": "AAL-20260926-RTE-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "TWO_STAGE_AUTOMATED_AGENT_PURPOSE_ROUTING",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "bf75a1ff56e0450c87a72ba91124bf55257647c6",
+      "objective": "Persist the owner's required two-stage post-identity purpose router without activating untested runtime behavior.",
+      "evidence_refs": [
+        "CPD-021",
+        "docs/control-plane/TASKS.md",
+        ".governance/control-plane-db/catalog.json",
+        ".governance/control-plane-db/runtime-seed.json",
+        "docs/control-plane/CANONICAL_ARCHITECTURE.md"
+      ],
+      "discovered_tasks": [
+        "RTE-001",
+        "RTE-002",
+        "RTE-003",
+        "RTE-004",
+        "RTE-005",
+        "RTE-006",
+        "RTE-007",
+        "RTE-008",
+        "RTE-009",
+        "RTE-010",
+        "RTE-011",
+        "RTE-012",
+        "RTE-013"
+      ],
+      "remarks": [
+        "The active entry-action router is preserved until the two-stage router has implementation and regression tests.",
+        "Human technical execution is not required; explicit governed approvals remain required where applicable."
+      ],
+      "proposals": [],
+      "unique_next_action": "C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM"
+    },
+    {
+      "activity_id": "AAL-20260926-V284-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "CREATE_NEW_REPOSITORY/C1-12",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "9d8c3936576888709830ba03309c3880367f1943",
+      "pilot_repository": "Patricked-code/Gouvern",
+      "observed_pilot_head": "3a1b7689be5aa38b4b6fdb6456526e618f9b0dd5",
+      "objective": "Fix the generic connection-intent self-test defect in the framework product, using Gouvern only as external evidence.",
+      "evidence_refs": [
+        "Gouvern Actions run 36262734626",
+        "scripts/test_connection_intent.py",
+        "CPD-022"
+      ],
+      "discovered_tasks": [
+        "C1-12-G"
+      ],
+      "remarks": [
+        "Pilot work-items are validation evidence only and must not become framework truth."
+      ],
+      "proposals": [],
+      "unique_next_action": "C1_12_G_FIX_GENERIC_INTENT_SELFTEST"
+    },
+    {
+      "activity_id": "AAL-20260926-V284-002",
+      "agent_identity": "ChatGPT",
+      "workstream": "CREATE_NEW_REPOSITORY/C1-12",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "608d29318d1b2df199e4ec304c4e2fe7bfb94263",
+      "objective": "Attest V2.8.4 product release and move C1-12 to external pilot validation.",
+      "evidence_refs": [
+        "Template PR #33",
+        "Governance CI run 36274141697"
+      ],
+      "discovered_tasks": [],
+      "remarks": [
+        "Framework product remains the Template; pilot repositories are validation-only."
+      ],
+      "proposals": [],
+      "unique_next_action": "C1_12_I_VALIDATE_V2_8_4_ON_CASE1_PILOT"
+    },
+    {
+      "activity_id": "AAL-20260926-V285-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "CREATE_NEW_REPOSITORY/C1-12",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "9782af27a1b8c97cdbbc8e2bc15ac2b02d649488",
+      "objective": "Fix generic client-upgrade distribution gaps in the framework before external pilot validation.",
+      "evidence_refs": [
+        "scripts/control_plane_upgrade_local_entry.py",
+        ".github/workflows/governance-ci.yml",
+        "CPD-023",
+        "CP-ARCH-001-R4"
+      ],
+      "discovered_tasks": [
+        "C1-12-I-A",
+        "C1-12-I-B"
+      ],
+      "remarks": [
+        "No pilot mutation is allowed until the Template upgrader can distribute the current release safely."
+      ],
+      "proposals": [],
+      "unique_next_action": "C1_12_I_A_FIX_DYNAMIC_CLIENT_UPGRADER"
+    },
+    {
+      "activity_id": "AAL-20260926-V285-002",
+      "agent_identity": "ChatGPT",
+      "workstream": "CREATE_NEW_REPOSITORY/C1-12",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "556011ea20310a483f77a9a382b66b79bed4b31c",
+      "objective": "Attest V2.8.5 framework release and move to governed external pilot upgrade.",
+      "evidence_refs": [
+        "Template PR #35",
+        "Governance CI run 36274765257"
+      ],
+      "discovered_tasks": [],
+      "remarks": [
+        "Pilot remained untouched during framework correction."
+      ],
+      "proposals": [],
+      "unique_next_action": "C1_12_I_B_APPLY_CURRENT_TEMPLATE_TO_CASE1_PILOT"
+    },
+    {
+      "activity_id": "AAL-20260926-V286-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "CREATE_NEW_REPOSITORY/C1-12",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "784e8738758ac9de1d59c3119304a833b720f213",
+      "pilot_repository": "Patricked-code/Gouvern",
+      "observed_pilot_head": "17f852c19ac8c5d26f40d3508338ce9c221697c8",
+      "objective": "Complete portable connection-intent synthetic bootstrap fixture in the framework after external pilot evidence.",
+      "evidence_refs": [
+        "Governed Control Plane run 36274976355",
+        "Pilot CI run 36275001208",
+        "CPD-024",
+        "CP-ARCH-001-R5"
+      ],
+      "discovered_tasks": [
+        "C1-12-J-A",
+        "C1-12-J-B",
+        "C1-12-J-C"
+      ],
+      "remarks": [
+        "Pilot upgrade succeeded; pilot CI exposed a generic Template fixture-isolation gap."
+      ],
+      "proposals": [],
+      "unique_next_action": "C1_12_J_B_COMPLETE_PORTABLE_INTENT_FIXTURE"
+    },
+    {
+      "activity_id": "AAL-20260926-V286-002",
+      "agent_identity": "ChatGPT",
+      "workstream": "CREATE_NEW_REPOSITORY/C1-12",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "02173120acfa3941e84bf69c89dac0e8d74b47ce",
+      "objective": "Attest V2.8.6 release and move to governed external pilot revalidation.",
+      "evidence_refs": [
+        "Template PR #37",
+        "Governance CI run 36275324940"
+      ],
+      "discovered_tasks": [],
+      "remarks": [
+        "No direct pilot patching; next step uses governed exact-head upgrade."
+      ],
+      "proposals": [],
+      "unique_next_action": "C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT"
+    },
+    {
+      "activity_id": "AAL-20260927-GMC-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "CENTRAL_GOVERNANCE_MODEL_CATALOGUE",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "76fae0dc132ef7e91e659c4dad44cd3522d2c8c4",
+      "objective": "Persist the central Governance Model, storage/reuse contract and hierarchical completion programme in canonical memory without bypassing CASE 1.",
+      "evidence_refs": [
+        "CP-GOVMODEL-001",
+        "CPD-025",
+        "CPD-026",
+        "CPD-027",
+        "docs/control-plane/GOVERNANCE_MODEL_CATALOGUE.md",
+        ".governance/control-plane-state/governance-model-catalogue.json",
+        "docs/control-plane/TASKS.md",
+        ".governance/control-plane-db/runtime-seed.json"
+      ],
+      "discovered_tasks": [
+        "GMC-01",
+        "GMC-02",
+        "GMC-03",
+        "GMC-04",
+        "GMC-05",
+        "GMC-06",
+        "GMC-07",
+        "GMC-08",
+        "GMC-09",
+        "GMC-10",
+        "GMC-11",
+        "GMC-12",
+        "GMC-13",
+        "GMC-14",
+        "GMC-15",
+        "GMC-16",
+        "GMC-17",
+        "GMC-18",
+        "GMC-19"
+      ],
+      "remarks": [
+        "Governance Model is the reference object; CREATE/ADOPT/MAP/LAB are application strategies.",
+        "Existing relational memory/materializer is extended; no parallel canonical database.",
+        "Detailed registry schema is PENDING_PROJECTION until its governed migration task executes."
+      ],
+      "proposals": [],
+      "unique_next_action": "C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT"
+    },
+    {
+      "activity_id": "AAL-20260927-GMC-002",
+      "agent_identity": "ChatGPT",
+      "workstream": "CENTRAL_GOVERNANCE_MODEL_CATALOGUE_POST_MERGE",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "6fb12122d5a0812f6ceca063b1d7af13511003bc",
+      "objective": "Attest PR #39 merge and reconcile canonical source projections without changing CASE 1 priority.",
+      "evidence_refs": [
+        "Template PR #39",
+        "Governance CI run 36284616415",
+        "CP-GOVMODEL-001",
+        "CP-ARCH-001-R6"
+      ],
+      "discovered_tasks": [],
+      "remarks": [
+        "PR #39 merged with Governance CI PASS.",
+        "GMC-01..GMC-19 are now canonical backlog but remain dependency-bound behind P12-S6."
+      ],
+      "proposals": [],
+      "unique_next_action": "C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT"
+    },
+    {
+      "activity_id": "AAL-20260927-GMC-003",
+      "agent_identity": "ChatGPT",
+      "workstream": "C1-12/PR42_POST_MERGE_GMC_INTEGRITY_RECONCILIATION",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "2c70fc82aed4fa8f7eebb7f49b2573e6c57e9e59",
+      "objective": "Resolve the two still-open PR #42 post-merge review defects before any CASE 1 pilot mutation, and reconcile the same relational continuity surface.",
+      "evidence_refs": [
+        "Template PR #42",
+        "PRRT_kwDOUqP9V86mWsAw",
+        "PRRT_kwDOUqP9V86mWsAx",
+        ".governance/control-plane-state/governance-model-execution-blueprint.json",
+        ".governance/control-plane-state/governance-model-catalogue.json"
+      ],
+      "discovered_tasks": [
+        "C1-12-J-C-A"
+      ],
+      "remarks": [
+        "68 of 85 knowledge artifacts had GMC consumed_by metadata divergent from the already reciprocal group dependency contracts and global artifact dependency edges.",
+        "CPD-029 changed the normative catalogue contract while CP-GOVMODEL-001 remained at revision R1.",
+        "runtime-seed repository HEAD and current checkpoint/handoff projection were stale relative to canonical source memory."
+      ],
+      "proposals": [],
+      "unique_next_action": "C1_12_J_C_A_RECONCILE_GMC_POST_MERGE_INTEGRITY"
+    },
+    {
+      "activity_id": "AAL-20260927-GMC-004",
+      "agent_identity": "ChatGPT",
+      "workstream": "C1-12/PR43_GMC_INTEGRITY_POST_MERGE_ATTESTATION",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "113c50aa765ae886cd7a085637b8d5dbb5c2766b",
+      "objective": "Attest the merged PR #43 Governance Model integrity correction and resume the previously blocked CASE 1 pilot re-upgrade.",
+      "evidence_refs": [
+        "Template PR #43",
+        "Governance CI run 36289874574",
+        "Template main 113c50aa765ae886cd7a085637b8d5dbb5c2766b",
+        "PR #42 review threads PRRT_kwDOUqP9V86mWsAw and PRRT_kwDOUqP9V86mWsAx resolved"
+      ],
+      "discovered_tasks": [],
+      "remarks": [
+        "GMC projection integrity test passes with 19 groups, 174 atomic tasks, 85 planned knowledge artifacts and 100 artifact dependency edges.",
+        "CP-GOVMODEL-001 is revision R2 with append/supersede history.",
+        "Canonical relational database materialization passes.",
+        "C1-12-J-C-A is complete; pilot mutation gate is reopened only through C1-12-J-C."
+      ],
+      "proposals": [],
+      "unique_next_action": "C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT"
+    },
+    {
+      "activity_id": "AAL-20260927-C112-JC-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "CREATE_NEW_REPOSITORY/C1-12",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "dc2c1d5244aa11eaa9d4486edb5d3a1cc166ed6f",
+      "pilot_repository": "Patricked-code/Gouvern",
+      "observed_pilot_head": "671774dfc8e8be8eac2b50d5fb8f0928591694b3",
+      "objective": "Reconcile live evidence that the V2.8.6 governed pilot re-upgrade and Governance CI already completed successfully, without replaying the mutation.",
+      "evidence_refs": [
+        "Patricked-code/Gouvern@671774dfc8e8be8eac2b50d5fb8f0928591694b3",
+        "Pilot Governance CI run 36275524530",
+        "Template issue #12 supervision continuity note",
+        ".governance/TEMPLATE_MANIFEST.json@Patricked-code/Gouvern"
+      ],
+      "discovered_tasks": [],
+      "remarks": [
+        "Pilot V2.8.6 upgrade was already applied by patricked-mcp-publisher[bot] from prior HEAD 17f852c19ac8c5d26f40d3508338ce9c221697c8.",
+        "Pilot Governance CI run 36275524530 is SUCCESS on the exact current pilot HEAD.",
+        "Replaying the upgrade would be unnecessary and would violate evidence-driven chronological continuation."
+      ],
+      "proposals": [],
+      "unique_next_action": "C1_12_K_RERUN_GOUVERN_ISSUE_3"
+    },
+    {
+      "activity_id": "AAL-20260930-KBI04CJ-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "KBI-04C/KBI-04J_READ_ONLY_KNOWLEDGE_COLLECTORS",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "b9a60756ccc006c27f2140f91c3c355e1fe71e3d",
+      "objective": "Implement bounded independent read-only server and GitHub secret-metadata collectors without changing Ekyc or the unique CASE 1 execution action.",
+      "evidence_refs": [
+        "scripts/control_plane_server_inventory_collector.py",
+        "scripts/control_plane_github_secret_metadata.py",
+        "scripts/test_control_plane_server_inventory_collector.py",
+        "scripts/test_control_plane_github_secret_metadata.py",
+        "Template main b9a60756ccc006c27f2140f91c3c355e1fe71e3d"
+      ],
+      "discovered_tasks": [],
+      "remarks": [
+        "The intervening execution-engine PR #76 was reconciled before publication; its tests still pass.",
+        "No MCP or GitHub API read credential was available to the local scripts; live inventory and secret metadata remain pending.",
+        "No server, secret or Ekyc mutation was performed. KBI-04D and KBI-04K remain planned."
+      ],
+      "proposals": [],
+      "unique_next_action": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING"
+    },
+    {
+      "activity_id": "AAL-20260930-KBI04D-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "KBI-04D_SERVER_INVENTORY_PERSISTENCE",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "bc826b88be57d990df157d99bfac6875421b2077",
+      "objective": "Project bounded S1/S2 observations into governed source memory and the existing relational database without fabricating live infrastructure facts.",
+      "evidence_refs": [
+        "scripts/control_plane_server_inventory_facts.py",
+        "scripts/test_control_plane_server_inventory_facts.py",
+        ".governance/control-plane-state/server-inventory-facts.json",
+        ".governance/control-plane-db/004_server_inventory_facts.sql"
+      ],
+      "discovered_tasks": [],
+      "remarks": [
+        "Intervening Template PR #78 was reconciled before implementation; KBI-04D uses a distinct source-only collision domain.",
+        "The source inventory remains NOT_COLLECTED at revision 0. Synthetic fixtures validate projection and staleness; they are never committed as server observations.",
+        "No server, secret, domain or Ekyc mutation was performed. A live KBI-04C collection remains required before facts may be ingested."
+      ],
+      "proposals": [],
+      "unique_next_action": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING"
+    },
+    {
+      "activity_id": "AAL-20260930-KBI04E-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "KBI-04E_SERVER_RECIPE_CAPABILITY_MAPPING",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "41f3975c9a5f21f8d8ad271542522bfb6e1ce721",
+      "objective": "Derive each server recipe's required inventory and MCP capability candidates from the current source model without claiming live or mutation authority.",
+      "evidence_refs": [
+        "scripts/control_plane_server_recipe_capabilities.py",
+        "scripts/test_control_plane_server_recipe_capabilities.py",
+        ".governance/control-plane-state/mcp-capability-snapshot.json",
+        ".governance/control-plane-state/server-knowledge-model.json"
+      ],
+      "discovered_tasks": [],
+      "remarks": [
+        "KBI-04D PR #79 and post-merge CI were verified before starting this separate source-only slice.",
+        "The derived matrix maps 15 recipes and distinguishes unmodelled capabilities, absent matching tools, project-scoped candidates and generic snapshot candidates.",
+        "No live MCP tools/list, server mutation, Ekyc binding or server observation was performed. Inventory revision remains 0."
+      ],
+      "proposals": [],
+      "unique_next_action": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING"
+    },
+    {
+      "activity_id": "AAL-20261001-KBI04O-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "KBI-04O_GOVERNED_READONLY_SERVER_IDENTITY_SECRET_REFRESH",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "b665fba88d276b9efb636a894e53d890344b2faa",
+      "objective": "Prove event-and-need based read-only S1/S2 identity-secret observation and canonical safe-fact persistence without server mutation.",
+      "evidence_refs": [
+        "Template PR #84",
+        "refresh run 36844233362",
+        "Template PR #85",
+        "refresh run 36844701817",
+        "Template PR #86",
+        "Governance CI 36844736669",
+        "post-merge Governance CI 36844997332",
+        ".governance/control-plane-state/server-identity-secret-facts.json revision 1"
+      ],
+      "discovered_tasks": [
+        "KBI-04O-A"
+      ],
+      "remarks": [
+        "First live run proved collector and persistence but exposed a unit-fixture revision coupling; no live fact PR was created.",
+        "Second live run passed and persisted only 17 safe metadata facts through governed PR #86.",
+        "No secret values, raw MCP payloads, server connection coordinates, or server mutation were persisted/performed."
+      ],
+      "proposals": [],
+      "unique_next_action": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING"
+    },
+    {
+      "activity_id": "AAL-20261001-GACR-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "GACR_CROSS_CUTTING_CONTINUITY_HARDENING",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "05f49a634e1da46f3da5a016e32499236223ff1d",
+      "objective": "Resume at the proven GACR R2 boundary and add interruption forensics without changing the global P12-S6 programme priority.",
+      "evidence_refs": [
+        "Template PR #98",
+        "Governance CI 36915276875",
+        "Template PR #100",
+        "Governance CI 36916456136",
+        "Template PR #102",
+        "Governance CI 36921331490",
+        "Template PR #103",
+        "Governance CI 36921646133",
+        "Template PR #104",
+        "Governance CI 36927496576",
+        "post-merge Governance CI 36927683547",
+        "workflow registration failure 36927681943",
+        "Template PR #105",
+        "Governance CI 36927942003",
+        "post-merge Governance CI 36928024260",
+        "CP-AGENT-RELAY-001-R3",
+        "CPD-052"
+      ],
+      "discovered_tasks": [],
+      "remarks": [
+        "R2 was reconstructed and reused rather than replayed.",
+        "R3 Interruption Forensics is a projection over existing GACR evidence, not a parallel engine.",
+        "External interruption causes remain observed-only and in-flight actions require exact-HEAD reconciliation before replay.",
+        "The workflow-registration defect after PR #104 was detected and corrected before final attestation.",
+        "P12-S6 remains the global next action but execution is held until explicit owner OK after GACR finalization."
+      ],
+      "proposals": [],
+      "unique_next_action": "P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE"
+    },
+    {
+      "activity_id": "AAL-20261002-GACR-R4-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "GACR_R4_AUTOMATIC_CONTINUITY_ATTACHMENT",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "7467bbbca0f554df9d43831588ca03a0d1862c9f",
+      "objective": "Automatically attach observable governed arrivals to GACR and prove the current Conversation Chronicle live.",
+      "evidence_refs": [
+        "Template PR #109",
+        "Governance CI 36939255201",
+        "merge 4c7db9f0e2e782de147ef316c41086ed0863b49e",
+        "post-merge Governance CI 36939325620",
+        "GACR live run 36939325451",
+        "session-68c97d4bb1ef71c86444de12",
+        "GACR-B-6e9a2275ea04",
+        "GACR-C-caffb7cb6efd",
+        "CP-AGENT-RELAY-001-R4",
+        "CPD-053"
+      ],
+      "discovered_tasks": [],
+      "remarks": [
+        "The active conversation attached automatically through fresh Conversation Chronicle evidence.",
+        "Provider conversation reference was unavailable and did not block attachment.",
+        "Live correlation level is EXACT.",
+        "P12-S6 remains unchanged and unexecuted pending explicit owner OK."
+      ],
+      "proposals": [],
+      "unique_next_action": "P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE"
+    },
+    {
+      "activity_id": "AAL-20261002-GACR-R5-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "GACR_R5_CLIENT_LIVENESS_TRACE_EMITTER",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "34ceb14a140202ad7b57c9db2700241d50e7460c",
+      "objective": "Complete the generic GACR client-side liveness and trace protocol without fabricating provider-host observability.",
+      "evidence_refs": [
+        "Template PR #111",
+        "candidate Governance CI 36941120405",
+        "merge 9b371b45711a9274a0976fe5015d8b19b0315e6c",
+        "post-merge Governance CI 36941216248",
+        "post-merge GACR run 36941216312",
+        "session-68c97d4bb1ef71c86444de12",
+        "GACR-B-ff8bedbc4bf2",
+        "GACR-C-976bbba3924d",
+        "CP-AGENT-RELAY-001-R5",
+        "CPD-054"
+      ],
+      "discovered_tasks": [],
+      "remarks": [
+        "Generic GACR R1-R5 is complete as repository/runtime/client protocol.",
+        "The current ChatGPT host exposes no persistent emitter process or direct repository-dispatch surface to this assistant.",
+        "Autonomous browser heartbeat remains an external host-instrumentation boundary and is not falsely marked live.",
+        "P12-S6 remains unchanged and unexecuted pending explicit owner OK."
+      ],
+      "proposals": [],
+      "unique_next_action": "P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE"
+    },
+    {
+      "activity_id": "AAL-20261002-GACR-R5A-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "GACR_R5A_INTERNAL_TRANSPORT_IDENTITY_CORRECTION",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "173297fee3c6ac55a03ca3787558b063cb85b668",
+      "objective": "Correct the post-attestation defect that misclassified GACR internal workflow transport as a new agent/session.",
+      "evidence_refs": [
+        "CPD-055",
+        "Template PR #113",
+        "candidate Governance CI 36942282684",
+        "merge bfb7b6fb81244f18f1b2c8c1ea82526af0dc2d62",
+        "post-merge Governance CI 36942347934",
+        "post-merge GACR run 36942347872",
+        "runtime main 173297fee3c6ac55a03ca3787558b063cb85b668",
+        "session-68c97d4bb1ef71c86444de12",
+        "session-cb22a4ed0d9e29eba5383f5d"
+      ],
+      "discovered_tasks": [],
+      "remarks": [
+        "Internal GACR transport is not an agent identity.",
+        "No new session or Beacon was produced by the corrected internal push path.",
+        "The invalid historical transport session is preserved CLOSED/SUPERSEDED.",
+        "Terminal sessions are excluded from live correlation candidates.",
+        "Generic GACR R1-R5 is complete; provider-host emitter activation remains external.",
+        "P12-S6 remains unchanged and unexecuted pending explicit owner OK."
+      ],
+      "proposals": [],
+      "unique_next_action": "P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE"
+    },
+    {
+      "activity_id": "AAL-20261002-GACR-R6-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "GACR_R6_PROVIDER_HOST_INTEGRATION",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "46a4a3068f0eb28ec3dc1d141cbcf349542a3348",
+      "objective": "Integrate this ChatGPT host into GACR through an automatic event-driven governed GitHub issue-comment transport and prove it live without duplicating the canonical session.",
+      "evidence_refs": [
+        "Template issue #115",
+        "Template PR #116",
+        "Governance CI 36947562102 PASS",
+        "R6 START comment 5943461065",
+        "R6 state commit 69ccfc90c14f2fa02a264c765e31c49c64951635",
+        "Beacon GACR-B-ddc264dcf74e",
+        "Correlation GACR-C-ea0f04b97de7 EXACT",
+        "Template PR #117",
+        "Governance CI 36947919754 PASS",
+        "R6 COMPLETED comment 5943497457",
+        "R6 completed state commit 3d258e3c9fdfacd1232fb0a19448594ab452b47f",
+        "Rerun 36947989601: GACR_HOST_EVENT_ALREADY_PROCESSED / GACR_NO_STATE_CHANGE",
+        "Template PR #118",
+        "Governance CI 36948433046 PASS",
+        "R6-B heartbeat comment 5943559595",
+        "R6-B state commit 371509ac60d1a63c0be7cee8ec8620346210d824",
+        "Template PR #119",
+        "Governance CI 36948711458 PASS",
+        "R6-C heartbeat comment 5943592733",
+        "R6-C state commit 46a4a3068f0eb28ec3dc1d141cbcf349542a3348",
+        "session-68c97d4bb1ef71c86444de12"
+      ],
+      "discovered_tasks": [],
+      "remarks": [
+        "Provider-host integration is live and event-driven through issue_comment.",
+        "Canonical session is preserved and now attributed to provider chatgpt.",
+        "Provider conversation reference remains unavailable because the host did not expose one.",
+        "Issue-comment reruns are idempotent against latest main and create no duplicate Beacon/state commit.",
+        "Template source issue #115 is repository-local and not distributed to clients.",
+        "Continuous background heartbeat is not claimed because this host exposes no persistent daemon surface.",
+        "P12-S6 remains unchanged and unexecuted pending explicit owner OK."
+      ],
+      "proposals": [],
+      "unique_next_action": "P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE"
+    },
+    {
+      "activity_id": "AAL-20261007-IDN-006-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "IDN_PER_ARRIVAL_SESSION_RUNTIME_LIVE_CLOSURE",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "f768268bf1a3f62c2e6741aecfba20d86545969c",
+      "objective": "Close IDN-006 with a fresh-arrival live proof through Q12, actual-function F1 and explicit release to normal governance.",
+      "evidence_refs": [
+        "Template issue #244",
+        "Template PR #243",
+        "PR #243 merge 4a71b8c0aa0d2b08462e62d884241fd9b3dd910e",
+        "First Touch run 37550225527",
+        "Q9 ACK run 37550266592",
+        "Q9/Q10/Q12 run 37550300562",
+        "GACR relay run 37550326114",
+        "session-5bba386248ac4d9c0e05f1a8",
+        "GSCC-RUNTIME-ded6c37f3dc7c3dd634f838e",
+        "GSCC-CONN-6d1caad58d77dbd3b164344efc04f6aa",
+        "Q12 comment 6027860755",
+        "F1 workflow run 37550409710",
+        "GSCC-EXPOSURE-083cf0005955022e1c19d5b8d79264a170e9d9cc7bc898a251339e9b3b92b76f",
+        "release workflow run 37550477009",
+        "release comment 6027880258",
+        "released HEAD f768268bf1a3f62c2e6741aecfba20d86545969c"
+      ],
+      "discovered_tasks": [],
+      "remarks": [
+        "Provider-private conversation/session identifiers remained UNAVAILABLE and were not invented.",
+        "Fresh arrival proved isolated GSCC identity, Q9 control, Q10 GSE SessionTwin, exact canonical GACR binding, Q12 Access Grant, actual-function F1, and explicit release.",
+        "The release is bound to the same runtime, connection_ref, GACR session, Access Grant and exact HEAD.",
+        "Normal governed entry is now released to 00_START_HERE.md without replaying GSCC First Touch.",
+        "P12-S6 was not executed by this lane; global programme resumes at its pre-existing unique next action."
+      ],
+      "proposals": [],
+      "unique_next_action": "P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE"
+    }
+  ]
+}

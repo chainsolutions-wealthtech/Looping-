@@ -1,0 +1,188 @@
+{
+  "schema_version": "1.0.0",
+  "question": "Quelle action principale cet agent vient-il accomplir ?",
+  "required_on_connection": true,
+  "actions": {
+    "CREATE_NEW_REPOSITORY": {
+      "ordinal": 1,
+      "label": "Créer un nouveau repository Git",
+      "initial_route": "REPOSITORY_CREATION_DISCOVERY",
+      "initial_mutable": false,
+      "target_repository_state": "NOT_YET_CREATED_OR_NEW",
+      "required_gates": [
+        "TARGET_OWNER_SCOPE_RESOLVED",
+        "EXPLICIT_CREATE_AUTHORITY"
+      ],
+      "invariants": [
+        "NO_REPOSITORY_CREATION_WITHOUT_AUTHORITY",
+        "USE_GOVERNED_TEMPLATE_BY_DEFAULT"
+      ]
+    },
+    "ADOPT_EXISTING_REPOSITORY": {
+      "ordinal": 2,
+      "label": "Mettre à niveau un repository Git existant avec des briques de gouvernance",
+      "initial_route": "ADOPTION_DISCOVERY",
+      "initial_mutable": false,
+      "target_repository_state": "EXISTING",
+      "required_gates": [
+        "EXACT_HEAD_OBSERVED",
+        "CLEAN_OR_EXPLICITLY_RECONCILED",
+        "ADOPTION_PLAN_ACCEPTED"
+      ],
+      "invariants": [
+        "PRESERVE_EXISTING_CONTENT",
+        "NO_OVERWRITE_BY_DEFAULT",
+        "ADDITIVE_ONLY_WHERE_COMPATIBLE",
+        "CONFLICT_HOLD_FOR_REVIEW"
+      ]
+    },
+    "MAP_EXISTING_PROJECT": {
+      "ordinal": 3,
+      "label": "Créer une cartographie et/ou une architecture cible d'un projet existant",
+      "initial_route": "PROJECT_MAPPING_DISCOVERY",
+      "initial_mutable": false,
+      "target_repository_state": "EXISTING",
+      "required_gates": [
+        "EXACT_HEAD_OBSERVED"
+      ],
+      "invariants": [
+        "OBSERVED_ARCHITECTURE_NE_TARGET_ARCHITECTURE",
+        "NO_CODE_MUTATION_REQUIRED",
+        "UNKNOWN_NE_INVENTED"
+      ]
+    },
+    "LAB_EVOLUTION": {
+      "ordinal": 4,
+      "label": "Créer une branche/PR laboratoire pour faire évoluer un projet existant sans casser la branche de vérité",
+      "initial_route": "LAB_EVOLUTION_DISCOVERY",
+      "initial_mutable": false,
+      "target_repository_state": "EXISTING",
+      "required_gates": [
+        "EXACT_HEAD_OBSERVED",
+        "LAB_BASELINE_CAPTURED",
+        "EXPLICIT_BRANCH_OR_PR_AUTHORITY"
+      ],
+      "invariants": [
+        "CANONICAL_BRANCH_UNTOUCHED_UNTIL_MERGE",
+        "NO_FORCE_PUSH",
+        "NO_HISTORY_REWRITE",
+        "LAB_CHANGES_REQUIRE_VALIDATION",
+        "MERGE_ONLY_AFTER_NON_REGRESSION"
+      ],
+      "post_f1_claim_boundary": {
+        "self_initiated_lab_branch_setup_needs_work_offer": false,
+        "self_initiated_lab_branch_setup_needs_dispatcher_claim": false,
+        "owner_scope_permission_remains_required": true,
+        "native_github_write_permission_requires_live_check": true,
+        "post_branch_code_changes_use_compatible_governed_ownership": true
+      }
+    },
+    "UNKNOWN": {
+      "ordinal": 0,
+      "label": "Action d'entrée non résolue",
+      "initial_route": "RESOLVE_ENTRY_ACTION",
+      "initial_mutable": false,
+      "target_repository_state": "UNKNOWN",
+      "required_gates": [
+        "ENTRY_ACTION_RESOLVED"
+      ],
+      "invariants": [
+        "FAIL_CLOSED"
+      ]
+    },
+    "CONTINUE_GOVERNED_WORK": {
+      "ordinal": 5,
+      "label": "Poursuivre un travail déjà gouverné sur le repository courant",
+      "initial_route": "GOVERNED_WORK_RECONCILIATION",
+      "initial_mutable": true,
+      "target_repository_state": "EXISTING_GOVERNED",
+      "required_gates": [
+        "EXACT_HEAD_OBSERVED",
+        "SESSION_INTENT_RESOLVED"
+      ],
+      "invariants": [
+        "EXISTING_GOVERNANCE_REMAINS_AUTHORITATIVE",
+        "DISPATCH_REMAINS_DEPENDENCY_AND_COLLISION_SAFE"
+      ]
+    }
+  },
+  "questionnaire": [
+    {
+      "id": "Q1",
+      "required": true,
+      "text": "Quel est le scénario principal ?",
+      "choices": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "id": "Q2",
+      "required_when": [
+        "CREATE_NEW_REPOSITORY"
+      ],
+      "text": "Quel propriétaire cible : organisation, compte personnel propriétaire, ou autre scope explicitement autorisé ?"
+    },
+    {
+      "id": "Q3",
+      "required_when": [
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "text": "Quel repository existant et quel HEAD exact doivent être observés avant toute écriture ?"
+    },
+    {
+      "id": "Q4",
+      "required_when": [
+        "LAB_EVOLUTION"
+      ],
+      "text": "La création de branche/PR laboratoire est-elle explicitement autorisée pour ce projet ?"
+    },
+    {
+      "id": "Q5",
+      "required_when": [
+        "CONTINUE_GOVERNED_WORK"
+      ],
+      "text": "Quel work-item ou NEXT_ACTION existant doit être repris après réconciliation du HEAD ?"
+    }
+  ],
+  "invariants": [
+    "ENTRY_ACTION_REQUIRED_ON_CONNECTION",
+    "ENTRY_ACTION_NE_CONNECTION_INTENT",
+    "ENTRY_ACTION_NE_AUTHORITY",
+    "UNKNOWN_FAILS_CLOSED"
+  ],
+  "post_f1_choice_contract": {
+    "schema": "post-f1-entry-choices/v1",
+    "applies_to": "DOOR_A_NEW_AND_RETURNING_RELEASED_AGENTS",
+    "entry_authority": "00_START_HERE.md",
+    "initial_task_or_claim_required": false,
+    "dispatcher_is_initial_entry_choice_not_mandatory": true,
+    "choices": [
+      "OBSERVE",
+      "REVIEW",
+      "SUPERVISE",
+      "INTAKE",
+      "PLAN",
+      "LAB_EVOLUTION",
+      "CONTINUE_GOVERNED_WORK",
+      "OPT_IN_GACR_DISPATCH"
+    ],
+    "gacr_projection": "scripts/gacr_capacity_dispatch.py::session_capacity_projection.post_release_entry",
+    "reconstruction_projection": "scripts/gacr_agent_reconstruction.py::post_release_entry",
+    "native_permissions_source": "LIVE_AUTHENTICATED_GITHUB_ACTOR",
+    "f1_beacon_alone_is_authority": false,
+    "current_session_identity_required": true,
+    "lab_branch_native_push_permission_required": true,
+    "lab_branch_project_scope_permission_required": true,
+    "lab_branch_exact_head_required": true,
+    "lab_branch_dispatched_claim_required": false,
+    "dispatched_canonical_task_claim_required": true,
+    "new_gacr_queue_or_dispatcher_created": false,
+    "existing_door_b_modified": false
+  }
+}

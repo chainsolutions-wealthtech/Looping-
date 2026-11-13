@@ -1,0 +1,873 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import json
+import os
+import subprocess
+import sys
+from pathlib import Path
+
+import gacr_continuity_coordination as continuity_coordination
+from gacr_owner_alias import assign_owner_alias
+from gacr_owner_role import assign_owner_role
+from gscc_gacr.issue_control_bridge import (
+    DISPATCHES_PATH,
+    apply_host_control_event,
+    read_json as read_control_json,
+    write_json as write_control_json,
+)
+
+ROOT = Path(__file__).resolve().parents[1]
+CONFIG_PATH = ROOT / ".governance" / "agent-relay" / "config.json"
+AUTO_ATTACH = ROOT / "scripts" / "gacr_auto_attach.py"
+CORE = ROOT / "scripts" / "governed_agent_continuity_relay.py"
+TELEMETRY = ROOT / "scripts" / "gacr_agent_telemetry.py"
+CAPACITY = ROOT / "scripts" / "gacr_capacity_dispatch.py"
+CONTINUITY = ROOT / "scripts" / "gacr_continuity_coordination.py"
+BUS = ROOT / "scripts" / "gacr_continuity_bus.py"
+
+PREFIX = "/gacr-host "
+SCHEMA = "gacr-host-event/v1"
+EVENTS = {"attach", "heartbeat", "action", "interrupt", "availability", "work_offer_accept", "command_ack", "challenge_response", "continuity_scope", "continuity_yield", "continuity_event", "continuity_ack", "continuity_response", "owner_alias_assign", "owner_role_assign"}
+ACTION_PHASES = {"STARTED", "COMPLETED", "FAILED", "CANCELLED"}
+INTERRUPTION_CODES = {
+    "CLIENT_DISCONNECTED",
+    "PROVIDER_TIMEOUT",
+    "TOOL_FAILURE",
+    "AGENT_ERROR",
+    "USER_CANCELLED",
+    "NETWORK_LOSS",
+    "PROCESS_EXITED",
+    "PROVIDER_RATE_LIMIT",
+    "PROVIDER_QUOTA_EXHAUSTED",
+    "CONTEXT_LIMIT",
+    "WAITING_FOR_INPUT",
+    "DEPENDENCY_BLOCKED",
+    "UNKNOWN",
+}
+AVAILABILITY_STATES = {"AVAILABLE", "WAITING", "BUSY", "BLOCKED", "RATE_LIMITED", "QUOTA_BLOCKED", "CHECKPOINTING", "TERMINATING", "UNKNOWN"}
+AVAILABILITY_REASON_CODES = {"WAITING_FOR_WORK", "WAITING_FOR_INPUT", "DEPENDENCY_BLOCKED", "PROVIDER_RATE_LIMIT", "PROVIDER_QUOTA_EXHAUSTED", "CONTEXT_LIMIT", "CHECKPOINTING", "TERMINATING", "MANUAL_BUSY", "UNKNOWN"}
+AUTHORIZED_ASSOCIATIONS = {"OWNER", "MEMBER", "COLLABORATOR"}
+ENTRY_ACTIONS = {
+    "CREATE_NEW_REPOSITORY",
+    "ADOPT_EXISTING_REPOSITORY",
+    "MAP_EXISTING_PROJECT",
+    "LAB_EVOLUTION",
+    "CONTINUE_GOVERNED_WORK",
+    "UNKNOWN",
+}
+CONNECTION_INTENTS = {
+    "OBSERVE",
+    "CONTEXT_INTAKE",
+    "INFORMATION_INTAKE",
+    "WORK_REQUEST",
+    "CODE_CHANGE",
+    "REVIEW",
+    "INFRASTRUCTURE",
+    "UNKNOWN",
+}
+ENTRY_PURPOSES = {"WORK_ON_CONTROL_PLANE", "APPLY_GOVERNANCE_CASE"}
+CONTROL_PLANE_WORK_KINDS = {"CODE_IMPLEMENTATION", "EXECUTE_EXISTING_TASK", "ADD_OR_ENRICH_INFORMATION"}
+FORBIDDEN_KEY_FRAGMENTS = ("token", "secret", "password", "private_key", "cookie", "authorization")
+ALLOWED_KEYS = {
+    "schema",
+    "event",
+    "session_id",
+    "agent",
+    "provider",
+    "provider_ref",
+    "provider_url",
+    "connection_ref",
+    "client_instance_id",
+    "bridge_registration_ref",
+    "provider_connector_app_id",
+    "provider_connector_client_id",
+    "provider_connector_installation_id",
+    "provider_connector_slug",
+    "logical_agent_alias",
+    "same_logical_agent_session_id",
+    "continuity_evidence_ref",
+    "observed_head",
+    "branch",
+    "task_id",
+    "pull_request",
+    "agent_role",
+    "entry_action",
+    "connection_intent",
+    "entry_purpose",
+    "work_kind",
+    "capabilities",
+    "wake_channels",
+    "continuity_id",
+    "coordination_issue",
+    "coordination_state_ref",
+    "scope_id",
+    "work_mode",
+    "collision_domains",
+    "handoff_ref",
+    "action_id",
+    "action_label",
+    "action_phase",
+    "tool_name",
+    "tool_call_id",
+    "outcome",
+    "written_head",
+    "checkpoint_ref",
+    "interruption_code",
+    "availability_state",
+    "availability_reason_code",
+    "dispatch_id",
+    "command_id",
+    "correlation_id",
+    "delivery_state",
+    "challenge_id",
+    "nonce",
+    "challenge_status",
+    "target_session_ids",
+    "target_logical_agent_alias",
+    "event_kind",
+    "payload_ref",
+    "event_id",
+    "response_ref",
+    "short_alias",
+    "work_items",
+    "logical_agent_id",
+    "arrival_issue",
+    "requires_ack",
+    "reply_to_event_id",
+    "expires_at",
+    "ack_timeout_seconds",
+}
+
+
+def read_json(path: Path, default=None):
+    if not path.exists():
+        if default is not None:
+            return default
+        raise FileNotFoundError(path)
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def state_paths() -> tuple[Path, Path]:
+    if (ROOT / ".template-source").exists():
+        base = ROOT / ".governance" / "control-plane-state"
+        return base / "gacr-sessions.json", base / "gacr-beacons.json"
+    base = ROOT / ".governance"
+    return base / "sessions" / "sessions.json", base / "agent-relay" / "beacons.json"
+
+
+def assert_safe(value: object, path: str = "payload") -> None:
+    if isinstance(value, dict):
+        for key, child in value.items():
+            lowered = str(key).lower()
+            if any(fragment in lowered for fragment in FORBIDDEN_KEY_FRAGMENTS):
+                raise ValueError(f"forbidden host-event key: {path}.{key}")
+            if lowered in {"message", "messages", "transcript", "conversation_text", "prompt", "response_text"}:
+                raise ValueError(f"transcript-like host-event key forbidden: {path}.{key}")
+            assert_safe(child, f"{path}.{key}")
+    elif isinstance(value, list):
+        for index, child in enumerate(value):
+            assert_safe(child, f"{path}[{index}]")
+    elif isinstance(value, str):
+        if len(value) > 2048:
+            raise ValueError(f"host-event value too long at {path}")
+        if "-----BEGIN PRIVATE KEY-----" in value or value.startswith("ghp_") or value.startswith("github_pat_"):
+            raise ValueError(f"secret-like host-event value at {path}")
+
+
+def parse_issue_comment_event(event: dict, config: dict) -> dict | None:
+    bridge = config.get("host_issue_bridge") or {}
+    if not bridge.get("enabled", False):
+        return None
+    if event.get("action") != "created":
+        return None
+
+    issue = event.get("issue") or {}
+    configured_issue = bridge.get("issue_number")
+    if configured_issue not in (None, "", 0):
+        if int(issue.get("number") or 0) != int(configured_issue):
+            return None
+    else:
+        expected_title = str(bridge.get("issue_title") or "").strip()
+        if not expected_title or str(issue.get("title") or "").strip() != expected_title:
+            return None
+
+    comment = event.get("comment") or {}
+    body = str(comment.get("body") or "")
+    if not body.startswith(PREFIX):
+        return None
+
+    association = str(comment.get("author_association") or "").upper()
+    allowed = set(bridge.get("allowed_author_associations") or AUTHORIZED_ASSOCIATIONS)
+    if association not in allowed:
+        raise ValueError(f"unauthorized host-event author association: {association or 'UNKNOWN'}")
+
+    encoded = body[len(PREFIX):].strip()
+    if not encoded or len(encoded) > int(bridge.get("max_payload_chars") or 8192):
+        raise ValueError("invalid host-event payload size")
+    payload = json.loads(encoded)
+    if not isinstance(payload, dict):
+        raise ValueError("host-event payload must be a JSON object")
+    if payload.get("schema") != SCHEMA:
+        raise ValueError("unsupported host-event schema")
+    unknown = sorted(set(payload) - ALLOWED_KEYS)
+    if unknown:
+        raise ValueError(f"unsupported host-event fields: {','.join(unknown)}")
+    assert_safe(payload)
+
+    kind = str(payload.get("event") or "").lower()
+    if kind not in EVENTS:
+        raise ValueError("unsupported host-event type")
+    same_logical_requested = any(
+        payload.get(key) not in (None, "")
+        for key in ("same_logical_agent_session_id", "continuity_evidence_ref")
+    )
+    if same_logical_requested:
+        same_logical_fields = (
+            payload.get("same_logical_agent_session_id"),
+            payload.get("continuity_id"),
+            payload.get("continuity_evidence_ref"),
+        )
+        if kind != "attach":
+            raise ValueError("same-logical-agent proof is supported only for attach events")
+        if any(value in (None, "") for value in same_logical_fields):
+            raise ValueError("same-logical-agent attach requires session, continuity_id and evidence_ref")
+        if payload.get("agent") in (None, ""):
+            raise ValueError("same-logical-agent attach requires explicit agent identity")
+        if payload.get("connection_ref") in (None, ""):
+            raise ValueError("same-logical-agent attach requires explicit connection_ref")
+    if kind == "action" and payload.get("action_phase") not in ACTION_PHASES:
+        raise ValueError("host action requires a supported action_phase")
+    if kind == "interrupt" and payload.get("interruption_code") not in INTERRUPTION_CODES:
+        raise ValueError("host interrupt requires a supported interruption_code")
+    if kind == "availability":
+        if payload.get("availability_state") not in AVAILABILITY_STATES:
+            raise ValueError("host availability requires a supported availability_state")
+        reason = payload.get("availability_reason_code")
+        if reason is not None and reason not in AVAILABILITY_REASON_CODES:
+            raise ValueError("host availability requires a supported availability_reason_code")
+    entry_action = payload.get("entry_action")
+    if entry_action is not None and entry_action not in ENTRY_ACTIONS:
+        raise ValueError("unsupported host-event entry_action")
+    connection_intent = payload.get("connection_intent")
+    if connection_intent is not None and connection_intent not in CONNECTION_INTENTS:
+        raise ValueError("unsupported host-event connection_intent")
+    entry_purpose = payload.get("entry_purpose")
+    if entry_purpose is not None and entry_purpose not in ENTRY_PURPOSES:
+        raise ValueError("unsupported host-event entry_purpose")
+    work_kind = payload.get("work_kind")
+    if work_kind is not None and work_kind not in CONTROL_PLANE_WORK_KINDS:
+        raise ValueError("unsupported host-event work_kind")
+
+    if kind == "owner_role_assign":
+        actor = str(((comment.get("user") or {}).get("login") or ""))
+        sender = str(((event.get("sender") or {}).get("login") or ""))
+        if actor != "Wealthtechinnovations" or sender != actor:
+            raise ValueError("OWNER_ROLE_AUTHENTICATION_REQUIRED")
+        for field in ("session_id", "logical_agent_id", "connection_ref", "continuity_id",
+                      "coordination_issue", "agent_role", "work_items", "observed_head"):
+            if payload.get(field) in (None, ""):
+                raise ValueError("OWNER_ROLE_REQUIRED_FIELD:" + field)
+        if not isinstance(payload["coordination_issue"], int):
+            raise ValueError("OWNER_ROLE_COORDINATION_ISSUE_REQUIRED")
+    if kind == "owner_alias_assign":
+        actor = str(((comment.get("user") or {}).get("login") or ""))
+        sender = str(((event.get("sender") or {}).get("login") or ""))
+        if actor != "Wealthtechinnovations" or sender != actor:
+            raise ValueError("OWNER_ALIAS_AUTHENTICATED_OWNER_REQUIRED")
+        for field in ("session_id", "logical_agent_id", "connection_ref", "continuity_id",
+                      "coordination_issue", "short_alias", "observed_head", "arrival_issue"):
+            if payload.get(field) in (None, ""):
+                raise ValueError("OWNER_ALIAS_REQUIRED_FIELD:" + field)
+        if not isinstance(payload["coordination_issue"], int) or not isinstance(payload["arrival_issue"], int):
+            raise ValueError("OWNER_ALIAS_ISSUE_NUMBERS_REQUIRED")
+    if kind == "continuity_scope":
+        for key in ("session_id", "continuity_id", "coordination_issue", "coordination_state_ref", "scope_id", "work_mode", "observed_head"):
+            if payload.get(key) in (None, ""):
+                raise ValueError(f"host continuity_scope requires {key}")
+        if payload.get("work_mode") not in {"READ_ONLY", "WRITE", "REVIEW"}:
+            raise ValueError("host continuity_scope requires a supported work_mode")
+        domains = payload.get("collision_domains")
+        if not isinstance(domains, list) or not domains:
+            raise ValueError("host continuity_scope requires non-empty collision_domains")
+        if not all(isinstance(item, str) and item.strip() for item in domains):
+            raise ValueError("host continuity_scope collision_domains must be non-empty strings")
+        if not isinstance(payload.get("coordination_issue"), int) or int(payload["coordination_issue"]) <= 0:
+            raise ValueError("host continuity_scope requires a positive coordination_issue")
+    if kind == "continuity_yield":
+        for key in ("session_id", "continuity_id", "scope_id", "handoff_ref", "observed_head"):
+            if payload.get(key) in (None, ""):
+                raise ValueError(f"host continuity_yield requires {key}")
+    if kind == "continuity_event":
+        for key in ("session_id", "continuity_id", "event_kind", "payload_ref", "observed_head", "scope_id"):
+            if payload.get(key) in (None, ""):
+                raise ValueError(f"host continuity_event requires {key}")
+        domains = payload.get("collision_domains")
+        if not isinstance(domains, list) or not domains:
+            raise ValueError("host continuity_event requires non-empty collision_domains")
+        direct_targets = payload.get("target_session_ids")
+        alias_target = payload.get("target_logical_agent_alias")
+        has_direct = isinstance(direct_targets, list) and any(str(x).strip() for x in direct_targets)
+        has_alias = alias_target not in (None, "")
+        if has_direct == has_alias:
+            raise ValueError("host continuity_event requires exactly one target mode")
+        if "requires_ack" in payload and not isinstance(payload.get("requires_ack"), bool):
+            raise ValueError("host continuity_event requires_ack must be boolean")
+        if "ack_timeout_seconds" in payload and (
+            not isinstance(payload.get("ack_timeout_seconds"), int)
+            or int(payload["ack_timeout_seconds"]) <= 0
+        ):
+            raise ValueError("host continuity_event ack_timeout_seconds must be positive")
+    if kind == "continuity_ack":
+        for key in ("session_id", "continuity_id", "event_id", "observed_head"):
+            if payload.get(key) in (None, ""):
+                raise ValueError(f"host continuity_ack requires {key}")
+    if kind == "continuity_response":
+        for key in ("session_id", "continuity_id", "event_id", "response_ref", "observed_head"):
+            if payload.get(key) in (None, ""):
+                raise ValueError(f"host continuity_response requires {key}")
+    if kind == "work_offer_accept":
+        for key in ("session_id", "dispatch_id"):
+            if payload.get(key) in (None, ""):
+                raise ValueError(f"host work_offer_accept requires {key}")
+    if kind == "command_ack":
+        for key in ("session_id", "dispatch_id", "command_id", "correlation_id", "delivery_state"):
+            if payload.get(key) in (None, ""):
+                raise ValueError(f"host command_ack requires {key}")
+    if kind == "challenge_response":
+        for key in ("session_id", "dispatch_id", "command_id", "correlation_id", "challenge_id", "nonce", "challenge_status"):
+            if payload.get(key) in (None, ""):
+                raise ValueError(f"host challenge_response requires {key}")
+    for list_field in ("capabilities", "wake_channels", "collision_domains", "target_session_ids"):
+        if list_field in payload and not isinstance(payload.get(list_field), list):
+            raise ValueError(f"{list_field} must be a JSON array")
+    if isinstance(payload.get("capabilities"), list) and len(payload["capabilities"]) > 32:
+        raise ValueError("too many host-event capabilities")
+    if isinstance(payload.get("wake_channels"), list) and len(payload["wake_channels"]) > 8:
+        raise ValueError("too many host-event wake channels")
+    if isinstance(payload.get("collision_domains"), list) and len(payload["collision_domains"]) > 32:
+        raise ValueError("too many host-event collision domains")
+
+    comment_id = comment.get("id")
+    if not comment_id:
+        raise ValueError("host-event comment id unavailable")
+    payload["_comment_id"] = str(comment_id)
+    payload["_evidence_ref"] = f"github-issue-comment:{comment_id}"
+    payload["_actor"] = ((comment.get("user") or {}).get("login") or (event.get("sender") or {}).get("login"))
+    payload["_association"] = association
+    payload["_observed_at"] = comment.get("created_at")
+    return payload
+
+
+def _session_logical_agent_id(session: dict) -> str | None:
+    value = session.get("logical_agent_id") or session.get("agent_identity")
+    return str(value).strip() if value not in (None, "") else None
+
+
+def _session_values(session: dict, key: str) -> set[str]:
+    values: set[str] = set()
+    primary = session.get(key)
+    if primary not in (None, "", "UNAVAILABLE"):
+        values.add(str(primary))
+    if key in {"provider_conversation_ref", "client_instance_id", "connection_ref"}:
+        for context in session.get("provider_contexts") or []:
+            if not isinstance(context, dict):
+                continue
+            value = context.get(key)
+            if value not in (None, "", "UNAVAILABLE"):
+                values.add(str(value))
+    return values
+
+
+def resolve_owner_alias(alias: str) -> dict:
+    state = continuity_coordination.read_json(
+        continuity_coordination.STATE_PATH,
+        continuity_coordination.default_state(),
+    )
+    sessions = {"sessions": active_sessions()}
+    return continuity_coordination.resolve_logical_agent_alias_docs(state, sessions, alias=alias)
+
+
+def active_sessions() -> list[dict]:
+    sessions_path, _ = state_paths()
+    return read_json(sessions_path, {"sessions": []}).get("sessions", [])
+
+
+def resolve_session(payload: dict, repository: str) -> dict | None:
+    session_id = payload.get("session_id")
+    matches = []
+    for session in active_sessions():
+        if session.get("repository") != repository:
+            continue
+        relay_state = (session.get("relay") or {}).get("state")
+        if session.get("status") == "CLOSED" or relay_state in {"CLOSED", "HANDOFF_STALLED"}:
+            continue
+        if session_id:
+            if session.get("session_id") == session_id:
+                matches.append(session)
+            continue
+        matched = False
+        provider_ref = payload.get("provider_ref")
+        if provider_ref and str(provider_ref) in _session_values(session, "provider_conversation_ref"):
+            matched = True
+        connection_ref = payload.get("connection_ref")
+        if connection_ref and str(connection_ref) in _session_values(session, "connection_ref"):
+            matched = True
+        client_instance_id = payload.get("client_instance_id")
+        if client_instance_id and str(client_instance_id) in _session_values(session, "client_instance_id"):
+            matched = True
+        if matched:
+            matches.append(session)
+
+    unique = {item.get("session_id"): item for item in matches if item.get("session_id")}
+    if len(unique) > 1:
+        raise ValueError("host-event session resolution is ambiguous")
+    return next(iter(unique.values()), None)
+
+
+def evidence_processed(evidence_ref: str) -> bool:
+    _, beacons_path = state_paths()
+    store = read_json(beacons_path, {"items": []})
+    return any(item.get("evidence_ref") == evidence_ref for item in store.get("items", []))
+
+
+def now_iso_from_event(payload: dict) -> str:
+    value = payload.get("_observed_at")
+    if value:
+        return str(value)
+    from datetime import datetime, timezone
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+
+
+def add(args: list[str], flag: str, value) -> None:
+    if value in (None, "", []):
+        return
+    args.extend([flag, str(value)])
+
+
+def run_script(path: Path, args: list[str]) -> str:
+    cp = subprocess.run([sys.executable, str(path), *args], cwd=ROOT, text=True, capture_output=True)
+    if cp.stdout:
+        print(cp.stdout, end="")
+    if cp.stderr:
+        print(cp.stderr, file=sys.stderr, end="")
+    if cp.returncode != 0:
+        raise RuntimeError(f"{path.name} failed with exit {cp.returncode}")
+    return cp.stdout
+
+
+def ensure_session(payload: dict, repository: str) -> dict:
+    alias_resolution = None
+    alias = payload.get("logical_agent_alias")
+    if alias not in (None, ""):
+        alias_resolution = resolve_owner_alias(str(alias))
+
+    existing = resolve_session(payload, repository)
+    explicit_provider = payload.get("provider")
+    if existing:
+        if alias_resolution and _session_logical_agent_id(existing) != alias_resolution.get("logical_agent_id"):
+            raise ValueError("logical agent alias resolves to a different canonical session identity")
+        existing_provider = existing.get("provider")
+        if explicit_provider not in (None, "", "other", existing_provider) and existing_provider not in (None, "", "other"):
+            raise ValueError("provider conflict on host-event session")
+
+        connector_evidence = any(
+            payload.get(key) not in (None, "")
+            for key in (
+                "provider_connector_app_id",
+                "provider_connector_client_id",
+                "provider_connector_installation_id",
+                "provider_connector_slug",
+            )
+        )
+        provider_enrichment = (
+            explicit_provider not in (None, "", "other")
+            and existing_provider in (None, "", "other")
+        )
+        provider_context_enrichment = (
+            payload.get("provider_ref") not in (None, "")
+            and payload.get("provider_ref") != existing.get("provider_conversation_ref")
+        )
+        if provider_enrichment or provider_context_enrichment or connector_evidence:
+            args: list[str] = []
+            add(args, "--agent", payload.get("agent") or existing.get("agent_identity") or "conversation-agent")
+            add(args, "--provider", explicit_provider or existing_provider or "other")
+            add(args, "--provider-ref", payload.get("provider_ref") or existing.get("provider_conversation_ref"))
+            add(args, "--provider-url", payload.get("provider_url"))
+            add(args, "--connection-ref", payload.get("connection_ref") or existing.get("connection_ref"))
+            add(args, "--client-instance-id", payload.get("client_instance_id") or existing.get("client_instance_id"))
+            add(args, "--bridge-registration-ref", payload.get("bridge_registration_ref") or existing.get("bridge_registration_ref"))
+            add(args, "--provider-connector-app-id", payload.get("provider_connector_app_id"))
+            add(args, "--provider-connector-client-id", payload.get("provider_connector_client_id"))
+            add(args, "--provider-connector-installation-id", payload.get("provider_connector_installation_id"))
+            add(args, "--provider-connector-slug", payload.get("provider_connector_slug"))
+            add(args, "--repository", repository)
+            add(args, "--observed-head", payload.get("observed_head"))
+            add(args, "--branch", payload.get("branch") or (existing.get("relay") or {}).get("branch") or "main")
+            add(args, "--task-id", payload.get("task_id"))
+            add(args, "--pull-request", payload.get("pull_request"))
+            add(args, "--agent-role", payload.get("agent_role"))
+            add(args, "--source", "EXPLICIT_CLIENT")
+            run_script(AUTO_ATTACH, args)
+            enriched = resolve_session(payload, repository)
+            if not enriched:
+                raise RuntimeError("host-event provider/context enrichment completed but session could not be resolved")
+            return enriched
+        return existing
+
+    if alias_resolution:
+        proof_fields = (
+            payload.get("same_logical_agent_session_id"),
+            payload.get("continuity_id"),
+            payload.get("continuity_evidence_ref"),
+        )
+        if any(value in (None, "") for value in proof_fields):
+            raise ValueError(
+                "LOGICAL_AGENT_ALIAS_SURFACE_UNRESOLVED: alias identifies the intended logical agent "
+                "but does not prove this new provider/runtime surface"
+            )
+        allowed_sessions = {
+            item.get("session_id")
+            for item in alias_resolution.get("sessions") or []
+            if item.get("session_id")
+        }
+        if str(payload.get("same_logical_agent_session_id")) not in allowed_sessions:
+            raise ValueError("logical agent alias reference session is outside resolved logical agent")
+        payload = dict(payload)
+        payload["agent"] = alias_resolution["logical_agent_id"]
+
+    if not any(payload.get(key) for key in ("provider_ref", "provider_url", "connection_ref", "client_instance_id")):
+        raise ValueError("host-event cannot auto-attach without provider_ref/provider_url/connection_ref/client_instance_id")
+
+    args: list[str] = []
+    add(args, "--agent", payload.get("agent") or "conversation-agent")
+    add(args, "--provider", payload.get("provider") or "other")
+    add(args, "--provider-ref", payload.get("provider_ref"))
+    add(args, "--provider-url", payload.get("provider_url"))
+    add(args, "--connection-ref", payload.get("connection_ref"))
+    add(args, "--client-instance-id", payload.get("client_instance_id"))
+    add(args, "--bridge-registration-ref", payload.get("bridge_registration_ref"))
+    add(args, "--provider-connector-app-id", payload.get("provider_connector_app_id"))
+    add(args, "--provider-connector-client-id", payload.get("provider_connector_client_id"))
+    add(args, "--provider-connector-installation-id", payload.get("provider_connector_installation_id"))
+    add(args, "--provider-connector-slug", payload.get("provider_connector_slug"))
+    add(args, "--same-logical-agent-session-id", payload.get("same_logical_agent_session_id"))
+    add(args, "--continuity-id", payload.get("continuity_id"))
+    add(args, "--continuity-evidence-ref", payload.get("continuity_evidence_ref"))
+    add(args, "--repository", repository)
+    add(args, "--observed-head", payload.get("observed_head"))
+    add(args, "--branch", payload.get("branch") or "main")
+    add(args, "--task-id", payload.get("task_id"))
+    add(args, "--pull-request", payload.get("pull_request"))
+    add(args, "--agent-role", payload.get("agent_role"))
+    add(args, "--entry-action", payload.get("entry_action"))
+    add(args, "--connection-intent", payload.get("connection_intent"))
+    add(args, "--source", "EXPLICIT_CLIENT")
+    for capability in payload.get("capabilities") or []:
+        add(args, "--capability", capability)
+    for channel in payload.get("wake_channels") or ["POLL_REPOSITORY"]:
+        add(args, "--wake-channel", channel)
+    run_script(AUTO_ATTACH, args)
+
+    attached = resolve_session(payload, repository)
+    if not attached:
+        raise RuntimeError("host-event auto-attach completed but session could not be resolved")
+    return attached
+
+
+def marker_beacon(session_id: str, payload: dict, event_type: str) -> None:
+    args = [
+        "beacon",
+        "--session-id", session_id,
+        "--event-type", event_type,
+        "--source", "CLIENT_EMITTER",
+        "--evidence-ref", payload["_evidence_ref"],
+    ]
+    add(args, "--action-id", payload.get("action_id"))
+    add(args, "--action-label", payload.get("action_label"))
+    add(args, "--action-phase", payload.get("action_phase"))
+    add(args, "--tool-name", payload.get("tool_name"))
+    add(args, "--tool-call-id", payload.get("tool_call_id"))
+    add(args, "--outcome", payload.get("outcome"))
+    add(args, "--written-head", payload.get("written_head"))
+    add(args, "--checkpoint-ref", payload.get("checkpoint_ref"))
+    add(args, "--interruption-code", payload.get("interruption_code"))
+    add(args, "--availability-state", payload.get("availability_state"))
+    add(args, "--availability-reason-code", payload.get("availability_reason_code"))
+    add(args, "--agent-role", payload.get("agent_role"))
+    add(args, "--entry-purpose", payload.get("entry_purpose"))
+    add(args, "--work-kind", payload.get("work_kind"))
+    run_script(TELEMETRY, args)
+
+
+def process(payload: dict, repository: str) -> dict:
+    evidence_ref = payload["_evidence_ref"]
+    if evidence_processed(evidence_ref):
+        return {
+            "status": "GACR_HOST_EVENT_ALREADY_PROCESSED",
+            "evidence_ref": evidence_ref,
+            "event": payload.get("event"),
+        }
+
+    kind = payload["event"]
+    if kind in {"command_ack", "challenge_response"}:
+        session = resolve_session(payload, repository)
+        if not session:
+            raise ValueError("host control response requires an existing canonical session")
+        session_id = session["session_id"]
+        store = read_control_json(DISPATCHES_PATH, {"schema_version": "1.0.0", "revision": 0, "items": []})
+        control_result = apply_host_control_event(
+            store,
+            payload,
+            evidence_ref=evidence_ref,
+            observed_at=now_iso_from_event(payload),
+        )
+        write_control_json(DISPATCHES_PATH, store)
+        marker_beacon(session_id, payload, "COMMAND_ACK" if kind == "command_ack" else "CHALLENGE_RESPONSE")
+        if kind == "challenge_response" and control_result.get("fresh_liveness") is True:
+            hb = [
+                "heartbeat",
+                "--session-id", session_id,
+                "--source", "CLIENT_EMITTER",
+                "--action", "HOST_CHALLENGE_RESPONSE",
+                "--evidence", evidence_ref,
+            ]
+            add(hb, "--observed-head", payload.get("observed_head"))
+            run_script(CORE, hb)
+        run_script(TELEMETRY, ["correlate"])
+        run_script(TELEMETRY, ["forensics", "--session-id", session_id])
+        return {
+            "status": "GACR_HOST_CONTROL_EVENT_PROCESSED",
+            "event": kind,
+            "session_id": session_id,
+            "evidence_ref": evidence_ref,
+            "control": control_result,
+            "transport": "GITHUB_ISSUE_COMMENT",
+            "provenance": "CLIENT_EMITTER",
+        }
+
+    if kind == "owner_role_assign":
+        if not (ROOT / ".template-source").exists():
+            raise ValueError("OWNER_ROLE_SOURCE_REPOSITORY_ONLY")
+        if repository != "chainsolutions-wealthtech/Governed-Repository-Template":
+            raise ValueError("OWNER_ROLE_REPOSITORY_MISMATCH")
+        state = continuity_coordination.read_json(
+            continuity_coordination.STATE_PATH, continuity_coordination.default_state()
+        )
+        sessions = {"sessions": active_sessions()}
+        new_state, result = assign_owner_role(
+            state,sessions,
+            actor=payload["_actor"],association=payload["_association"],
+            continuity_id=payload["continuity_id"],coordination_issue=payload["coordination_issue"],
+            session_id=payload["session_id"],logical_agent_id=payload["logical_agent_id"],
+            connection_ref=payload["connection_ref"],agent_role=payload["agent_role"],
+            work_items=payload["work_items"],observed_head=payload["observed_head"],
+            current_head=continuity_coordination.git_head(),
+            evidence_ref=evidence_ref,timestamp=now_iso_from_event(payload),
+        )
+        if new_state is not state:
+            continuity_coordination.write_json(continuity_coordination.STATE_PATH,new_state)
+        return {**result,"transport":"GITHUB_OWNER_ISSUE_COMMENT","session_preserved":True}
+    if kind == "owner_alias_assign":
+        if not (ROOT / ".template-source").exists():
+            raise ValueError("OWNER_ALIAS_SOURCE_REPOSITORY_ONLY")
+        if repository != "chainsolutions-wealthtech/Governed-Repository-Template":
+            raise ValueError("OWNER_ALIAS_REPOSITORY_MISMATCH")
+        state = continuity_coordination.read_json(
+            continuity_coordination.STATE_PATH, continuity_coordination.default_state()
+        )
+        sessions = {"sessions": active_sessions()}
+        current_head = continuity_coordination.git_head()
+        new_state, result = assign_owner_alias(
+            state, sessions,
+            actor=payload["_actor"],
+            association=payload["_association"],
+            continuity_id=payload["continuity_id"],
+            coordination_issue=payload["coordination_issue"],
+            session_id=payload["session_id"],
+            logical_agent_id=payload["logical_agent_id"],
+            connection_ref=payload["connection_ref"],
+            short_alias=payload["short_alias"],
+            observed_head=payload["observed_head"],
+            current_head=current_head,
+            evidence_ref=evidence_ref,
+            arrival_issue=payload["arrival_issue"],
+            timestamp=now_iso_from_event(payload),
+        )
+        if new_state is not state:
+            continuity_coordination.write_json(continuity_coordination.STATE_PATH, new_state)
+        return {**result, "transport": "GITHUB_OWNER_ISSUE_COMMENT", "session_preserved": True}
+
+    session = ensure_session(payload, repository)
+    session_id = session["session_id"]
+    coordination_result = None
+
+    if kind == "continuity_scope":
+        args = [
+            "declare",
+            "--session-id", session_id,
+            "--continuity-id", str(payload["continuity_id"]),
+            "--coordination-issue", str(payload["coordination_issue"]),
+            "--coordination-state-ref", str(payload["coordination_state_ref"]),
+            "--scope-id", str(payload["scope_id"]),
+            "--work-mode", str(payload["work_mode"]),
+            "--observed-head", str(payload["observed_head"]),
+            "--evidence-ref", evidence_ref,
+        ]
+        add(args, "--declared-role", payload.get("agent_role"))
+        for domain in payload.get("collision_domains") or []:
+            add(args, "--collision-domain", domain)
+        coordination_result = json.loads(run_script(CONTINUITY, args))
+        hb = [
+            "heartbeat",
+            "--session-id", session_id,
+            "--source", "CLIENT_EMITTER",
+            "--action", "CONTINUITY_SCOPE_DECLARED",
+            "--evidence", evidence_ref,
+            "--observed-head", str(payload["observed_head"]),
+        ]
+        run_script(CORE, hb)
+        marker_payload = dict(payload)
+        marker_payload["checkpoint_ref"] = str(payload["continuity_id"])
+        marker_beacon(session_id, marker_payload, "CONTINUITY_SCOPE_DECLARED")
+    elif kind == "continuity_yield":
+        args = [
+            "yield",
+            "--session-id", session_id,
+            "--continuity-id", str(payload["continuity_id"]),
+            "--scope-id", str(payload["scope_id"]),
+            "--observed-head", str(payload["observed_head"]),
+            "--handoff-ref", str(payload["handoff_ref"]),
+            "--evidence-ref", evidence_ref,
+        ]
+        coordination_result = json.loads(run_script(CONTINUITY, args))
+        hb = [
+            "heartbeat",
+            "--session-id", session_id,
+            "--source", "CLIENT_EMITTER",
+            "--action", "CONTINUITY_SCOPE_YIELDED",
+            "--evidence", evidence_ref,
+            "--observed-head", str(payload["observed_head"]),
+        ]
+        run_script(CORE, hb)
+        marker_payload = dict(payload)
+        marker_payload["checkpoint_ref"] = str(payload["continuity_id"])
+        marker_beacon(session_id, marker_payload, "CONTINUITY_SCOPE_YIELDED")
+    elif kind == "continuity_event":
+        args = [
+            "emit",
+            "--continuity-id", str(payload["continuity_id"]),
+            "--from-session-id", session_id,
+            "--event-kind", str(payload["event_kind"]),
+            "--payload-ref", str(payload["payload_ref"]),
+            "--observed-head", str(payload["observed_head"]),
+            "--evidence-ref", evidence_ref,
+            "--scope-id", str(payload["scope_id"]),
+        ]
+        for target in payload.get("target_session_ids") or []:
+            add(args, "--target-session-id", target)
+        add(args, "--target-logical-agent-alias", payload.get("target_logical_agent_alias"))
+        for domain in payload.get("collision_domains") or []:
+            add(args, "--collision-domain", domain)
+        add(args, "--correlation-id", payload.get("correlation_id"))
+        add(args, "--reply-to-event-id", payload.get("reply_to_event_id"))
+        add(args, "--expires-at", payload.get("expires_at"))
+        add(args, "--ack-timeout-seconds", payload.get("ack_timeout_seconds"))
+        if payload.get("requires_ack") is False:
+            args.append("--no-requires-ack")
+        elif payload.get("requires_ack") is True:
+            args.append("--requires-ack")
+        coordination_result = json.loads(run_script(BUS, args))
+        marker_beacon(session_id, payload, "CONTINUITY_EVENT_EMITTED")
+    elif kind == "continuity_ack":
+        coordination_result = json.loads(run_script(BUS, [
+            "ack",
+            "--continuity-id", str(payload["continuity_id"]),
+            "--event-id", str(payload["event_id"]),
+            "--session-id", session_id,
+            "--observed-head", str(payload["observed_head"]),
+            "--evidence-ref", evidence_ref,
+        ]))
+        marker_beacon(session_id, payload, "CONTINUITY_EVENT_ACK")
+    elif kind == "continuity_response":
+        coordination_result = json.loads(run_script(BUS, [
+            "respond",
+            "--continuity-id", str(payload["continuity_id"]),
+            "--event-id", str(payload["event_id"]),
+            "--session-id", session_id,
+            "--response-ref", str(payload["response_ref"]),
+            "--observed-head", str(payload["observed_head"]),
+            "--evidence-ref", evidence_ref,
+        ]))
+        marker_beacon(session_id, payload, "CONTINUITY_EVENT_RESPONSE")
+    elif kind == "work_offer_accept":
+        run_script(CAPACITY, [
+            "accept-work",
+            "--dispatch-id", str(payload["dispatch_id"]),
+            "--session-id", session_id,
+        ])
+        marker_beacon(session_id, payload, "WORK_OFFER_ACCEPT")
+    elif kind == "attach":
+        marker_beacon(session_id, payload, "HOST_ATTACH_RECEIPT")
+    elif kind == "heartbeat":
+        args = [
+            "heartbeat",
+            "--session-id", session_id,
+            "--source", "CLIENT_EMITTER",
+            "--action", payload.get("action_label") or "HOST_HEARTBEAT",
+            "--evidence", evidence_ref,
+        ]
+        add(args, "--observed-head", payload.get("observed_head"))
+        run_script(CORE, args)
+        marker_beacon(session_id, payload, "HOST_HEARTBEAT_RECEIPT")
+    elif kind == "action":
+        hb = [
+            "heartbeat",
+            "--session-id", session_id,
+            "--source", "CLIENT_EMITTER",
+            "--action", payload.get("action_label") or "HOST_ACTION",
+            "--evidence", evidence_ref,
+        ]
+        add(hb, "--observed-head", payload.get("observed_head"))
+        run_script(CORE, hb)
+        marker_beacon(session_id, payload, "ACTION_TRACE")
+    elif kind == "interrupt":
+        marker_beacon(session_id, payload, "INTERRUPTION_SIGNAL")
+    elif kind == "availability":
+        marker_beacon(session_id, payload, "AVAILABILITY_UPDATE")
+
+    run_script(TELEMETRY, ["correlate"])
+    run_script(TELEMETRY, ["forensics", "--session-id", session_id])
+    return {
+        "status": "GACR_HOST_EVENT_PROCESSED",
+        "event": kind,
+        "session_id": session_id,
+        "evidence_ref": evidence_ref,
+        "transport": "GITHUB_ISSUE_COMMENT",
+        "provenance": "CLIENT_EMITTER",
+        "coordination": coordination_result,
+    }
+
+
+def main() -> None:
+    event_path = os.environ.get("GITHUB_EVENT_PATH")
+    if not event_path:
+        raise SystemExit("GACR_HOST_ISSUE_INGRESS_FAILED: GITHUB_EVENT_PATH unavailable")
+    event = read_json(Path(event_path))
+    config = read_json(CONFIG_PATH)
+    try:
+        payload = parse_issue_comment_event(event, config)
+        if payload is None:
+            print(json.dumps({"status": "GACR_HOST_EVENT_IGNORED"}, indent=2))
+            return
+        repository = str(os.environ.get("GITHUB_REPOSITORY") or ((event.get("repository") or {}).get("full_name") or ""))
+        if repository.count("/") != 1:
+            raise ValueError("repository identity unavailable")
+        result = process(payload, repository)
+        print(json.dumps(result, indent=2, ensure_ascii=False))
+    except Exception as exc:
+        raise SystemExit(f"GACR_HOST_ISSUE_INGRESS_FAILED: {exc}") from exc
+
+
+if __name__ == "__main__":
+    main()

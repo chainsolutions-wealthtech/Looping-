@@ -1,0 +1,51 @@
+{
+  "schema": "gscc-entry-router/v1",
+  "authority": "00_GSCC_ENTRY.md",
+  "fail_closed": true,
+  "routes": [
+    {
+      "step_id": "R0_ENTRY_AUTHORITY",
+      "current": "ARRIVAL",
+      "action": "READ_AUTHORITY",
+      "target": "00_GSCC_ENTRY.md",
+      "success_outcome": "ENTRY_AUTHORITY_READ",
+      "next_step": "R1_PROVIDER_CONTEXT",
+      "failure_step": "BLOCK_UNRESOLVED"
+    },
+    {
+      "step_id": "R1_PERSISTED_ENTRY_PIPELINE",
+      "current": "00_GSCC_ENTRY.md",
+      "action": "RUN_PERSISTED_ENTRY_PIPELINE",
+      "target": "scripts/gscc_persisted_entry_pipeline.py",
+      "success_outcome": "READY_FOR_Q1",
+      "next_step": "Q1",
+      "failure_outcome": "ENTRY_BLOCKED",
+      "failure_step": "BLOCK_UNRESOLVED"
+    },
+    {
+      "step_id": "BLOCK_UNRESOLVED",
+      "current": "BLOCK_UNRESOLVED",
+      "action": "STOP_FAIL_CLOSED",
+      "target": null,
+      "next_step": null
+    }
+  ],
+  "canonical_after_q1": [
+    "Q1",
+    "Q3",
+    "Q4",
+    "Q5",
+    "Q8",
+    "Q9",
+    "Q10_GSE",
+    "Q2_GACR",
+    "Q6",
+    "Q7",
+    "Q11",
+    "Q12",
+    "F1",
+    "00_START_HERE.md"
+  ],
+  "post_q1_router": ".governance/gscc-post-q1-router.json",
+  "post_q1_persistence": ".governance/control-plane-db/009_gscc_post_q1_gate_route.sql"
+}

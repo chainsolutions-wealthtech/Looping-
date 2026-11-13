@@ -1,0 +1,134 @@
+{
+  "schema_version": "1.9.0",
+  "role": "REPOSITORY_TO_MCP_BINDING",
+  "preferred_transport": "ADAPTIVE_BY_CONFIGURED_ROUTE_AND_CAPABILITY",
+  "fallback_transport": "GITHUB_OIDC_EPHEMERAL_SSH_CERTIFICATE",
+  "direct_mcp": {
+    "endpoint_variable": "GOVERNED_MCP_URL",
+    "token_secret": "GOVERNED_MCP_AUTH_TOKEN",
+    "default_endpoint": null,
+    "discovery_tools": [
+      "ping",
+      "get_project_context",
+      "list_domains_s1",
+      "list_domains_s2",
+      "get_write_tools_context"
+    ],
+    "credential_provisioning": {
+      "mode": "CENTRAL_CONTROL_PLANE_REPOSITORY_SECRET",
+      "source_secret": "GOVERNED_MCP_AUTH_TOKEN",
+      "target_secret": "GOVERNED_MCP_AUTH_TOKEN",
+      "transport": "GITHUB_APP_INSTALLATION_TOKEN",
+      "required_target_permission": "repository:Secrets:write",
+      "source_value_exposure": "FORBIDDEN",
+      "trigger": "ANY_GOVERNED_LOCAL_COMMAND_WHEN_DIRECT_CREDENTIAL_APPLIES",
+      "attestation": "TARGET_SECRET_METADATA_ONLY",
+      "fallback": "BOTH_CONFIGURES_DIRECT_AND_SSH;_SSH_IS_USED_ONLY_WHEN_SELECTED_AS_ALTERNATE_ROUTE",
+      "mandatory_for": [
+        "DIRECT_MCP_TOKEN"
+      ],
+      "optional_for": [
+        "BOTH"
+      ],
+      "opportunistic_for": [
+        "BOTH"
+      ]
+    }
+  },
+  "ssh": {
+    "mode": "GITHUB_OIDC_EPHEMERAL_CERTIFICATE",
+    "broker_path": "/access/github/repository-ssh/certificate",
+    "oidc_audience": "https://mcp.wealthtechinnovations.com/access/github/repository-ssh",
+    "workflow": ".github/workflows/governed-local-entry.yml",
+    "key_algorithm": "ed25519",
+    "key_lifetime": "RUNNER_EPHEMERAL_ONLY",
+    "certificate_max_seconds": 600,
+    "host_profile_source": "OWNER_OR_OBSERVED_FACT_CROSS_CHECKED_WITH_SIGNED_BROKER_RESPONSE",
+    "known_hosts_source": "AUTHENTICATED_BROKER_RESPONSE",
+    "strict_host_key_checking": "REQUIRED",
+    "arbitrary_shell": "FORBIDDEN",
+    "persistent_private_key_secret": "FORBIDDEN",
+    "allowed_commands": [
+      "ping",
+      "project-context",
+      "list-domains-s1",
+      "list-domains-s2",
+      "docker-status-s1",
+      "docker-status-s2",
+      "write-tools-context"
+    ],
+    "write_authority": "MCP_SCOPED_WRITE_ONLY",
+    "both_semantics": {
+      "mode": "DUAL_READY_SMART_ROUTING",
+      "configured_transports": [
+        "DIRECT_MCP_TOKEN",
+        "SSH"
+      ],
+      "initial_preference": "DIRECT_MCP_TOKEN",
+      "fallback": "SSH",
+      "route_selection": "ONE_ROUTE_PER_OPERATION_UNLESS_INDEPENDENT_ATTESTATION_IS_EXPLICITLY_REQUIRED",
+      "simultaneous_execution_required": false,
+      "one_successful_route_satisfies_current_discovery": true,
+      "alternate_route": "CONFIGURED_AND_AVAILABLE_WITH_INDEPENDENT_READINESS_STATE",
+      "fallback_success_status": "PASS_IF_SELECTED_ROUTE_PASSES",
+      "write_authority": "UNCHANGED_MCP_SCOPED_WRITE_ONLY"
+    }
+  },
+  "invariants": [
+    "NO_SECRET_IN_GIT",
+    "NO_PERSISTENT_REPOSITORY_SSH_PRIVATE_KEY",
+    "READ_ONLY_DISCOVERY_FIRST",
+    "WRITE_TOOLS_REQUIRE_PROJECT_REGISTRATION",
+    "DOMAIN_CREATION_REQUIRES_EXPLICIT_APPROVAL",
+    "MCP_STATE_NE_GITHUB_STATE",
+    "CONTROL_PLANE_MCP_SECRET_PROVISIONING_NEVER_EXPOSES_SECRET_VALUE",
+    "TARGET_MCP_SECRET_IS_PROVISIONED_ONLY_AT_EXACT_HEAD_CREDENTIAL_GATE",
+    "BOTH_DIRECT_CREDENTIAL_ABSENCE_MUST_NOT_BLOCK_READ_ONLY_SSH_DISCOVERY",
+    "MCP_DISCOVERY_FAILURES_ON_EXACT_HEAD_ARE_PERSISTED_RETRYABLE",
+    "HEAD_MOVED_NEVER_PERSISTS_AS_DISCOVERY_EVIDENCE",
+    "DISCOVERY_REFRESH_PRESERVES_EXISTING_SETUP_ANSWERS",
+    "MCP_CONFIGURATION_INTENT_NE_DISCOVERY_EXECUTION_AUTHORITY",
+    "MCP_DISCOVERY_PLAN_MUST_BE_PRESENTED_BEFORE_EXECUTION",
+    "MCP_DISCOVERY_EXECUTION_REQUIRES_EXPLICIT_APPROVAL",
+    "SIGNED_BROKER_SSH_PROFILE_IS_FACTUAL_DISCOVERY_EVIDENCE",
+    "SSH_PROFILE_MISMATCH_REOPENS_PROFILE_RECOVERY",
+    "SSH_PROFILE_CHANGE_INVALIDATES_PRIOR_DISCOVERY_APPROVAL",
+    "BOTH_MEANS_DUAL_READY_SMART_ROUTING_NOT_COUPLED_EXECUTION",
+    "BOTH_ONE_OPERATION_SELECTS_ONE_ROUTE_UNLESS_INDEPENDENT_ATTESTATION_IS_REQUIRED",
+    "BOTH_ONE_SUCCESSFUL_SELECTED_ROUTE_SATISFIES_CURRENT_DISCOVERY",
+    "BOTH_ALTERNATE_ROUTE_READINESS_NE_CURRENT_ROUTE_SUCCESS",
+    "BOTH_PRIOR_AUTHORIZED_DIRECT_PASS_MAY_BE_REUSED_AFTER_ALTERNATE_SSH_PROFILE_CORRECTION"
+  ],
+  "discovery_failure_policy": {
+    "persist_exact_head_failures": true,
+    "retry_command": "/local-execute",
+    "retry_state": "MCP_DISCOVERY",
+    "head_moved_mutates_state": false,
+    "failure_evidence_secrecy": "NON_SECRET_CODES_ONLY",
+    "ssh_profile_mismatch": {
+      "recovery_phase": "Q_SSH_PROFILE_RECOVERY",
+      "observed_profile_source": "SIGNED_MCP_SSH_BROKER_RESPONSE",
+      "preserve_direct_mcp_evidence_in_failure": true,
+      "retry_without_profile_correction": false
+    }
+  },
+  "discovery_reconciliation_policy": {
+    "both_refresh_when_direct_credential_becomes_available": false,
+    "preserve_existing_answers": true,
+    "preserve_prior_evidence": "BOUNDED_HISTORY",
+    "max_prior_evidence_entries": 5,
+    "setup_approval_requires_current_selected_route_evidence": true,
+    "alternate_route_attestation_blocks_setup": false,
+    "authority_change": "NONE_FOR_REUSING_PREVIOUSLY_AUTHORIZED_SUCCESSFUL_ROUTE_EVIDENCE"
+  },
+  "discovery_authorization_policy": {
+    "configuration_answers_are_execution_authority": false,
+    "plan_required": true,
+    "explicit_approval_required": true,
+    "approval_field": "mcp_discovery_approved",
+    "approval_precedes_credential_provisioning_and_network_discovery": true,
+    "endpoint_change_invalidates_prior_discovery_approval": true,
+    "legacy_preapproval_discovery_evidence": "ARCHIVE_AND_REENTER_APPROVAL_GATE",
+    "ssh_profile_change_invalidates_prior_discovery_approval": true
+  }
+}

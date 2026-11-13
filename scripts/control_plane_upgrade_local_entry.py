@@ -1,0 +1,269 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+import argparse, base64, copy, json, os, re, urllib.error, urllib.parse, urllib.request
+from pathlib import Path
+from local_governed_entry import reconcile_both_smart_routing, reconcile_domain_question_order, reconcile_existing_host_path_question_order, reconcile_legacy_discovery_authority, reconcile_setup_question_order
+from gscc.capability_projection import build_portable_capability_projection
+
+ROOT=Path(__file__).resolve().parents[1]
+CENTRAL="chainsolutions-wealthtech/Governed-Repository-Template"
+LOCAL_STATE_RE=re.compile(r"<!-- GOVERNED_LOCAL_ENTRY_STATE:([A-Za-z0-9_-]+) -->")
+SHA_RE=re.compile(r"^[0-9a-f]{40}$")
+UPGRADE_PREFIX="governance: upgrade repository-local setup to v2."
+VERSION_RE=re.compile(r"^[0-9]+\.[0-9]+\.[0-9]+$")
+
+def current_template_version():
+    manifest=json.loads((ROOT/".governance/TEMPLATE_MANIFEST.json").read_text(encoding="utf-8"))
+    version=str(manifest.get("template_version") or "").strip()
+    if not VERSION_RE.fullmatch(version):
+        raise RuntimeError(f"TEMPLATE_VERSION_INVALID: {version!r}")
+    return version
+
+def gh(token,method,path,payload=None,allow_404=False):
+    req=urllib.request.Request("https://api.github.com"+path,method=method,
+      headers={"Authorization":f"Bearer {token}","Accept":"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28","User-Agent":"governed-local-entry-upgrader"},
+      data=json.dumps(payload).encode() if payload is not None else None)
+    try:
+        with urllib.request.urlopen(req,timeout=30) as r:
+            raw=r.read().decode();return json.loads(raw) if raw else {}
+    except urllib.error.HTTPError as exc:
+        body=exc.read().decode(errors="replace")
+        if allow_404 and exc.code==404:return None
+        raise RuntimeError(f"GitHub API {method} {path} failed: {exc.code} {body}") from exc
+
+def target_text(token,target,path):
+    obj=gh(token,"GET",f"/repos/{target}/contents/{path}",allow_404=True)
+    if not obj:return None
+    return base64.b64decode(obj["content"]).decode("utf-8")
+
+def append_once(text,marker,addition):
+    if marker in text:return text
+    return text.rstrip()+"\n\n"+addition.strip()+"\n"
+
+
+def merge_relay_config_for_client(source_config,target_config):
+    merged=copy.deepcopy(source_config if isinstance(source_config,dict) else {})
+    target_config=target_config if isinstance(target_config,dict) else {}
+
+    # Host-bridge source identity remains repository-local. Preserve the
+    # established title-fallback behavior from the portable baseline.
+    host_bridge=merged.setdefault("host_issue_bridge",{})
+    host_bridge["issue_number"]=None
+    host_bridge["source_issue_number_distributed"]=False
+    host_bridge["client_issue_strategy"]="TITLE_FALLBACK_UNTIL_LOCAL_NUMBER_BOUND"
+    host_bridge["live_proof_status"]="CLIENT_TITLE_FALLBACK_CI_PROVEN_SOURCE_LIVE_PROOF_SEPARATE"
+    merged.setdefault("external_bridge",{})["chatgpt_issue_bridge_live_proven"]=False
+
+    function_gate=merged.setdefault("gscc_function_exposure_gate",{})
+    target_gate=target_config.get("gscc_function_exposure_gate")
+    target_gate=target_gate if isinstance(target_gate,dict) else {}
+    target_issue=target_gate.get("issue_number")
+    local_bound=(
+        isinstance(target_issue,int)
+        and target_issue>0
+        and target_gate.get("source_issue_number_distributed") is False
+        and target_gate.get("client_issue_strategy")=="LOCAL_NUMBER_BOUND"
+    )
+    if local_bound:
+        function_gate["issue_number"]=target_issue
+        if isinstance(target_gate.get("issue_title"),str) and target_gate.get("issue_title").strip():
+            function_gate["issue_title"]=target_gate["issue_title"]
+        function_gate["source_issue_number_distributed"]=False
+        function_gate["client_issue_strategy"]="LOCAL_NUMBER_BOUND"
+    else:
+        function_gate["issue_number"]=None
+        function_gate["source_issue_number_distributed"]=False
+        function_gate["client_issue_strategy"]="DISABLED_UNTIL_LOCAL_NUMBER_BOUND"
+    return merged
+
+def build_relay_config_update(token,target):
+    source_config=json.loads((ROOT/".governance/agent-relay/config.json").read_text(encoding="utf-8"))
+    existing_text=target_text(token,target,".governance/agent-relay/config.json")
+    existing_config=json.loads(existing_text) if existing_text else {}
+    merged=merge_relay_config_for_client(source_config,existing_config)
+    return json.dumps(merged,ensure_ascii=False,indent=2)+"\n"
+
+
+def decode_local_issue_state(body):
+    match=LOCAL_STATE_RE.search(body or "")
+    if not match:return None
+    value=match.group(1);value += "="*((4-len(value)%4)%4)
+    try:
+        state=json.loads(base64.urlsafe_b64decode(value.encode("ascii")).decode("utf-8"))
+    except Exception:
+        return None
+    return state if isinstance(state,dict) else None
+
+def encode_local_issue_state(state):
+    raw=json.dumps(state,separators=(",",":"),ensure_ascii=False).encode("utf-8")
+    return base64.urlsafe_b64encode(raw).decode("ascii").rstrip("=")
+
+def is_governed_upgrade_chain(token,target,from_sha,to_sha):
+    if from_sha==to_sha:return True
+    if not SHA_RE.fullmatch(str(from_sha or "")) or not SHA_RE.fullmatch(str(to_sha or "")):return False
+    comparison=gh(token,"GET",f"/repos/{target}/compare/{from_sha}...{to_sha}")
+    if ((comparison.get("merge_base_commit") or {}).get("sha"))!=from_sha:return False
+    if comparison.get("status") not in {"ahead","identical"}:return False
+    commits=comparison.get("commits") or []
+    if not commits:return False
+    for item in commits:
+        message=(((item.get("commit") or {}).get("message")) or "").splitlines()[0]
+        if not message.startswith(UPGRADE_PREFIX):return False
+    return True
+
+def migrate_open_local_entry_heads(token,target,current_head,new_head):
+    migrated=[]
+    page=1
+    while True:
+        issues=gh(token,"GET",f"/repos/{target}/issues?state=open&per_page=100&page={page}")
+        if not isinstance(issues,list):raise RuntimeError("TARGET_OPEN_ISSUES_INVALID")
+        for issue in issues:
+            if issue.get("pull_request"):continue
+            if not str(issue.get("title") or "").startswith("[Governed Local Entry]"):continue
+            state=decode_local_issue_state(issue.get("body"))
+            if not state or state.get("repository")!=target:continue
+            state_head=state.get("expected_head_sha")
+            if state_head==new_head:continue
+            if state_head!=current_head and not is_governed_upgrade_chain(token,target,state_head,current_head):
+                continue
+            old_revision=int(state.get("revision") or 0)
+            state=reconcile_legacy_discovery_authority(state)
+            state=reconcile_both_smart_routing(state)
+            state=reconcile_setup_question_order(state)
+            state=reconcile_domain_question_order(state)
+            state=reconcile_existing_host_path_question_order(state)
+            state["expected_head_sha"]=new_head
+            state["revision"]=old_revision+1
+            replacement=f"<!-- GOVERNED_LOCAL_ENTRY_STATE:{encode_local_issue_state(state)} -->"
+            body=LOCAL_STATE_RE.sub(replacement,issue.get("body") or "",count=1)
+            number=int(issue["number"])
+            gh(token,"PATCH",f"/repos/{target}/issues/{number}",{"body":body})
+            gh(token,"POST",f"/repos/{target}/issues/{number}/comments",{"body":f"### Governed upgrade HEAD migration\n\nLocal entry expected HEAD advanced from \`{state_head}\` to \`{new_head}\` after a verified governance-only upgrade chain.\n\nBusiness answers and approved baseline content were preserved. State revision: \`{old_revision}\` → \`{old_revision+1}\`."})
+            migrated.append({"issue_number":number,"from_head":state_head,"to_head":new_head,"revision":old_revision+1})
+        if len(issues)<100:break
+        page+=1
+    return migrated
+
+def main():
+    p=argparse.ArgumentParser();p.add_argument("--target-repository",required=True);p.add_argument("--expected-head",required=True);p.add_argument("--issue-number",type=int)
+    a=p.parse_args();target=a.target_repository;owner,name=target.split("/",1)
+    token=os.environ["GOVERNED_TARGET_TOKEN"]
+    info=gh(token,"GET",f"/repos/{target}");branch=info.get("default_branch") or "main"
+    ref=gh(token,"GET",f"/repos/{target}/git/ref/heads/{branch}");head=ref["object"]["sha"]
+    if head!=a.expected_head: raise SystemExit(f"HEAD_MOVED: expected={a.expected_head} remote={head}")
+    commit=gh(token,"GET",f"/repos/{target}/git/commits/{head}");base_tree=commit["tree"]["sha"]
+
+    static_paths=[
+      ".governance/local-entry-policy.json","schemas/local-entry-request.schema.json","schemas/local-entry-receipt.schema.json",
+      "schemas/infrastructure-intent.schema.json","docs/LOCAL_GOVERNED_ENTRY.md","scripts/local_governed_entry.py",
+      "scripts/local_entry_issue_bridge.py","scripts/local_entry_apply_baseline.py","scripts/test_local_governed_entry.py",
+      "scripts/initialize_governance.py","scripts/auto_bootstrap.py","scripts/finalize_bootstrap.py","scripts/governance_agent.py",
+      "scripts/validate_governance.py","scripts/adopt_existing_repository.py","scripts/test_bootstrap_consistency.py","scripts/test_connection_intent.py","scripts/test_entry_action_router.py","scripts/test_repository_scope.py","scripts/test_governance_model_integrity.py",".github/workflows/governed-local-entry.yml",
+      ".github/ISSUE_TEMPLATE/governed-local-entry.yml",".github/workflows/governance-ci.yml",
+      ".github/workflows/governance-auto-bootstrap.yml",".governance/TEMPLATE_MANIFEST.json",
+      ".governance/repository-creation-executor.json",
+      ".governance/connection-intent-policy.json",".governance/entry-action-policy.json",
+      "docs/CONNECTION_INTENT.md","docs/ENTRY_ACTION_ROUTER.md",
+      ".governance/mcp-connection-policy.json","schemas/mcp-binding.schema.json","docs/MCP_REPOSITORY_BINDING.md",
+      "docs/MULTI_AGENT_COORDINATION.md","docs/GACR_AGENT_CONTINUITY_RELAY.md","docs/GACR_BRIDGE_CONTRACT.md",
+      ".governance/agent-relay/config.json","schemas/gacr-state.schema.json","schemas/gacr-telemetry.schema.json","schemas/gacr-bridge-contract.schema.json","schemas/session.schema.json","schemas/work-claim.schema.json",
+      "scripts/governed_agent_continuity_relay.py","scripts/gacr_workflow_bridge.py","scripts/gacr_agent_telemetry.py","scripts/gacr_capacity_dispatch.py","scripts/gacr_bridge_notifier.py","scripts/gacr_auto_attach.py","scripts/gacr_client_emitter.py","scripts/gacr_host_issue_ingress.py","scripts/test_governed_agent_continuity_relay.py","scripts/test_gacr_agent_telemetry.py","scripts/test_gacr_capacity_dispatch.py","scripts/test_gacr_liveness_progress_context.py","scripts/test_gacr_auto_attach.py","scripts/test_gacr_presence_first.py","scripts/test_gacr_client_emitter.py","scripts/test_gacr_host_issue_ingress.py","scripts/test_gacr_host_issue_workflow.py",".github/workflows/governed-agent-continuity-relay.yml",
+      "scripts/gscc/__init__.py","scripts/gscc/protocol.py","scripts/gscc/transport.py","scripts/gscc/session_endpoint.py","scripts/gscc/instrumentation.py","scripts/gscc/gacr_compat.py","scripts/gscc/admission.py","scripts/gscc/capability_projection.py","scripts/gscc_observable_arrival.py","scripts/test_gscc_observable_arrival.py",".github/workflows/gscc-observable-arrival.yml",
+      "scripts/gscc_function_exposure_gate.py","scripts/test_gscc_function_exposure_gate.py",".github/workflows/gscc-function-exposure-gate.yml",
+      "scripts/mcp_repository_discovery.py","scripts/control_plane_local_command.py","scripts/control_plane_local_start.py","scripts/control_plane_provision_mcp_credential.py","scripts/test_mcp_credential_provisioning.py","scripts/test_mcp_both_ssh_fallback.py","scripts/control_plane_upgrade_local_entry.py","scripts/test_upgrade_session_head_migration.py"
+    ]
+    updates={p:(ROOT/p).read_text(encoding="utf-8") for p in static_paths}
+    source_capability_snapshot=json.loads((ROOT/".governance/control-plane-state/mcp-capability-snapshot.json").read_text(encoding="utf-8"))
+    portable_capability_snapshot=build_portable_capability_projection(source_capability_snapshot)
+    updates[".governance/gscc/mcp-capability-snapshot.json"]=json.dumps(portable_capability_snapshot,ensure_ascii=False,indent=2)+"\n"
+
+    control_plane_policy=json.loads((ROOT/".governance/control-plane-policy.json").read_text(encoding="utf-8"))
+    control_plane_policy["current_role"]="GOVERNED_TARGET_CLIENT"
+    control_plane_policy["client_repository"]=target
+    updates[".governance/control-plane-policy.json"]=json.dumps(control_plane_policy,ensure_ascii=False,indent=2)+"\n"
+
+    existing_local=target_text(token,target,".governance/local-entry/state.json")
+    if existing_local:
+        local=json.loads(existing_local)
+    else:
+        local=json.loads((ROOT/".governance/local-entry/state.json").read_text(encoding="utf-8"))
+    local["repository"]=target
+    updates[".governance/local-entry/state.json"]=json.dumps(local,ensure_ascii=False,indent=2)+"\n"
+
+    profile=json.loads(target_text(token,target,".governance/profile.json"))
+    source_profile=json.loads((ROOT/".governance/profile.json").read_text(encoding="utf-8"))
+    for k in ["local_control_plane","first_agent_baseline","local_entry_head_guard","local_entry_state_external_to_canonical_truth"]:
+        profile.setdefault("policies",{})[k]=source_profile["policies"][k]
+    for k in ["local_governed_entry","first_agent_baseline_workflow","subsequent_agent_local_routing"]:
+        profile.setdefault("automation",{})[k]=source_profile["automation"][k]
+    updates[".governance/profile.json"]=json.dumps(profile,ensure_ascii=False,indent=2)+"\n"
+
+    mcp_binding=json.loads((ROOT/".governance/mcp-binding.json").read_text(encoding="utf-8"))
+    mcp_binding["repository"]=target
+    updates[".governance/mcp-binding.json"]=json.dumps(mcp_binding,ensure_ascii=False,indent=2)+"\n"
+
+    access_plan=json.loads((ROOT/".governance/access-plan.json").read_text(encoding="utf-8"))
+    access_plan["repository"]=target
+    updates[".governance/access-plan.json"]=json.dumps(access_plan,ensure_ascii=False,indent=2)+"\n"
+
+    workflow_model=json.loads((ROOT/".governance/workflow-model.json").read_text(encoding="utf-8"))
+    workflow_model["repository"]=target
+    updates[".governance/workflow-model.json"]=json.dumps(workflow_model,ensure_ascii=False,indent=2)+"\n"
+
+    # GACR/GSCC ingress identities are repository-local runtime state. Start
+    # from the portable Template contract, but preserve an explicitly bound
+    # target-local function exposure issue across governed upgrades.
+    updates[".governance/agent-relay/config.json"]=build_relay_config_update(token,target)
+
+    existing_gacr_takeovers=target_text(token,target,".governance/agent-relay/takeovers.json")
+    if existing_gacr_takeovers is None:
+        existing_gacr_takeovers=(ROOT/".governance/agent-relay/takeovers.json").read_text(encoding="utf-8")
+    updates[".governance/agent-relay/takeovers.json"]=existing_gacr_takeovers
+
+    for gacr_state_name in ["beacons.json","correlations.json","dispatches.json","forensics.json"]:
+        gacr_path=f".governance/agent-relay/{gacr_state_name}"
+        existing_gacr_state=target_text(token,target,gacr_path)
+        if existing_gacr_state is None:
+            existing_gacr_state=(ROOT/gacr_path).read_text(encoding="utf-8")
+        updates[gacr_path]=existing_gacr_state
+
+    version=current_template_version()
+
+    docs={
+      "00_START_HERE.md":("## Local governed entry","## Local governed entry\n\nDans un repository cible initialisé, le point d'entrée préféré d'un agent est le workflow local décrit dans docs/LOCAL_GOVERNED_ENTRY.md. Le premier agent après bootstrap doit terminer FIRST_AGENT_BOOTSTRAP avant tout travail fonctionnel mutable."),
+      "AGENTS.md":("## Repository-local control plane","## Repository-local control plane\n\nAfter central handoff, start local work through a [Governed Local Entry] issue or repository_dispatch: governed_local_start. The first agent is routed through FIRST_AGENT_BOOTSTRAP; later agents are routed through NORMAL_GOVERNED_ENTRY. Do not bypass a pending first-agent baseline.\n\n## GACR agent continuity\n\nOn controlled/instrumentable repository surfaces, GACR Presence Fabric observes the first safe repository touch and creates or resumes continuity without requiring the agent to self-register, send a Beacon, heartbeat, or /gacr-host command. Explicit client/host telemetry remains optional enrichment where the host exposes it. Standby agents may accept a stalled takeover only after exact-HEAD reconciliation. External conversation references are recorded only when actually supplied.\n\nIf the provider host cannot call repository_dispatch but can write GitHub issue comments, use the configured GACR host-issue bridge. Emit only the safe /gacr-host JSON envelope to the configured ingress issue; never send transcript bodies, cookies, authorization headers or secrets. The bridge auto-attaches/resolves the session, renews liveness and records action/interruption telemetry without granting execution authority."),
+      "docs/AUTOMATION.md":("## Repository-local agent entry","## Repository-local agent entry\n\nInitialized target repositories include .github/workflows/governed-local-entry.yml. It accepts a local-entry issue or repository_dispatch: governed_local_start, persists one-question-at-a-time state in the issue, and applies the approved first-agent baseline under an exact-HEAD guard."),
+      "SOURCE_OF_TRUTH.md":("## Local entry operational state","## Local entry operational state\n\nA [Governed Local Entry] issue is orchestration state, not canonical project truth. Once the approved first-agent baseline is committed, the versioned repository files and machine projections become authoritative according to the normal hierarchy.")
+    }
+    for path,(marker,addition) in docs.items():
+        updates[path]=append_once(target_text(token,target,path) or "",marker,addition)
+
+    updates["AGENTS.md"]=append_once(
+      updates.get("AGENTS.md") or target_text(token,target,"AGENTS.md") or "",
+      "## GACR controlled host route",
+      "## GACR controlled host route\n\nFor a first controlled/instrumentable attach, the host must provide the canonical GACR route when known. Read-only continuation uses the GACR vocabulary `CONTINUE_GOVERNED_WORK` + `OBSERVE`; this is distinct from GSCC Admission intent values. Provider enrichment is route-neutral: it must never change or resolve an existing session's `entry_action` or `connection_intent`. A route change after CREATE requires governed reconciliation rather than a RESUME/auto-attach shortcut."
+    )
+
+    change=target_text(token,target,"CHANGELOG.md") or "# CHANGELOG\n"
+    updates["CHANGELOG.md"]=append_once(
+      change,
+      f"## Governance Automation V{version}",
+      f"## Governance Automation V{version}\n\n- Governed client upgrade synchronized from the current Template manifest version.\n- Preserves client business state while refreshing the generic governance/runtime/test surface.\n- Client CI remains portable and source-only control-plane memory stays excluded."
+    )
+
+    entries=[]
+    for path,text in updates.items():
+        blob=gh(token,"POST",f"/repos/{target}/git/blobs",{"content":text,"encoding":"utf-8"})
+        entries.append({"path":path,"mode":"100644","type":"blob","sha":blob["sha"]})
+    tree=gh(token,"POST",f"/repos/{target}/git/trees",{"base_tree":base_tree,"tree":entries})
+    new_commit=gh(token,"POST",f"/repos/{target}/git/commits",{"message":f"governance: upgrade repository-local setup to v{version}","tree":tree["sha"],"parents":[head]})
+    gh(token,"PATCH",f"/repos/{target}/git/refs/heads/{branch}",{"sha":new_commit["sha"],"force":False})
+    migrated_local_entries=migrate_open_local_entry_heads(token,target,head,new_commit["sha"])
+
+    issue=a.issue_number
+    central_token=os.environ.get("GITHUB_TOKEN")
+    if issue and central_token:
+        gh(central_token,"POST",f"/repos/{CENTRAL}/issues/{issue}/comments",{"body":f"### Local entry upgrade applied\n\nTarget: {target}\nPrevious HEAD: {head}\nUpgrade commit: {new_commit['sha']}\nVersion: {version}\nMigrated open local entries: {len(migrated_local_entries)}"})
+    print(json.dumps({"status":"LOCAL_SETUP_UPGRADE_APPLIED","version":version,"target":target,"old_head":head,"new_head":new_commit["sha"],"migrated_local_entries":migrated_local_entries}))
+
+if __name__=="__main__":main()

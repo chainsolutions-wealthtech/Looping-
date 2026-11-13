@@ -1,0 +1,257 @@
+name: GSCC Function Exposure Gate
+
+on:
+  workflow_call:
+    inputs:
+      package_path:
+        required: true
+        type: string
+      expected_source_head:
+        required: true
+        type: string
+    outputs:
+      route_validated:
+        value: ${{ jobs.package-evaluate.outputs.route_validated }}
+      validation_digest:
+        value: ${{ jobs.package-evaluate.outputs.validation_digest }}
+      function_count:
+        value: ${{ jobs.package-evaluate.outputs.function_count }}
+      invocation_count:
+        value: ${{ jobs.package-evaluate.outputs.invocation_count }}
+  push:
+  create:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+  issues:
+    types: [opened, reopened]
+  issue_comment:
+    types: [created]
+  pull_request_review:
+    types: [submitted]
+  pull_request_review_comment:
+    types: [created]
+  repository_dispatch:
+    types:
+      - gscc_function_exposure_request
+  workflow_dispatch:
+    inputs:
+      connection_ref:
+        description: Stable GSCC connection reference
+        required: true
+        type: string
+      tool_name:
+        description: Canonical function/tool name requested for exposure
+        required: true
+        type: string
+      observed_head:
+        description: Exact observed repository HEAD
+        required: true
+        type: string
+      access_grant_json:
+        description: Serialized safe gscc-access-grant/v1 JSON
+        required: true
+        type: string
+      authority_class:
+        description: Exact authority class satisfied by evidence
+        required: true
+        type: string
+      authority_evidence_ref:
+        description: Safe non-secret authority evidence reference
+        required: true
+        type: string
+      authority_granted:
+        description: Explicitly attest the requested authority is granted
+        required: true
+        default: false
+        type: boolean
+      live_preflight_status:
+        description: PASSED for mutation-capable functions
+        required: false
+        type: string
+      live_preflight_head:
+        description: Exact HEAD observed during live preflight
+        required: false
+        type: string
+      live_preflight_evidence_ref:
+        description: Safe non-secret live preflight evidence reference
+        required: false
+        type: string
+      route_gate_evidence_json:
+        description: Safe gscc-entry-action-gate-evidence/v1 JSON for staged mutation routes
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  arrival-plan:
+    if: ${{ github.actor != 'github-actions[bot]' && github.event_name != 'repository_dispatch' && github.event_name != 'workflow_dispatch' && github.event_name != 'workflow_call' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build mandatory GSCC end-to-end route before any function exposure
+        run: python3 scripts/gscc_function_exposure_gate.py arrival-plan --event-path "$GITHUB_EVENT_PATH" --output "$RUNNER_TEMP/gscc-arrival-route.json"
+
+      - name: Persist route evidence as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gscc-arrival-route-${{ github.run_id }}
+          path: ${{ runner.temp }}/gscc-arrival-route.json
+          if-no-files-found: error
+          retention-days: 14
+
+  package-evaluate:
+    if: ${{ github.event_name == 'workflow_call' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      route_validated: ${{ steps.build-package-route.outputs.route_validated }}
+      validation_digest: ${{ steps.build-package-route.outputs.validation_digest }}
+      function_count: ${{ steps.build-package-route.outputs.function_count }}
+      invocation_count: ${{ steps.build-package-route.outputs.invocation_count }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Resolve configured canonical branch
+        id: canonical
+        shell: bash
+        run: |
+          set -euo pipefail
+          canonical="$(python3 scripts/gscc_function_exposure_gate.py canonical-branch)"
+          test -n "$canonical"
+          echo "branch=$canonical" >> "$GITHUB_OUTPUT"
+          echo "CANONICAL_BRANCH=$canonical" >> "$GITHUB_ENV"
+
+      - name: Checkout configured canonical branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.canonical.outputs.branch }}
+          persist-credentials: false
+
+      - name: Verify canonical source before package route validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "${{ inputs.expected_source_head }}" || {
+            echo "::error::GSCC_FUNCTION_ROUTE_HEAD_MOVED expected=${{ inputs.expected_source_head }} actual=$actual"
+            exit 1
+          }
+
+      - name: Build GSCC route for every MCP invocation
+        id: build-package-route
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/gscc-function-route"
+          python3 scripts/gscc_function_exposure_gate.py package-evaluate \
+            --package "${{ inputs.package_path }}" \
+            --repository "${{ github.repository }}" \
+            --expected-source-head "${{ inputs.expected_source_head }}" \
+            --output "$RUNNER_TEMP/gscc-function-route/receipt.json"
+
+      - name: Publish package route validation receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: gscc-package-function-route-${{ github.run_id }}
+          path: ${{ runner.temp }}/gscc-function-route/receipt.json
+          if-no-files-found: error
+          retention-days: 30
+
+  evaluate:
+    if: ${{ github.event_name == 'repository_dispatch' || github.event_name == 'workflow_dispatch' || (github.event_name == 'issue_comment' && startsWith(github.event.comment.body, '/gscc-function-exposure ') && (github.event.comment.author_association == 'OWNER' || github.event.comment.author_association == 'MEMBER' || github.event.comment.author_association == 'COLLABORATOR')) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Resolve configured canonical branch
+        id: canonical
+        shell: bash
+        run: |
+          set -euo pipefail
+          canonical="$(python3 scripts/gscc_function_exposure_gate.py canonical-branch)"
+          test -n "$canonical"
+          echo "branch=$canonical" >> "$GITHUB_OUTPUT"
+          echo "CANONICAL_BRANCH=$canonical" >> "$GITHUB_ENV"
+
+      - name: Checkout configured canonical branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.canonical.outputs.branch }}
+          persist-credentials: false
+
+      - name: Evaluate exposure request through mandatory GSCC gate
+        env:
+          CONNECTION_REF: ${{ github.event.client_payload.connection_ref || inputs.connection_ref }}
+          TOOL_NAME: ${{ github.event.client_payload.tool_name || inputs.tool_name }}
+          OBSERVED_HEAD: ${{ github.event.client_payload.observed_head || inputs.observed_head }}
+          ACCESS_GRANT_JSON: ${{ github.event.client_payload.access_grant_json || inputs.access_grant_json }}
+          AUTHORITY_CLASS: ${{ github.event.client_payload.authority_class || inputs.authority_class }}
+          AUTHORITY_EVIDENCE_REF: ${{ github.event.client_payload.authority_evidence_ref || inputs.authority_evidence_ref }}
+          AUTHORITY_GRANTED: ${{ github.event.client_payload.authority_granted || inputs.authority_granted }}
+          PREFLIGHT_STATUS: ${{ github.event.client_payload.live_preflight_status || inputs.live_preflight_status }}
+          PREFLIGHT_HEAD: ${{ github.event.client_payload.live_preflight_head || inputs.live_preflight_head }}
+          PREFLIGHT_EVIDENCE_REF: ${{ github.event.client_payload.live_preflight_evidence_ref || inputs.live_preflight_evidence_ref }}
+          ROUTE_GATE_EVIDENCE_JSON: ${{ github.event.client_payload.route_gate_evidence_json || inputs.route_gate_evidence_json }}
+        run: |
+          set -euo pipefail
+
+          if [ "${{ github.event_name }}" = "issue_comment" ]; then
+            python3 scripts/gscc_function_exposure_gate.py issue-comment \
+              --event-path "$GITHUB_EVENT_PATH" \
+              --output "$RUNNER_TEMP/gscc-exposure-receipt.json" \
+              --require-validated
+            exit 0
+          fi
+
+          authority_flag=()
+          [ "$AUTHORITY_GRANTED" = "true" ] && authority_flag+=(--authority-granted)
+
+          preflight_args=()
+          [ -n "$PREFLIGHT_STATUS" ] && preflight_args+=(--live-preflight-status "$PREFLIGHT_STATUS")
+          [ -n "$PREFLIGHT_HEAD" ] && preflight_args+=(--live-preflight-head "$PREFLIGHT_HEAD")
+          [ -n "$PREFLIGHT_EVIDENCE_REF" ] && preflight_args+=(--live-preflight-evidence-ref "$PREFLIGHT_EVIDENCE_REF")
+
+          route_gate_args=()
+          [ -n "$ROUTE_GATE_EVIDENCE_JSON" ] && route_gate_args+=(--route-gate-evidence-json "$ROUTE_GATE_EVIDENCE_JSON")
+
+          python3 scripts/gscc_function_exposure_gate.py evaluate \
+            --connection-ref "$CONNECTION_REF" \
+            --tool-name "$TOOL_NAME" \
+            --observed-head "$OBSERVED_HEAD" \
+            --access-grant-json "$ACCESS_GRANT_JSON" \
+            --authority-class "$AUTHORITY_CLASS" \
+            --authority-evidence-ref "$AUTHORITY_EVIDENCE_REF" \
+            "${authority_flag[@]}" \
+            "${preflight_args[@]}" \
+            "${route_gate_args[@]}" \
+            --output "$RUNNER_TEMP/gscc-exposure-receipt.json" \
+            --require-validated
+
+      - name: Publish validated exposure receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: gscc-exposure-receipt-${{ github.run_id }}
+          path: ${{ runner.temp }}/gscc-exposure-receipt.json
+          if-no-files-found: error
+          retention-days: 14

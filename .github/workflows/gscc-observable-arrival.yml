@@ -1,0 +1,141 @@
+name: GSCC Observable Arrival Gateway
+
+on:
+  push:
+  create:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+  issues:
+    types:
+      - opened
+      - reopened
+  issue_comment:
+    types:
+      - created
+  pull_request_review:
+    types:
+      - submitted
+  pull_request_review_comment:
+    types:
+      - created
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+  issues: read
+  pull-requests: read
+
+concurrency:
+  group: gscc-observable-arrival-${{ github.repository }}-${{ github.actor }}-${{ github.ref_name || github.event_name }}
+  cancel-in-progress: false
+
+jobs:
+  arrival:
+    if: ${{ github.actor != 'github-actions[bot]' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Capture exhaustive first-touch evidence
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 scripts/first_touch_exhaustive_collector.py github-event \
+            --output "${RUNNER_TEMP}/first-touch-capture.json"
+
+      - name: Restore previous GSCC GSE First Touch state
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 scripts/first_touch_state_artifact.py restore \
+            --repository "${GITHUB_REPOSITORY}" \
+            --run-id "${GITHUB_RUN_ID}" \
+            --output "${RUNNER_TEMP}/first-touch-previous.sqlite"
+
+      - name: Materialize first-touch field block gate database
+        run: |
+          python3 scripts/first_touch_field_block_gate.py \
+            --capture "${RUNNER_TEMP}/first-touch-capture.json" \
+            --output "${RUNNER_TEMP}/first-touch-capture.sqlite" \
+            --source-ref "github-actions:${GITHUB_RUN_ID}:${GITHUB_RUN_ATTEMPT}"
+          if [ -f "${RUNNER_TEMP}/first-touch-previous.sqlite" ]; then
+            python3 scripts/first_touch_state_artifact.py merge \
+              --current "${RUNNER_TEMP}/first-touch-capture.sqlite" \
+              --previous "${RUNNER_TEMP}/first-touch-previous.sqlite"
+          fi
+
+      - name: Build expected first-touch field registry
+        run: |
+          python3 scripts/first_touch_expected_field_registry.py
+
+      - name: Build first-touch connection completeness packet
+        run: |
+          python3 scripts/first_touch_connection_completeness.py \
+            --capture "${RUNNER_TEMP}/first-touch-capture.json" \
+            --output "${RUNNER_TEMP}/first-touch-completeness.json"
+
+      - name: Evaluate mandatory first-touch entry contract
+        id: entry
+        run: |
+          python3 scripts/first_touch_entry_contract.py \
+            --capture "${RUNNER_TEMP}/first-touch-capture.json" \
+            --completeness "${RUNNER_TEMP}/first-touch-completeness.json" \
+            --db "${RUNNER_TEMP}/first-touch-capture.sqlite" \
+            --output "${RUNNER_TEMP}/first-touch-entry-contract.json"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          p=Path(os.environ["RUNNER_TEMP"])/"first-touch-entry-contract.json"
+          v=json.loads(p.read_text(encoding="utf-8"))
+          with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as f:
+              f.write("status="+v["status"]+"\n")
+              f.write("classification="+v["classification"]+"\n")
+          PY
+
+      - name: Upload exhaustive first-touch evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: first-touch-capture-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/first-touch-capture.json
+            ${{ runner.temp }}/first-touch-capture.sqlite
+            ${{ runner.temp }}/first-touch-completeness.json
+            ${{ runner.temp }}/first-touch-entry-contract.json
+            ${{ runner.temp }}/first-touch-capture.sqlite
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Persist GSCC GSE First Touch state
+        uses: actions/upload-artifact@v4
+        with:
+          name: first-touch-state-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/first-touch-capture.sqlite
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Build canonical GSCC First Touch handoff
+        if: ${{ steps.entry.outputs.status == 'ENTRY_READY_FOR_Q1' }}
+        run: |
+          python3 scripts/gscc/first_touch_handoff.py \
+            --entry "${RUNNER_TEMP}/first-touch-entry-contract.json" \
+            --db "${RUNNER_TEMP}/first-touch-capture.sqlite" \
+            --output "${RUNNER_TEMP}/gscc-first-touch-handoff.json"
+
+      - name: Upload GSCC First Touch handoff
+        if: ${{ steps.entry.outputs.status == 'ENTRY_READY_FOR_Q1' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: gscc-first-touch-handoff-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/gscc-first-touch-handoff.json
+          if-no-files-found: error
+          retention-days: 30

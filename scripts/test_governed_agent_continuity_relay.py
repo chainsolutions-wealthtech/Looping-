@@ -1,0 +1,421 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import importlib.util
+import os
+import tempfile
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+MODULE_PATH = ROOT / "scripts" / "governed_agent_continuity_relay.py"
+
+
+def load_module():
+    spec = importlib.util.spec_from_file_location("gacr", MODULE_PATH)
+    if spec is None or spec.loader is None:
+        raise SystemExit("GACR_TEST_FAILED: unable to load module")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def base_config():
+    return {
+        "stalled_after_seconds": 1800,
+        "suspected_stall_after_seconds": 900,
+        "external_conversation_reference": {
+            "persist_full_url": False,
+        },
+        "takeover": {
+            "auto_offer_to_compatible_standby": True,
+        },
+    }
+
+
+def empty_sessions():
+    return {"schema_version": "1.0.0", "revision": 0, "sessions": []}
+
+
+def empty_claims():
+    return {"schema_version": "1.0.0", "revision": 0, "claims": []}
+
+
+def empty_takeovers():
+    return {"schema_version": "1.0.0", "revision": 0, "last_scan_at": None, "items": []}
+
+
+def assert_true(value, message):
+    if not value:
+        raise SystemExit("GACR_TEST_FAILED: " + message)
+
+
+def main():
+    gacr = load_module()
+    config = base_config()
+    sessions = empty_sessions()
+    claims = empty_claims()
+    takeovers = empty_takeovers()
+    t0 = datetime(2026, 10, 1, 18, 0, 0, tzinfo=timezone.utc)
+
+    agent_a, resolution = gacr.register_docs(
+        config,
+        sessions,
+        repository="owner/repo",
+        agent="ChatGPT-A",
+        provider="chatgpt",
+        provider_ref=None,
+        provider_url="https://chatgpt.com/c/6abe6ebe-3f98-83ed-b12e-2cf0f5b1e300",
+        connection_ref=None,
+        observed_head="a" * 40,
+        branch="governance/p12-s6-close-case1",
+        task_id="P12-S6",
+        pull_request=96,
+        standby=False,
+        timestamp=t0,
+    )
+    assert_true(resolution == "CREATE", "agent A should be created")
+    assert_true(
+        agent_a["provider_conversation_ref"] == "6abe6ebe-3f98-83ed-b12e-2cf0f5b1e300",
+        "ChatGPT conversation ID should be extracted from explicitly supplied URL",
+    )
+    assert_true("provider_conversation_url" not in agent_a, "full external URL should not persist by default")
+    assert_true(
+        gacr.reconstruct_url("chatgpt", agent_a["provider_conversation_ref"])
+        == "https://chatgpt.com/c/6abe6ebe-3f98-83ed-b12e-2cf0f5b1e300",
+        "ChatGPT URL should be reconstructable",
+    )
+
+    provider_sessions = empty_sessions()
+    generic, generic_resolution = gacr.register_docs(
+        config,
+        provider_sessions,
+        repository="owner/provider-test",
+        agent="conversation-agent",
+        provider="other",
+        provider_ref=None,
+        provider_url=None,
+        connection_ref="chronicle:test:session",
+        observed_head="a" * 40,
+        branch="main",
+        task_id=None,
+        pull_request=None,
+        standby=False,
+        timestamp=t0,
+    )
+    assert_true(generic_resolution == "CREATE", "generic provider session should be created")
+    assert_true(generic["provider"] == "other", "generic provider starts as other")
+
+    enriched, enriched_resolution = gacr.register_docs(
+        config,
+        provider_sessions,
+        repository="owner/provider-test",
+        agent="conversation-agent",
+        provider="chatgpt",
+        provider_ref=None,
+        provider_url=None,
+        connection_ref="chronicle:test:session",
+        observed_head="b" * 40,
+        branch="main",
+        task_id=None,
+        pull_request=None,
+        standby=False,
+        timestamp=t0 + timedelta(seconds=1),
+    )
+    assert_true(enriched_resolution == "RESUME", "provider enrichment must resume existing session")
+    assert_true(enriched["session_id"] == generic["session_id"], "provider enrichment must not duplicate session")
+    assert_true(enriched["provider"] == "chatgpt", "explicit provider should enrich generic session")
+    assert_true(enriched["provider_conversation_ref"] is None, "provider ref remains unavailable when host did not supply it")
+
+    try:
+        gacr.register_docs(
+            config,
+            provider_sessions,
+            repository="owner/provider-test",
+            agent="conversation-agent",
+            provider="claude",
+            provider_ref=None,
+            provider_url=None,
+            connection_ref="chronicle:test:session",
+            observed_head="c" * 40,
+            branch="main",
+            task_id=None,
+            pull_request=None,
+            standby=False,
+            timestamp=t0 + timedelta(seconds=2),
+        )
+        raise SystemExit("GACR_TEST_FAILED: conflicting explicit provider should fail")
+    except ValueError:
+        pass
+
+    agent_b, _ = gacr.register_docs(
+        config,
+        sessions,
+        repository="owner/repo",
+        agent="ChatGPT-B",
+        provider="chatgpt",
+        provider_ref="standby-conversation-id",
+        provider_url=None,
+        connection_ref=None,
+        observed_head="a" * 40,
+        branch="main",
+        task_id=None,
+        pull_request=None,
+        standby=True,
+        timestamp=t0 + timedelta(seconds=1),
+    )
+    assert_true(agent_b["status"] == "STANDBY", "agent B should be standby")
+
+    claims["claims"].append({
+        "session_id": agent_a["session_id"],
+        "work_item_id": "WORK-P12-S6",
+        "collision_domains": ["control-plane-case1"],
+        "status": "ACTIVE",
+        "claimed_head_sha": "a" * 40,
+        "claimed_at": gacr.iso(t0),
+        "released_at": None,
+    })
+
+    changes = gacr.scan_docs(
+        config,
+        sessions,
+        claims,
+        takeovers,
+        timestamp=t0 + timedelta(seconds=1000),
+    )
+    assert_true(agent_a["relay"]["state"] == "SUSPECTED_STALL", "late heartbeat should become suspected stall")
+    assert_true(agent_a["status"] == "ACTIVE", "suspected stall must not release active session")
+    assert_true(changes["stalled"] == [], "suspected stall should not be terminal")
+
+    changes = gacr.scan_docs(
+        config,
+        sessions,
+        claims,
+        takeovers,
+        timestamp=t0 + timedelta(seconds=1900),
+    )
+    assert_true(agent_a["relay"]["state"] == "TAKEOVER_READY", "expired lease should become takeover ready")
+    assert_true(agent_a["status"] == "STALLED", "expired lease should mark top-level session stalled")
+    assert_true(len(takeovers["items"]) == 1, "one takeover queue item should be created")
+    takeover = takeovers["items"][0]
+    assert_true(takeover["offered_to_session_id"] == agent_b["session_id"], "oldest compatible standby should be offered")
+    assert_true(claims["claims"][0]["status"] == "ACTIVE", "stall detection must not silently release mutable claim")
+    assert_true(claims["claims"][0]["session_id"] == agent_a["session_id"], "claim must remain with predecessor until accepted")
+
+    gacr.scan_docs(
+        config,
+        sessions,
+        claims,
+        takeovers,
+        timestamp=t0 + timedelta(seconds=2500),
+    )
+    assert_true(len(takeovers["items"]) == 1, "repeated scans must be idempotent for open takeover")
+
+    try:
+        gacr.heartbeat_docs(
+            config,
+            sessions,
+            session_id=agent_a["session_id"],
+            observed_head="b" * 40,
+            action="RETURNED_LATE",
+            evidence=None,
+            timestamp=t0 + timedelta(seconds=2600),
+        )
+        raise SystemExit("GACR_TEST_FAILED: stalled predecessor heartbeat should fail")
+    except ValueError:
+        pass
+
+    try:
+        gacr.accept_takeover_docs(
+            config,
+            sessions,
+            claims,
+            takeovers,
+            stalled_session_id=agent_a["session_id"],
+            successor_session_id=agent_b["session_id"],
+            reconciled_head_sha="b" * 40,
+            actual_work_head_sha="c" * 40,
+            timestamp=t0 + timedelta(seconds=2700),
+        )
+        raise SystemExit("GACR_TEST_FAILED: mismatched reconciled head should fail")
+    except ValueError:
+        pass
+
+    result = gacr.accept_takeover_docs(
+        config,
+        sessions,
+        claims,
+        takeovers,
+        stalled_session_id=agent_a["session_id"],
+        successor_session_id=agent_b["session_id"],
+        reconciled_head_sha="c" * 40,
+        actual_work_head_sha="c" * 40,
+        timestamp=t0 + timedelta(seconds=2800),
+    )
+    assert_true(result["status"] == "TAKEOVER_ACCEPTED", "takeover should succeed after exact-head reconciliation")
+    assert_true(agent_a["relay"]["state"] == "HANDOFF_STALLED", "predecessor should be terminal after takeover")
+    assert_true(agent_a["status"] == "CLOSED", "predecessor top-level session should close")
+    assert_true(agent_b["relay"]["state"] == "ACTIVE", "successor should become active")
+    assert_true(agent_b["relay"]["predecessor_session_id"] == agent_a["session_id"], "successor lineage should be preserved")
+    assert_true(claims["claims"][0]["session_id"] == agent_b["session_id"], "active claim should transfer only after acceptance")
+    assert_true(claims["claims"][0]["claimed_head_sha"] == "c" * 40, "transferred claim should use reconciled head")
+    assert_true(takeover["status"] == "ACCEPTED", "takeover queue item should become accepted")
+    assert_true(result["may_continue_mutable_work"] is True, "transferred canonical claim preserves mutable continuation")
+    assert_true(result["recoverable_work_authority"]["status"] == "VERIFIED", "claim transfer is explicit recovery authority")
+
+    try:
+        gacr.heartbeat_docs(
+            config,
+            sessions,
+            session_id=agent_a["session_id"],
+            observed_head="c" * 40,
+            action="LATE_RETURN",
+            evidence=None,
+            timestamp=t0 + timedelta(seconds=3000),
+        )
+        raise SystemExit("GACR_TEST_FAILED: predecessor must never resurrect after transferred takeover")
+    except ValueError:
+        pass
+
+    # A liveness takeover with zero canonical claims must never manufacture
+    # mutable work authority or synthesize a task binding.
+    zero_sessions = {
+        "schema_version": "1.0.0",
+        "revision": 0,
+        "sessions": [
+            {
+                "session_id": "session-zero-predecessor",
+                "repository": "owner/zero",
+                "status": "STALLED",
+                "relay": {
+                    "state": "TAKEOVER_READY",
+                    "task_id": None,
+                    "branch": "main",
+                    "pull_request": None,
+                },
+            },
+            {
+                "session_id": "session-zero-successor",
+                "repository": "owner/zero",
+                "status": "STANDBY",
+                "relay": {
+                    "state": "STANDBY",
+                    "task_id": None,
+                    "branch": "main",
+                    "pull_request": None,
+                },
+            },
+        ],
+    }
+    zero_claims = empty_claims()
+    zero_takeovers = {
+        "schema_version": "1.0.0",
+        "revision": 0,
+        "last_scan_at": None,
+        "items": [{
+            "takeover_id": "GACR-T-zero-claims",
+            "stalled_session_id": "session-zero-predecessor",
+            "offered_to_session_id": "session-zero-successor",
+            "accepted_by_session_id": None,
+            "status": "OFFERED",
+            "created_at": gacr.iso(t0),
+            "work_item_id": None,
+            "task_id": None,
+            "branch": "main",
+            "pull_request": None,
+            "last_observed_head_sha": "d" * 40,
+            "active_claim_count": 0,
+        }],
+    }
+    zero_result = gacr.accept_takeover_docs(
+        config,
+        zero_sessions,
+        zero_claims,
+        zero_takeovers,
+        stalled_session_id="session-zero-predecessor",
+        successor_session_id="session-zero-successor",
+        reconciled_head_sha="d" * 40,
+        actual_work_head_sha="d" * 40,
+        timestamp=t0 + timedelta(seconds=3200),
+        work_doc={"items": []},
+    )
+    zero_successor = next(x for x in zero_sessions["sessions"] if x["session_id"] == "session-zero-successor")
+    assert_true(zero_result["status"] == "TAKEOVER_ACCEPTED", "zero-claim liveness takeover may be recorded")
+    assert_true(zero_result["may_continue_mutable_work"] is False, "zero-claim takeover grants no mutable continuation")
+    assert_true(zero_result["recoverable_work_authority"]["status"] == "UNAVAILABLE", "zero-claim takeover has no work authority")
+    assert_true(zero_successor["relay"]["task_id"] is None, "zero-claim takeover must not synthesize task binding")
+    assert_true(zero_successor["relay"]["last_action"] == "TAKEOVER_ACCEPTED_NO_MUTABLE_WORK", "zero-claim takeover is explicitly non-mutable")
+    assert_true(zero_claims["revision"] == 0, "zero-claim takeover must not mutate claim revision")
+    assert_true(zero_takeovers["items"][0]["recoverable_work_authority"] == "NONE", "takeover record persists no-authority result")
+
+    if (ROOT/".template-source").exists():
+        assert_true(
+            gacr.SESSIONS_PATH == ROOT/".governance"/"control-plane-state"/"gacr-sessions.json",
+            "Template source must keep GACR sessions in source-only control-plane memory",
+        )
+        assert_true(
+            gacr.CLAIMS_PATH == ROOT/".governance"/"control-plane-state"/"gacr-claims.json",
+            "Template source must keep GACR claims in source-only control-plane memory",
+        )
+        assert_true(
+            gacr.TAKEOVERS_PATH == ROOT/".governance"/"control-plane-state"/"gacr-takeovers.json",
+            "Template source must keep GACR takeovers in source-only control-plane memory",
+        )
+        assert_true(
+            gacr.CONFIG_PATH == ROOT/".governance"/"agent-relay"/"config.json",
+            "GACR config remains generic/distributed",
+        )
+        import gacr_agent_telemetry as telemetry
+        assert_true(
+            telemetry.FORENSICS_PATH == ROOT/".governance"/"control-plane-state"/"gacr-forensics.json",
+            "Template source must keep GACR forensics in source-only control-plane memory",
+        )
+
+    upgrader=(ROOT/"scripts"/"control_plane_upgrade_local_entry.py").read_text(encoding="utf-8")
+    for fragment in [
+        "docs/GACR_AGENT_CONTINUITY_RELAY.md",
+        ".governance/agent-relay/config.json",
+        "scripts/governed_agent_continuity_relay.py",
+        "scripts/test_gacr_liveness_progress_context.py",
+        ".github/workflows/governed-agent-continuity-relay.yml",
+        "existing_gacr_takeovers=target_text",
+        '"forensics.json"',
+    ]:
+        assert_true(fragment in upgrader, f"client upgrader missing GACR contract: {fragment}")
+
+    for forbidden in [
+        ".governance/control-plane-state/gacr-sessions.json",
+        ".governance/control-plane-state/gacr-claims.json",
+        ".governance/control-plane-state/gacr-takeovers.json",
+    ]:
+        assert_true(forbidden not in upgrader, f"source-only GACR state leaked into client upgrader: {forbidden}")
+
+    workflow=(ROOT/".github"/"workflows"/"governed-agent-continuity-relay.yml").read_text(encoding="utf-8")
+    for fragment in [
+        "Governed Agent Continuity Relay",
+        "cancel-in-progress: false",
+        "GACR_NO_STATE_CHANGE",
+    ]:
+        assert_true(fragment in workflow, f"GACR workflow safety boundary missing: {fragment}")
+
+    reconcile_step = workflow.split(
+        "- name: Reconcile relay ingress to latest default branch", 1
+    )
+    assert_true(len(reconcile_step) == 2, "relay workflow must have a canonical ingress reconciliation step")
+    reconcile_prefix = reconcile_step[1].split("- name: Capture exact base HEAD", 1)[0]
+    assert_true(
+        "github.event_name == 'issue_comment' || github.event_name == 'repository_dispatch'"
+        in reconcile_prefix,
+        "issue_comment and repository_dispatch must reconcile before BASE_HEAD capture",
+    )
+    assert_true(
+        'git fetch origin "$DEFAULT_BRANCH"' in reconcile_prefix
+        and "git checkout --detach FETCH_HEAD" in reconcile_prefix,
+        "relay ingress reconciliation must checkout current default branch",
+    )
+
+    print("GACR_AGENT_CONTINUITY_RELAY_TEST_PASS")
+
+
+if __name__ == "__main__":
+    main()

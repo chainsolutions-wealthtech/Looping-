@@ -1,0 +1,362 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import json
+import tempfile
+from pathlib import Path
+
+from gscc_observable_arrival import (
+    build_github_arrival_facts,
+    emit_controlled_arrival,
+    emit_github_arrival,
+    should_skip_github_arrival,
+)
+from gacr_workflow_bridge import expand_auto_attach_payload
+
+ROOT = Path(__file__).resolve().parents[1]
+WORKFLOW = ROOT / ".github" / "workflows" / "gscc-observable-arrival.yml"
+
+
+def assert_true(value: bool, message: str) -> None:
+    if not value:
+        raise AssertionError(message)
+
+
+def fake_request(calls: list[dict]):
+    def request(method: str, url: str, token: str, *, body=None, timeout: int = 15):
+        calls.append({
+            "method": method,
+            "url": url,
+            "token_present": bool(token),
+            "body": body,
+            "timeout": timeout,
+        })
+        return 204, b""
+    return request
+
+
+def main() -> None:
+    event = {
+        "repository": {
+            "id": 1386478935,
+            "full_name": "chainsolutions-wealthtech/Governed-Repository-Template",
+            "owner": {"login": "chainsolutions-wealthtech"},
+        },
+        "sender": {"login": "fresh-provider-actor"},
+        "pull_request": {
+            "number": 777,
+            "head": {"ref": "work/fresh-agent", "sha": "a" * 40},
+            "base": {"ref": "main"},
+        },
+        "number": 777,
+        # Deliberate unsafe/unneeded fields: the gateway must never persist or
+        # forward these because it reads only an allowlisted event projection.
+        "raw_prompt": "must-not-leave-event-file",
+        "authorization": "Bearer must-not-leave-event-file",
+    }
+    env = {
+        "GITHUB_EVENT_NAME": "pull_request",
+        "GITHUB_RUN_ID": "40000000001",
+        "GITHUB_RUN_ATTEMPT": "1",
+        "GITHUB_SHA": "b" * 40,
+    }
+
+    facts = build_github_arrival_facts(event, env)
+    assert_true(facts["surface_class"] == "GITHUB_EVENT_VISIBLE", "GitHub arrival surface must be event-visible")
+    assert_true(facts["repository"] == "chainsolutions-wealthtech/Governed-Repository-Template", "repository identity")
+    assert_true(facts["github_actor"] == "fresh-provider-actor", "platform actor must be observed")
+    assert_true(facts["branch"] == "work/fresh-agent", "PR head branch must be observed")
+    assert_true(facts["base_branch"] == "main", "PR base branch must be observed")
+    assert_true(facts["observed_head"] == "a" * 40, "PR head SHA must be observed")
+    assert_true(facts["pull_request"] == 777, "PR number must be observed")
+    assert_true(facts["connection_method"] == "gscc-github-event-gateway", "GSCC gateway must be explicit")
+    assert_true(facts["connection_ref"].startswith("gscc-observable:"), "stable safe observable anchor")
+    assert_true("raw_prompt" not in json.dumps(facts), "raw prompt must not enter safe projection")
+    assert_true("Bearer" not in json.dumps(facts), "authorization data must not enter safe projection")
+
+    controlled_app_event = {
+        "repository": event["repository"],
+        "sender": {"login": "fresh-provider-actor"},
+        "issue": {
+            "number": 888,
+            "performed_via_github_app": {"slug": "chatgpt-codex-connector"},
+        },
+        "number": 888,
+    }
+    controlled_app_facts = build_github_arrival_facts(
+        controlled_app_event,
+        {
+            "GITHUB_EVENT_NAME": "issues",
+            "GITHUB_RUN_ID": "40000000003",
+            "GITHUB_RUN_ATTEMPT": "1",
+            "GITHUB_SHA": "c" * 40,
+            "GITHUB_REF_NAME": "main",
+        },
+    )
+    assert_true(
+        controlled_app_facts["surface_class"] == "CONTROLLED_INSTRUMENTABLE",
+        "trusted ChatGPT connector event must enter the existing controlled surface",
+    )
+    assert_true(
+        controlled_app_facts["connection_method"] == "gscc-controlled-github-app:chatgpt-codex-connector",
+        "trusted connector provenance must be explicit without inventing provider identity",
+    )
+    assert_true(controlled_app_facts["provider"] is None, "provider identity stays unavailable unless supplied")
+    assert_true(
+        controlled_app_facts["connection_ref"].endswith(":issue:888"),
+        "controlled connector arrival must retain a stable repository subject anchor",
+    )
+
+    controlled_comment_event = {
+        "repository": event["repository"],
+        "sender": {"login": "fresh-provider-actor"},
+        "issue": {"number": 888},
+        "comment": {
+            "body": "ordinary governed work update",
+            "performed_via_github_app": {"slug": "chatgpt-codex-connector"},
+        },
+    }
+    controlled_comment_facts = build_github_arrival_facts(
+        controlled_comment_event,
+        {
+            "GITHUB_EVENT_NAME": "issue_comment",
+            "GITHUB_RUN_ID": "40000000005",
+            "GITHUB_RUN_ATTEMPT": "1",
+            "GITHUB_SHA": "e" * 40,
+            "GITHUB_REF_NAME": "main",
+        },
+    )
+    assert_true(
+        controlled_comment_facts["connection_ref"] == controlled_app_facts["connection_ref"],
+        "issue creation and later issue comment must preserve one stable controlled connection",
+    )
+
+    untrusted_app_event = {
+        "repository": event["repository"],
+        "sender": {"login": "fresh-provider-actor"},
+        "issue": {
+            "number": 889,
+            "performed_via_github_app": {"slug": "untrusted-example-app"},
+        },
+        "number": 889,
+    }
+    untrusted_app_facts = build_github_arrival_facts(
+        untrusted_app_event,
+        {
+            "GITHUB_EVENT_NAME": "issues",
+            "GITHUB_RUN_ID": "40000000004",
+            "GITHUB_RUN_ATTEMPT": "1",
+            "GITHUB_SHA": "d" * 40,
+        },
+    )
+    assert_true(
+        untrusted_app_facts["surface_class"] == "GITHUB_EVENT_VISIBLE",
+        "unknown GitHub apps must not be promoted to controlled surfaces",
+    )
+
+    same_surface_push = {
+        "repository": event["repository"],
+        "sender": {"login": "fresh-provider-actor"},
+        "ref": "refs/heads/work/fresh-agent",
+        "after": "a" * 40,
+    }
+    push_facts = build_github_arrival_facts(
+        same_surface_push,
+        {
+            "GITHUB_EVENT_NAME": "push",
+            "GITHUB_RUN_ID": "40000000002",
+            "GITHUB_RUN_ATTEMPT": "1",
+            "GITHUB_SHA": "a" * 40,
+        },
+    )
+    assert_true(
+        push_facts["connection_ref"] == facts["connection_ref"],
+        "push and PR observations for the same actor/branch must resume one GSCC surface identity",
+    )
+
+    # Non-main pushes must retain the actual branch and HEAD.
+    alt_push = {
+        "repository": event["repository"],
+        "sender": {"login": "fresh-provider-actor"},
+        "ref": "refs/heads/feature/non-main-first-touch",
+        "after": "f" * 40,
+    }
+    alt_push_facts = build_github_arrival_facts(
+        alt_push,
+        {
+            "GITHUB_EVENT_NAME": "push",
+            "GITHUB_REF_NAME": "feature/non-main-first-touch",
+            "GITHUB_SHA": "f" * 40,
+            "GITHUB_RUN_ID": "40000000006",
+            "GITHUB_RUN_ATTEMPT": "1",
+        },
+    )
+    assert_true(alt_push_facts["branch"] == "feature/non-main-first-touch", "non-main branch must be preserved")
+    assert_true(alt_push_facts["observed_head"] == "f" * 40, "non-main exact HEAD must be preserved")
+    assert_true(
+        alt_push_facts["connection_ref"].endswith(":ref:feature/non-main-first-touch"),
+        "connection identity must be ref-specific rather than main-specific",
+    )
+
+    # Issue/comment workflows run from the default branch. That execution ref
+    # is transport context, not evidence of the agent's working branch/HEAD.
+    issue_without_work_ref = {
+        "repository": event["repository"],
+        "sender": {"login": "fresh-provider-actor"},
+        "issue": {"number": 990},
+        "number": 990,
+    }
+    issue_facts = build_github_arrival_facts(
+        issue_without_work_ref,
+        {
+            "GITHUB_EVENT_NAME": "issues",
+            "GITHUB_REF_NAME": "main",
+            "GITHUB_SHA": "9" * 40,
+            "GITHUB_RUN_ID": "40000000007",
+            "GITHUB_RUN_ATTEMPT": "1",
+        },
+    )
+    assert_true(issue_facts["branch"] is None, "default workflow branch must not be attributed to issue-arriving agent")
+    assert_true(issue_facts["observed_head"] is None, "default workflow HEAD must not be attributed to issue-arriving agent")
+    assert_true(issue_facts["connection_ref"].endswith(":issue:990"), "issue arrival must retain issue-scoped identity")
+
+    # A created non-main ref remains observable without any main assumption.
+    create_ref_event = {
+        "repository": event["repository"],
+        "sender": {"login": "fresh-provider-actor"},
+        "ref": "feature/created-ref",
+        "ref_type": "branch",
+    }
+    create_facts = build_github_arrival_facts(
+        create_ref_event,
+        {
+            "GITHUB_EVENT_NAME": "create",
+            "GITHUB_REF_NAME": "feature/created-ref",
+            "GITHUB_SHA": "8" * 40,
+            "GITHUB_RUN_ID": "40000000008",
+            "GITHUB_RUN_ATTEMPT": "1",
+        },
+    )
+    assert_true(create_facts["branch"] == "feature/created-ref", "created non-main ref must be preserved")
+    assert_true(create_facts["observed_head"] == "8" * 40, "created ref exact HEAD must be preserved")
+
+    calls: list[dict] = []
+    result = emit_github_arrival(
+        event,
+        env,
+        token="runtime-only-token",
+        request_fn=fake_request(calls),
+    )
+    assert_true(result["status"] == "GSCC_ARRIVAL_DISPATCHED", "arrival must dispatch through GSCC")
+    assert_true(result["message"]["kind"] == "EVENT", "GSCC kind")
+    assert_true(result["message"]["type"] == "SESSION_ATTACH", "first observable arrival must be a GSCC attach event")
+    assert_true(result["message"]["target"]["system"] == "gacr", "GSCC target must be GACR")
+    assert_true(len(calls) == 1, "one observable arrival must create one downstream dispatch")
+    call = calls[0]
+    assert_true(call["method"] == "POST", "repository dispatch method")
+    assert_true(call["token_present"], "runtime transport credential is required but never persisted")
+    assert_true(call["body"]["event_type"] == "gacr_auto-attach", "GSCC compatibility path must reuse canonical GACR auto-attach")
+    payload = call["body"]["client_payload"]
+    assert_true(len(payload) <= 10, "GitHub repository_dispatch allows at most 10 top-level client_payload properties")
+    assert_true(payload["source"] == "CLIENT_EMITTER", "GACR compatibility provenance")
+    assert_true(payload["surface_class"] == "GITHUB_EVENT_VISIBLE", "surface class forwarded")
+    assert_true(payload["connection_method"] == "gscc-github-event-gateway", "GSCC connection method forwarded")
+    assert_true(payload["connection_ref"].startswith("gscc-observable:"), "stable connection forwarded")
+    assert_true(isinstance(payload["arrival_context"], dict), "extended arrival metadata must be nested")
+    expanded = expand_auto_attach_payload(payload)
+    assert_true(expanded["github_actor"] == "fresh-provider-actor", "observable actor restored by allowlisted bridge expansion")
+    assert_true(expanded["event_type"] == "GSCC_OBSERVABLE_PULL_REQUEST", "safe event class restored")
+    assert_true(expanded["last_action"] == "GSCC_OBSERVABLE_ARRIVAL", "arrival action marker restored")
+    assert_true(expanded["observed_head"] == "a" * 40, "observed head restored")
+    assert_true(expanded["pull_request"] == 777, "PR identity restored")
+    assert_true("mutation_authority_granted" not in payload, "presence transport must not grant write authority")
+    serialized = json.dumps(call["body"])
+    assert_true("runtime-only-token" not in serialized, "transport credential must never enter payload")
+    assert_true("must-not-leave-event-file" not in serialized, "unsafe raw event fields must never enter payload")
+
+    controlled_calls: list[dict] = []
+    controlled = emit_controlled_arrival(
+        repository="chainsolutions-wealthtech/Governed-Repository-Template",
+        connection_ref="provider-host:fresh-agent-a",
+        client_instance_id="provider-host-client-a",
+        provider="chatgpt",
+        agent="fresh-agent-a",
+        branch="main",
+        observed_head="c" * 40,
+        token="runtime-only-token",
+        request_fn=fake_request(controlled_calls),
+    )
+    assert_true(controlled["message"]["type"] == "SESSION_ATTACH", "controlled first touch must enter GSCC")
+    controlled_payload = controlled_calls[0]["body"]["client_payload"]
+    assert_true(controlled_payload["surface_class"] == "CONTROLLED_INSTRUMENTABLE", "controlled host is instrumentable")
+    assert_true(controlled_payload["provider"] == "chatgpt", "declared provider preserved")
+    assert_true(controlled_payload["connection_ref"] == "provider-host:fresh-agent-a", "stable host connection preserved")
+    assert_true("provider_ref" not in controlled_payload, "provider-private ref stays absent unless supplied")
+
+    internal = {
+        "repository": event["repository"],
+        "sender": {"login": "github-actions[bot]"},
+        "ref": "refs/heads/main",
+        "after": "d" * 40,
+    }
+    assert_true(
+        should_skip_github_arrival(internal, {"GITHUB_EVENT_NAME": "push"}) == "INTERNAL_GITHUB_ACTIONS_STATE_PUSH",
+        "internal state persistence push must not recursively create GSCC arrival",
+    )
+
+
+    first_touch_comment = {
+        "repository": event["repository"],
+        "sender": {"login": "Wealthtechinnovations"},
+        "comment": {"body": "/gscc-first-touch {\"connection\":{\"connection_ref\":\"ft:test\"}}"},
+    }
+    assert_true(
+        should_skip_github_arrival(first_touch_comment, {"GITHUB_EVENT_NAME": "issue_comment"})
+        == "INTERNAL_GSCC_FIRST_TOUCH_INGRESS",
+        "GSCC First Touch ingress must remain in the pre-Q1 path and never dispatch directly to GACR",
+    )
+
+    admission_comment = {
+        "repository": event["repository"],
+        "sender": {"login": "Wealthtechinnovations"},
+        "comment": {"body": "/gscc-admission {\"schema\":\"gscc-admission-envelope/v1\"}"},
+    }
+    assert_true(
+        should_skip_github_arrival(admission_comment, {"GITHUB_EVENT_NAME": "issue_comment"})
+        == "INTERNAL_GSCC_ADMISSION_INGRESS",
+        "GSCC admission ingress must not recursively create an observable arrival",
+    )
+
+    dispatch = {
+        "repository": event["repository"],
+        "sender": {"login": "fresh-provider-actor"},
+        "action": "gacr_auto-attach",
+    }
+    assert_true(
+        should_skip_github_arrival(dispatch, {"GITHUB_EVENT_NAME": "repository_dispatch"}) == "INTERNAL_GACR_OR_GSCC_DISPATCH",
+        "GSCC/GACR dispatch must not recurse into a new arrival",
+    )
+
+    text = WORKFLOW.read_text(encoding="utf-8")
+    for trigger in (
+        "push:",
+        "create:",
+        "pull_request:",
+        "issues:",
+        "issue_comment:",
+        "pull_request_review:",
+        "pull_request_review_comment:",
+        "workflow_dispatch:",
+    ):
+        assert_true(trigger in text, f"workflow must observe {trigger}")
+    assert_true("repository_dispatch:" not in text, "gateway workflow must not recursively trigger on its own dispatch")
+    assert_true("branches:" not in text, "gateway must not restrict observable arrival to main or a branch allowlist")
+    assert_true("python3 scripts/gscc/first_touch_handoff.py" in text, "workflow must build canonical GSCC First Touch handoff")
+    assert_true("python3 scripts/gscc_observable_arrival.py github-event" not in text, "First Touch workflow must not dispatch directly through historical GACR arrival path")
+    assert_true("contents: read" in text, "First Touch workflow must use read-only repository contents permission")
+
+    print("GSCC_OBSERVABLE_ARRIVAL_GATEWAY_TEST_PASS")
+
+
+if __name__ == "__main__":
+    main()

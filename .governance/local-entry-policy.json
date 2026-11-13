@@ -1,0 +1,101 @@
+{
+  "schema_version": "1.3.0",
+  "role": "REPOSITORY_LOCAL_CONTROL_PLANE",
+  "applies_to": "INITIALIZED_GOVERNED_TARGET_REPOSITORIES",
+  "source_template_behavior": "DEFINED_BUT_NOT_ACTIVE",
+  "transports": [
+    "GITHUB_ISSUE_CONVERSATION",
+    "REPOSITORY_DISPATCH"
+  ],
+  "dispatch_event": "governed_local_start",
+  "issue_title_prefix": "[Governed Local Entry]",
+  "modes": {
+    "FIRST_AGENT_BOOTSTRAP": {
+      "detection": [
+        "local_entry.first_agent_completed == false",
+        "canonical_memory.next_action == DISCOVER_PROJECT_BASELINE"
+      ],
+      "purpose": "TURN_POST_BOOTSTRAP_DISCOVERY_INTO_GUIDED_PROJECT_BASELINE",
+      "final_state": "LOCAL_HANDOFF_READY"
+    },
+    "NORMAL_GOVERNED_ENTRY": {
+      "detection": [
+        "FIRST_AGENT_BOOTSTRAP_NOT_REQUIRED"
+      ],
+      "purpose": "ROUTE_SUBSEQUENT_AGENTS_TO_EXISTING_GOVERNED_WORK",
+      "final_state": "LOCAL_HANDOFF_READY"
+    }
+  },
+  "invariants": [
+    "CENTRAL_CONTROL_PLANE_NE_LOCAL_CONTROL_PLANE",
+    "ONE_QUESTION_OR_ACTION_AT_A_TIME",
+    "FIRST_AGENT_CANNOT_SKIP_PROJECT_BASELINE",
+    "OBSERVED_STATE_NE_ASSUMED_STATE",
+    "HEAD_MOVED_BLOCKS_BASELINE_WRITE",
+    "BASELINE_WRITE_REQUIRES_EXPLICIT_APPROVAL",
+    "LOCAL_ISSUE_STATE_NE_CANONICAL_PROJECT_TRUTH",
+    "NO_SECRET_IN_LOCAL_ENTRY_STATE",
+    "NO_PRODUCTION_OR_INFRASTRUCTURE_FACT_WITHOUT_OBSERVATION",
+    "CONFIGURATION_INTENT_NE_EXECUTION_AUTHORITY",
+    "MCP_DISCOVERY_REQUIRES_EXPLICIT_OWNER_APPROVAL",
+    "OBSERVED_OR_OWNER_PROVIDED_FRESH_FACTS_SHOULD_NOT_BE_REASKED",
+    "BOTH_CONFIGURES_DUAL_READY_ROUTES_NOT_COUPLED_EXECUTION",
+    "ONE_SUCCESSFUL_SELECTED_ROUTE_SATISFIES_CURRENT_DISCOVERY",
+    "ALTERNATE_ROUTE_READINESS_IS_INDEPENDENT_AND_NON_BLOCKING",
+    "FRESH_PROJECT_PRODUCTION_SERVER_DECISION_PRECEDES_DOMAIN_PLANNING",
+    "OBSERVED_SERVER_CANDIDATE_NE_OWNER_PRODUCTION_DECISION",
+    "PRODUCTION_SERVER_CHOICE_NE_EXECUTION_AUTHORITY",
+    "DOMAIN_CHOICES_REUSE_SELECTED_SERVER_DISCOVERY",
+    "DOMAIN_PLANNING_IS_ONE_CHOICE_AT_A_TIME",
+    "DOMAIN_INTENT_PRECEDES_DOMAIN_PARENT_OR_NAME",
+    "SELECTED_SERVER_DOMAIN_INVENTORY_FEEDS_DYNAMIC_CHOICES",
+    "DOMAIN_CHOICE_PREPARES_CAPABILITIES_BUT_NE_EXECUTION_AUTHORITY",
+    "EXISTING_ANSWERED_DOMAIN_BINDING_IS_NOT_REASKED"
+  ],
+  "adaptive_preparation": {
+    "mode": "ADDITIVE_TO_EXISTING_LOOP_ENGINEERING",
+    "principle": "ANSWER_OR_OBSERVED_FACT_TO_PROJECT_MODEL_TO_RESOURCE_REQUIREMENTS_TO_PREPARED_WORK_ITEMS",
+    "reuse_fresh_observed_answers": true,
+    "ask_only_missing_or_owner_decision_fields": true,
+    "parallel_task_engine_forbidden": true
+  },
+  "mcp_transport_routing": {
+    "BOTH": {
+      "mode": "DUAL_READY_SMART_ROUTING",
+      "configured_transports": [
+        "DIRECT_MCP_TOKEN",
+        "SSH"
+      ],
+      "simultaneous_execution_required": false,
+      "selection": "ONE_ROUTE_PER_OPERATION",
+      "initial_discovery_preference": "DIRECT_MCP_TOKEN",
+      "fallback": "SSH",
+      "alternate_readiness_blocks_current_success": false
+    }
+  },
+  "fresh_project_setup_order": [
+    "READ_ONLY_DISCOVERY",
+    "PRODUCTION_SERVER_SELECTION",
+    "DOMAIN_INTENT_SELECTION",
+    "SERVER_SCOPED_DOMAIN_PARENT_OR_EXISTING_SELECTION",
+    "DOMAIN_NAME_OR_LABEL_SELECTION",
+    "DERIVE_DOMAIN_BINDING_AND_OPERATION_REQUIREMENTS",
+    "WORKFLOW_MODEL",
+    "SETUP_APPROVAL"
+  ],
+  "domain_question_chain": {
+    "intents": [
+      "REUSE_EXISTING_DOMAIN",
+      "CREATE_SUBDOMAIN",
+      "CREATE_NEW_ROOT_DOMAIN",
+      "CREATE_CHILD_DOMAIN",
+      "NO_PUBLIC_DOMAIN",
+      "DECIDE_LATER"
+    ],
+    "source": "SELECTED_SERVER_OBSERVED_DOMAIN_INVENTORY",
+    "one_question_at_a_time": true,
+    "automatic_binding_derivation": true,
+    "execution_authority_granted": false,
+    "capability_preparation": true
+  }
+}

@@ -1,0 +1,1018 @@
+name: GSCC Provider First Touch Ingress
+
+on:
+  repository_dispatch:
+    types:
+      - gscc_provider_first_touch
+  issues:
+    types:
+      - opened
+  issue_comment:
+    types:
+      - created
+  pull_request:
+    paths:
+      - "scripts/provider_first_touch_ingress.py"
+      - "scripts/provider_first_touch_repository_enrichment.py"
+      - "scripts/provider_first_tool_hook.py"
+      - "scripts/gscc/instrumentation.py"
+      - "scripts/governed_github_read_connector.py"
+      - "scripts/chatgpt_github_surface_instrumentation.py"
+      - "scripts/provider_first_touch_evidence.py"
+      - "scripts/first_touch_entry_contract.py"
+      - "scripts/first_touch_state_artifact.py"
+      - "scripts/first_touch_agent_transport_extractor.py"
+      - "scripts/gscc_arrival_identity.py"
+      - "scripts/gscc_session_runtime.py"
+      - "scripts/test_gscc_per_arrival_identity_session_runtime.py"
+      - "scripts/gscc_persisted_entry_pipeline.py"
+      - ".governance/control-plane-db/008_gscc_observable_entry_pipeline.sql"
+      - ".governance/control-plane-db/009_gscc_post_q1_gate_route.sql"
+      - ".governance/control-plane-db/010_gscc_arrival_session_identity.sql"
+      - ".governance/control-plane-db/011_gscc_session_runtime.sql"
+      - "scripts/first_touch_connection_completeness.py"
+      - "scripts/first_touch_field_block_gate.py"
+      - "scripts/gscc/first_touch_handoff.py"
+      - "scripts/test_provider_first_touch_ingress.py"
+      - "scripts/test_provider_first_touch_repository_enrichment.py"
+      - "scripts/test_provider_first_tool_hook.py"
+      - "tests/test_gscc_core.py"
+      - "scripts/test_governed_github_read_connector.py"
+      - "scripts/test_chatgpt_github_surface_instrumentation.py"
+      - ".github/workflows/gscc-provider-first-touch-ingress.yml"
+
+permissions:
+  contents: read
+  actions: read
+  issues: write
+
+concurrency:
+  group: gscc-first-touch-${{ github.event.issue.number || github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  regression:
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile
+        run: python3 -m py_compile scripts/provider_first_touch_ingress.py scripts/provider_first_touch_repository_enrichment.py scripts/provider_first_touch_evidence.py scripts/provider_first_tool_hook.py scripts/gscc/instrumentation.py scripts/governed_github_read_connector.py scripts/chatgpt_github_surface_instrumentation.py scripts/first_touch_entry_contract.py scripts/first_touch_state_artifact.py scripts/gscc/first_touch_handoff.py scripts/test_provider_first_touch_ingress.py scripts/test_provider_first_tool_hook.py scripts/test_provider_first_touch_repository_enrichment.py scripts/test_governed_github_read_connector.py
+      - name: Test canonical automatic owner F1 admission
+        run: |
+          PYTHONPATH=scripts python3 -m py_compile scripts/gscc_owner_f1.py scripts/test_gscc_owner_f1.py
+          PYTHONPATH=scripts python3 scripts/test_gscc_owner_f1.py
+
+      - name: Test provider first-touch sidecar, repository enrichment and host hook
+        run: PYTHONPATH=scripts:. python3 -m unittest scripts/test_provider_first_touch_ingress.py scripts/test_provider_first_touch_repository_enrichment.py scripts/test_provider_first_tool_hook.py scripts/test_governed_github_read_connector.py scripts/test_chatgpt_github_surface_instrumentation.py tests/test_gscc_core.py
+
+  ingest:
+    if: ${{ github.event_name == 'repository_dispatch' || (github.event_name == 'issues' && startsWith(github.event.issue.title, '[GSCC First Touch]')) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate provider envelope
+        env:
+          PROVIDER_ENVELOPE: ${{ toJson(github.event.client_payload) }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "${GITHUB_EVENT_NAME}" = "repository_dispatch" ]; then
+            printf '%s' "$PROVIDER_ENVELOPE" > "$RUNNER_TEMP/provider-first-touch-envelope.json"
+          else
+            printf '%s' "$ISSUE_BODY" > "$RUNNER_TEMP/gscc-first-touch-issue-body.txt"
+            python3 -c 'import json,os,pathlib; raw=pathlib.Path(os.environ["RUNNER_TEMP"]).joinpath("gscc-first-touch-issue-body.txt").read_text(encoding="utf-8").strip(); prefix="/gscc-first-touch"; assert raw.startswith(prefix), "body must start with /gscc-first-touch"; payload=json.loads(raw[len(prefix):].strip()); assert isinstance(payload,dict), "JSON object required"; pathlib.Path(os.environ["RUNNER_TEMP"]).joinpath("provider-first-touch-envelope.json").write_text(json.dumps(payload,ensure_ascii=False,sort_keys=True),encoding="utf-8")'
+          fi
+
+      - name: Mint per-arrival GSCC connection identity
+        id: arrival
+        run: |
+          python3 scripts/gscc_arrival_identity.py             --envelope "$RUNNER_TEMP/provider-first-touch-envelope.json"             --event "$GITHUB_EVENT_PATH"             --run-id "$GITHUB_RUN_ID"             --run-attempt "$GITHUB_RUN_ATTEMPT"             --output "$RUNNER_TEMP/provider-first-touch-identified-envelope.json"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          v=json.loads((Path(os.environ["RUNNER_TEMP"])/"provider-first-touch-identified-envelope.json").read_text())
+          with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as f:
+              f.write("state_scope="+v["gscc_arrival"]["state_scope"]+"\n")
+              f.write("arrival_ref="+v["gscc_arrival"]["arrival_ref"]+"\n")
+          PY
+          mv "$RUNNER_TEMP/provider-first-touch-identified-envelope.json" "$RUNNER_TEMP/provider-first-touch-envelope.json"
+
+      - name: Enrich minimal provider signal from repository-observable GitHub state
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 scripts/provider_first_touch_repository_enrichment.py \
+            --input "$RUNNER_TEMP/provider-first-touch-envelope.json" \
+            --output "$RUNNER_TEMP/provider-first-touch-enriched-envelope.json"
+
+      - name: Capture provider First Touch
+        run: |
+          python3 scripts/provider_first_touch_ingress.py \
+            --envelope "$RUNNER_TEMP/provider-first-touch-enriched-envelope.json" \
+            --capture-output "$RUNNER_TEMP/provider-first-touch-capture.json"
+
+      - name: Restore previous GSCC GSE First Touch state
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 scripts/first_touch_state_artifact.py restore             --repository "${GITHUB_REPOSITORY}"             --run-id "${GITHUB_RUN_ID}"             --scope "${{ steps.arrival.outputs.state_scope }}"             --output "${RUNNER_TEMP}/first-touch-previous.sqlite"
+
+      - name: Materialize existing B00-B30 first-touch database
+        run: |
+          python3 scripts/first_touch_field_block_gate.py             --capture "$RUNNER_TEMP/provider-first-touch-capture.json"             --output "$RUNNER_TEMP/provider-first-touch-capture.sqlite"             --source-ref "provider-first-touch:${GITHUB_RUN_ID}:${GITHUB_RUN_ATTEMPT}"
+
+      - name: Install persisted GSCC runtime schemas
+        run: |
+          python3 - <<'PY'
+          import sqlite3, os
+          from pathlib import Path
+          db=Path(os.environ["RUNNER_TEMP"])/"provider-first-touch-capture.sqlite"
+          conn=sqlite3.connect(db)
+          try:
+              for name in (
+                  "008_gscc_observable_entry_pipeline.sql",
+                  "009_gscc_post_q1_gate_route.sql",
+                  "010_gscc_arrival_session_identity.sql",
+                  "011_gscc_session_runtime.sql",
+              ):
+                  conn.executescript((Path(".governance/control-plane-db")/name).read_text(encoding="utf-8"))
+              conn.commit()
+          finally:
+              conn.close()
+          PY
+
+      - name: Merge previous persisted GSCC state
+        run: |
+          if [ -f "$RUNNER_TEMP/first-touch-previous.sqlite" ]; then
+            python3 scripts/first_touch_state_artifact.py merge               --current "$RUNNER_TEMP/provider-first-touch-capture.sqlite"               --previous "$RUNNER_TEMP/first-touch-previous.sqlite"
+          else
+            echo "NO_PRIOR_PERSISTED_GSCC_STATE"
+          fi
+
+      - name: Build expected first-touch field registry
+        run: python3 scripts/first_touch_expected_field_registry.py
+
+      - name: Build provider first-touch completeness packet
+        run: |
+          python3 scripts/first_touch_connection_completeness.py             --capture "$RUNNER_TEMP/provider-first-touch-capture.json"             --output "$RUNNER_TEMP/provider-first-touch-completeness.json"
+
+      - name: Evaluate mandatory First Touch entry contract
+        id: entry
+        run: |
+          python3 scripts/first_touch_entry_contract.py             --capture "$RUNNER_TEMP/provider-first-touch-capture.json"             --completeness "$RUNNER_TEMP/provider-first-touch-completeness.json"             --db "$RUNNER_TEMP/provider-first-touch-capture.sqlite"             --output "$RUNNER_TEMP/provider-first-touch-entry-contract.json"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          p=Path(os.environ["RUNNER_TEMP"])/"provider-first-touch-entry-contract.json"
+          v=json.loads(p.read_text(encoding="utf-8"))
+          with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as f:
+              f.write("status="+v["status"]+"\n")
+              f.write("classification="+v["classification"]+"\n")
+          PY
+
+      - name: Run canonical persisted GSCC entry pipeline
+        id: persisted_entry
+        run: |
+          python3 scripts/gscc_persisted_entry_pipeline.py             --provider-envelope "$RUNNER_TEMP/provider-first-touch-enriched-envelope.json"             --github "$RUNNER_TEMP/provider-first-touch-enriched-envelope.json"             --db "$RUNNER_TEMP/provider-first-touch-capture.sqlite"             --run-id "provider-first-touch-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"             > "$RUNNER_TEMP/gscc-persisted-entry-result.json"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          p=Path(os.environ["RUNNER_TEMP"])/"gscc-persisted-entry-result.json"
+          v=json.loads(p.read_text(encoding="utf-8"))
+          with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as f:
+              f.write("entry_status="+str(v.get("entry_status"))+"\n")
+              f.write("classification="+str(v.get("classification"))+"\n")
+              f.write("next_gate="+str(v.get("next_gate"))+"\n")
+          PY
+
+      - name: Prepare per-arrival GSCC session runtime
+        if: ${{ github.event_name == 'issues' && steps.persisted_entry.outputs.next_gate == 'Q1' }}
+        id: session_runtime
+        run: |
+          python3 scripts/gscc_session_runtime.py prepare             --db "$RUNNER_TEMP/provider-first-touch-capture.sqlite"             --run-id "provider-first-touch-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"             --issue-number "${{ github.event.issue.number }}"             > "$RUNNER_TEMP/gscc-session-runtime.json"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          v=json.loads((Path(os.environ["RUNNER_TEMP"])/"gscc-session-runtime.json").read_text())
+          with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as f:
+              f.write("runtime_id="+v["runtime_id"]+"\n")
+              f.write("state="+v["state"]+"\n")
+          d=v["dispatch"]; cmd=d["command"]; p=cmd["payload"]
+          ack={"runtime_id":v["runtime_id"],"payload":{
+            "event":"command_ack","session_id":d["target_session_id"],"dispatch_id":d["dispatch_id"],
+            "command_id":cmd["command_id"],"correlation_id":cmd["correlation_id"],"delivery_state":"ACKNOWLEDGED"}}
+          resp={"runtime_id":v["runtime_id"],"payload":{
+            "event":"challenge_response","session_id":d["target_session_id"],"dispatch_id":d["dispatch_id"],
+            "command_id":cmd["command_id"],"correlation_id":cmd["correlation_id"],
+            "challenge_id":p["challenge_id"],"nonce":p["nonce"],"challenge_status":"ACK"}}
+          body="### GSCC Q9 control challenge\n\nThis challenge belongs only to this arrival. Reply first with:\n\n`/gscc-entry-ack "+json.dumps(ack,separators=(',',':'))+"`\n\nAfter the ACK is accepted, reply with:\n\n`/gscc-entry-response "+json.dumps(resp,separators=(',',':'))+"`\n"
+          (Path(os.environ["RUNNER_TEMP"])/"gscc-q9-comment.txt").write_text(body,encoding="utf-8")
+          PY
+
+      - name: Deliver Q9 challenge to this arrival issue
+        if: ${{ github.event_name == 'issues' && steps.session_runtime.outputs.state == 'WAITING_Q9_ACK' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api "repos/${GITHUB_REPOSITORY}/issues/${{ github.event.issue.number }}/comments" -f body="$(cat "$RUNNER_TEMP/gscc-q9-comment.txt")"
+
+      - name: Persist canonical GSCC First Touch state
+        uses: actions/upload-artifact@v4
+        with:
+          name: first-touch-state-${{ steps.arrival.outputs.state_scope }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/provider-first-touch-capture.sqlite
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Build canonical GSCC First Touch handoff
+        if: ${{ steps.entry.outputs.status == 'ENTRY_READY_FOR_Q1' }}
+        run: |
+          python3 scripts/gscc/first_touch_handoff.py             --entry "$RUNNER_TEMP/provider-first-touch-entry-contract.json"             --db "$RUNNER_TEMP/provider-first-touch-capture.sqlite"             --output "$RUNNER_TEMP/gscc-first-touch-handoff.json"
+
+      - name: Upload provider first-touch evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: provider-first-touch-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/provider-first-touch-envelope.json
+            ${{ runner.temp }}/provider-first-touch-enriched-envelope.json
+            ${{ runner.temp }}/provider-first-touch-capture.json
+            ${{ runner.temp }}/provider-first-touch-capture.sqlite
+            ${{ runner.temp }}/provider-first-touch-completeness.json
+            ${{ runner.temp }}/provider-first-touch-entry-contract.json
+            ${{ runner.temp }}/gscc-persisted-entry-result.json
+            ${{ runner.temp }}/gscc-first-touch-handoff.json
+          if-no-files-found: warn
+          retention-days: 30
+
+  control:
+    if: ${{ github.event_name == 'issue_comment' && startsWith(github.event.issue.title, '[GSCC First Touch]') && github.actor != 'github-actions[bot]' && (startsWith(github.event.comment.body, '/gscc-entry-ack ') || startsWith(github.event.comment.body, '/gscc-entry-response ') || startsWith(github.event.comment.body, '/gscc-entry-rechallenge ') || startsWith(github.event.comment.body, '/gscc-entry-resume ')) }}
+    permissions:
+      contents: write
+      actions: read
+      issues: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Resolve this arrival state scope
+        id: arrival_scope
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          from scripts.gscc_arrival_identity import mint
+          event=json.loads(Path(os.environ["GITHUB_EVENT_PATH"]).read_text(encoding="utf-8"))
+          repository=((event.get("repository") or {}).get("full_name") or os.environ.get("GITHUB_REPOSITORY"))
+          result=mint({"repository":repository,"identity":{}},event,run_id=os.environ.get("GITHUB_RUN_ID"),run_attempt=os.environ.get("GITHUB_RUN_ATTEMPT"))
+          with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as f:
+              f.write("state_scope="+result["gscc_arrival"]["state_scope"]+"\n")
+              f.write("arrival_ref="+result["gscc_arrival"]["arrival_ref"]+"\n")
+          PY
+
+      - name: Restore this arrival runtime state
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 scripts/first_touch_state_artifact.py restore             --repository "${GITHUB_REPOSITORY}"             --run-id "${GITHUB_RUN_ID}"             --scope "${{ steps.arrival_scope.outputs.state_scope }}"             --output "${RUNNER_TEMP}/provider-first-touch-capture.sqlite"
+          test -f "${RUNNER_TEMP}/provider-first-touch-capture.sqlite"
+
+      - name: Apply GSCC control or recovery event
+        id: q9
+        env:
+          COMMENT_BODY: ${{ github.event.comment.body }}
+          COMMENT_AT: ${{ github.event.comment.created_at }}
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          raw=os.environ["COMMENT_BODY"].strip()
+          prefixes=(
+              ("/gscc-entry-ack ","control"),
+              ("/gscc-entry-response ","control"),
+              ("/gscc-entry-rechallenge ","rechallenge"),
+              ("/gscc-entry-resume ","resume-gacr"),
+          )
+          match=next(((prefix,mode) for prefix,mode in prefixes if raw.startswith(prefix)),None)
+          if match is None:
+              raise SystemExit("GSCC_CONTROL_OR_RECOVERY_PREFIX_INVALID")
+          prefix,mode=match
+          v=json.loads(raw[len(prefix):])
+          if not isinstance(v,dict) or not v.get("runtime_id"):
+              raise SystemExit("GSCC_CONTROL_OR_RECOVERY_PAYLOAD_INVALID")
+          if mode=="control" and not isinstance(v.get("payload"),dict):
+              raise SystemExit("GSCC_Q9_CONTROL_PAYLOAD_INVALID")
+          v["mode"]=mode
+          Path(os.environ["RUNNER_TEMP"]).joinpath("control-input.json").write_text(json.dumps(v),encoding="utf-8")
+          PY
+          runtime_id="$(python3 -c 'import json,os,pathlib; print(json.loads(pathlib.Path(os.environ["RUNNER_TEMP"]).joinpath("control-input.json").read_text())["runtime_id"])')"
+          mode="$(python3 -c 'import json,os,pathlib; print(json.loads(pathlib.Path(os.environ["RUNNER_TEMP"]).joinpath("control-input.json").read_text())["mode"])')"
+          if [ "$mode" = "control" ]; then
+            payload="$(python3 -c 'import json,os,pathlib; print(json.dumps(json.loads(pathlib.Path(os.environ["RUNNER_TEMP"]).joinpath("control-input.json").read_text())["payload"],separators=(",",":")))')"
+            python3 scripts/gscc_session_runtime.py control \
+              --db "$RUNNER_TEMP/provider-first-touch-capture.sqlite" \
+              --runtime-id "$runtime_id" \
+              --payload-json "$payload" \
+              --observed-at "$COMMENT_AT" \
+              > "$RUNNER_TEMP/gscc-session-control-result.json"
+          elif [ "$mode" = "rechallenge" ]; then
+            python3 scripts/gscc_session_runtime.py rechallenge \
+              --db "$RUNNER_TEMP/provider-first-touch-capture.sqlite" \
+              --runtime-id "$runtime_id" \
+              > "$RUNNER_TEMP/gscc-session-control-result.json"
+          else
+            python3 scripts/gscc_session_runtime.py resume-gacr \
+              --db "$RUNNER_TEMP/provider-first-touch-capture.sqlite" \
+              --runtime-id "$runtime_id" \
+              > "$RUNNER_TEMP/gscc-session-control-result.json"
+          fi
+          MODE="$mode" python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          root=Path(os.environ["RUNNER_TEMP"])
+          v=json.loads((root/"gscc-session-control-result.json").read_text())
+          with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as f:
+              f.write("runtime_id="+v["runtime_id"]+"\n")
+              f.write("state="+v["state"]+"\n")
+              f.write("mode="+os.environ["MODE"]+"\n")
+          if v["state"]=="GSE_VERIFIED_WAITING_GACR":
+              (root/"gacr-attach.json").write_text(json.dumps(v["gacr_attach"],separators=(",",":")),encoding="utf-8")
+          if v["state"]=="WAITING_Q9_RECHALLENGE_ACK":
+              d=v["dispatch"]; cmd=d["command"]; p=cmd["payload"]
+              ack={
+                "runtime_id":v["runtime_id"],
+                "payload":{
+                  "event":"command_ack","session_id":d["target_session_id"],
+                  "dispatch_id":d["dispatch_id"],"command_id":cmd["command_id"],
+                  "correlation_id":cmd["correlation_id"],"delivery_state":"ACKNOWLEDGED",
+                },
+              }
+              response={
+                "runtime_id":v["runtime_id"],
+                "payload":{
+                  "event":"challenge_response","session_id":d["target_session_id"],
+                  "dispatch_id":d["dispatch_id"],"command_id":cmd["command_id"],
+                  "correlation_id":cmd["correlation_id"],"challenge_id":p["challenge_id"],
+                  "nonce":p["nonce"],"challenge_status":"ACK",
+                },
+              }
+              body=(
+                "### GSCC Q9 refreshed control challenge\n\n"
+                "This challenge renews Q9 for the SAME persisted arrival; it does not create a new First Touch.\n\n"
+                "`/gscc-entry-ack "+json.dumps(ack,separators=(",",":"))+"`\n\n"
+                "After the ACK is accepted:\n\n"
+                "`/gscc-entry-response "+json.dumps(response,separators=(",",":"))+"`"
+              )
+              (root/"q9-rechallenge-comment.txt").write_text(body,encoding="utf-8")
+          PY
+
+      - name: Persist control-state checkpoint before downstream actions
+        if: ${{ steps.q9.outcome == 'success' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: first-touch-state-${{ steps.arrival_scope.outputs.state_scope }}-${{ github.run_id }}-${{ github.run_attempt }}-checkpoint
+          path: ${{ runner.temp }}/provider-first-touch-capture.sqlite
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Report refreshed Q9 challenge
+        if: ${{ steps.q9.outputs.state == 'WAITING_Q9_RECHALLENGE_ACK' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/${GITHUB_REPOSITORY}/issues/${{ github.event.issue.number }}/comments" \
+            -f body="$(cat "$RUNNER_TEMP/q9-rechallenge-comment.txt")"
+      - name: Record accepted Q9 ACK
+        if: ${{ steps.q9.outputs.state == 'WAITING_Q9_RESPONSE' || steps.q9.outputs.state == 'WAITING_Q9_RECHALLENGE_RESPONSE' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/${GITHUB_REPOSITORY}/issues/${{ github.event.issue.number }}/comments"             -f body="### GSCC Q9 ACK accepted\n\nThe arrival remains isolated under runtime ${{ steps.q9.outputs.runtime_id }}. Send the challenge-response command from the Q9 challenge message."
+
+      - name: Request canonical GACR attach after Q10
+        if: ${{ steps.q9.outputs.state == 'GSE_VERIFIED_WAITING_GACR' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          p=Path(os.environ["RUNNER_TEMP"])/"gacr-attach.json"
+          payload=json.loads(p.read_text(encoding="utf-8"))
+          for key in ("capabilities","wake_channels"):
+              if isinstance(payload.get(key),list):
+                  payload[key]=",".join(str(x) for x in payload[key])
+          # GitHub repository_dispatch limits client_payload to 10 top-level
+          # properties. Preserve the full arrival evidence by using the
+          # existing GACR arrival_context expansion contract instead of
+          # dropping fields.
+          arrival_context={"repository":os.environ["GITHUB_REPOSITORY"]}
+          for key in (
+              "observed_head","branch","last_evidence","entry_action","connection_intent",
+              "same_logical_agent_session_id","continuity_id","continuity_evidence_ref",
+          ):
+              value=payload.pop(key,None)
+              if value not in (None,""):
+                  arrival_context[key]=value
+          payload.pop("logical_agent_alias",None)
+          payload.pop("schema",None)
+          payload.pop("event",None)
+          payload["source"]="GSCC_PRE_GSE_RUNTIME"
+          payload["arrival_context"]=arrival_context
+          if len(payload)>10:
+              raise SystemExit(f"GACR_DISPATCH_CLIENT_PAYLOAD_TOO_WIDE:{len(payload)}")
+          out={"event_type":"gacr_auto-attach","client_payload":payload}
+          (Path(os.environ["RUNNER_TEMP"])/"gacr-auto-attach-dispatch.json").write_text(
+              json.dumps(out,ensure_ascii=False,separators=(",",":")),encoding="utf-8"
+          )
+          PY
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/dispatches"             --input "$RUNNER_TEMP/gacr-auto-attach-dispatch.json"
+
+      - name: Wait for canonical GACR session and bind Q2-Q12
+        if: ${{ steps.q9.outputs.state == 'GSE_VERIFIED_WAITING_GACR' }}
+        id: bind
+        env:
+          RUNTIME_ID: ${{ steps.q9.outputs.runtime_id }}
+        run: |
+          set -euo pipefail
+          connection_ref="$(python3 -c 'import json,os,pathlib; print(json.loads(pathlib.Path(os.environ["RUNNER_TEMP"]).joinpath("gacr-attach.json").read_text())["connection_ref"])')"
+          found=0
+          for i in $(seq 1 30); do
+            git fetch origin main >/dev/null 2>&1
+            if git show FETCH_HEAD:.governance/control-plane-state/gacr-sessions.json > "$RUNNER_TEMP/gacr-sessions.json" 2>/dev/null; then
+              if CONNECTION_REF="$connection_ref" RUNNER_TEMP="$RUNNER_TEMP" python3 -c 'import json,os,pathlib; d=json.loads(pathlib.Path(os.environ["RUNNER_TEMP"]).joinpath("gacr-sessions.json").read_text()); ref=os.environ["CONNECTION_REF"]; m=[s for s in d.get("sessions",[]) if s.get("connection_ref")==ref and s.get("status")=="ACTIVE" and (s.get("relay") or {}).get("state")=="ACTIVE"]; raise SystemExit(0 if len(m)==1 else 1)'; then
+                found=1
+                break
+              fi
+            fi
+            sleep 2
+          done
+          if [ "$found" != "1" ]; then
+            echo "GACR_BIND_TIMEOUT"; exit 4
+          fi
+          current_head="$(git rev-parse FETCH_HEAD)"
+          python3 scripts/gscc_session_runtime.py bind-gacr             --db "$RUNNER_TEMP/provider-first-touch-capture.sqlite"             --runtime-id "$RUNTIME_ID"             --sessions "$RUNNER_TEMP/gacr-sessions.json"             --current-head "$current_head"             > "$RUNNER_TEMP/gscc-gacr-bind-result.json"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          v=json.loads((Path(os.environ["RUNNER_TEMP"])/"gscc-gacr-bind-result.json").read_text())
+          with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as f:
+              f.write("state="+v["state"]+"\n")
+              f.write("gacr_session_id="+str(v.get("gacr_session_id"))+"\n")
+          PY
+
+      - name: Auto-release verified GitHub owner F1 (no work claim)
+        if: ${{ steps.bind.outputs.state == 'READY_FOR_F1' && (github.actor == 'Wealthtechinnovations' || github.actor == 'Patricked-code') && github.event.issue.user.login == github.actor }}
+        id: owner_f1
+        # Preserve per-arrival recovery evidence before failing the job.
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          RUNTIME_ID: ${{ steps.q9.outputs.runtime_id }}
+        run: |
+          set -euo pipefail
+          current_head="$(git ls-remote --exit-code origin refs/heads/main | awk '{print $1}')"
+          test -n "$current_head"
+          python3 scripts/gscc_owner_f1.py \
+            --db "$RUNNER_TEMP/provider-first-touch-capture.sqlite" \
+            --runtime-id "$RUNTIME_ID" \
+            --sessions "$RUNNER_TEMP/gacr-sessions.json" \
+            --current-head "$current_head" \
+            > "$RUNNER_TEMP/gscc-owner-f1-release.json"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          result=json.loads((Path(os.environ["RUNNER_TEMP"])/"gscc-owner-f1-release.json").read_text())
+          receipt=result["owner_f1_receipt"]
+          grant=result["access_grant"]
+          if (result["state"]!="RELEASED_TO_NORMAL_GOVERNANCE" or
+              receipt["grant_id"]!=grant["grant_id"] or
+              receipt["session_id"]!=result["gacr_session_id"] or
+              receipt["head"]!=result["released_head"]):
+              raise SystemExit("OWNER_F1_RECEIPT_GRANT_SESSION_HEAD_INVALID")
+          with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as output:
+              for key,value in (
+                  ("state",result["state"]),
+                  ("gacr_session_id",result["gacr_session_id"]),
+                  ("receipt_id",receipt["receipt_id"]),
+                  ("grant_id",grant["grant_id"]),
+                  ("head",result["released_head"])):
+                  output.write(key+"="+value+"\n")
+          PY
+
+      - name: Publish durable canonical owner F1 receipt and access grant to GitHub
+        if: ${{ steps.owner_f1.outputs.state == 'RELEASED_TO_NORMAL_GOVERNANCE' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          root=Path(os.environ["RUNNER_TEMP"])
+          item=json.loads((root/"gscc-owner-f1-release.json").read_text(encoding="utf-8"))
+          receipt=item["owner_f1_receipt"]
+          grant=item["access_grant"]
+          if not (receipt["grant_id"] == grant["grant_id"] and
+                  receipt["head"] == grant["bound_head"] == item["released_head"] and
+                  receipt["session_id"] == grant["session_id"] == item["gacr_session_id"]):
+              raise SystemExit("OWNER_F1_DURABLE_RECEIPT_BINDING_INVALID")
+          intro=("### F1 OWNER — canonical admission confirmed\n\n"
+                 "Status: RELEASED_TO_NORMAL_GOVERNANCE\n"
+                 "Next authority: 00_START_HERE.md\n"
+                 "This receipt records admission, NOT a fabricated function exposure. "
+                 "Native GitHub tools remain governed by actual account permissions, "
+                 "branch protections and CI; no task, claim or work lease is created.\n")
+          body=(intro+"\n#### Real GSCC F1 admission receipt\n\n~~~json\n"
+                +json.dumps(receipt,ensure_ascii=False,sort_keys=True,indent=2)
+                +"\n~~~\n\n#### Canonically issued gscc-access-grant/v1\n\n~~~json\n"
+                +json.dumps(grant,ensure_ascii=False,sort_keys=True,indent=2)
+                +"\n~~~\n")
+          if len(body)>15000:
+              raise SystemExit("OWNER_F1_RECEIPT_TOO_LARGE_FOR_DURABLE_ISSUE")
+          (root/"gscc-owner-f1-github-comment.txt").write_text(body,encoding="utf-8")
+          PY
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/${{ github.event.issue.number }}/comments" \
+            -f body="$(cat "$RUNNER_TEMP/gscc-owner-f1-github-comment.txt")"
+
+      - name: Publish owner F1 release to existing GACR beacon
+        if: ${{ steps.owner_f1.outputs.state == 'RELEASED_TO_NORMAL_GOVERNANCE' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SESSION_ID: ${{ steps.owner_f1.outputs.gacr_session_id }}
+          F1_RECEIPT_ID: ${{ steps.owner_f1.outputs.receipt_id }}
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          event={"event_type":"gacr_beacon","client_payload":{
+              "event_type":"F1_RELEASED",
+              "session_id":os.environ["SESSION_ID"],
+              "source":"GITHUB_ACTIONS",
+              "evidence_ref":"gscc-owner-f1:"+os.environ["F1_RECEIPT_ID"],
+              "checkpoint_ref":"RELEASED_TO_NORMAL_GOVERNANCE",
+              "agent_role":"CODE_AGENT"}}
+          (Path(os.environ["RUNNER_TEMP"])/"owner-f1-beacon.json").write_text(
+              json.dumps(event,separators=(",",":")),encoding="utf-8")
+          PY
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/dispatches" \
+            --input "$RUNNER_TEMP/owner-f1-beacon.json"
+
+      - name: Preserve canonical owner F1 release artifact
+        if: ${{ steps.owner_f1.outputs.state == 'RELEASED_TO_NORMAL_GOVERNANCE' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: gscc-owner-f1-release-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/gscc-owner-f1-release.json
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Report Q12 completion and F1 next gate
+        if: ${{ steps.bind.outputs.state == 'READY_FOR_F1' && steps.owner_f1.outputs.state != 'RELEASED_TO_NORMAL_GOVERNANCE' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/${GITHUB_REPOSITORY}/issues/${{ github.event.issue.number }}/comments"             -f body="### GSCC → GSE → GACR qualification complete\n\nRuntime: ${{ steps.q9.outputs.runtime_id }}\nGACR session: ${{ steps.bind.outputs.gacr_session_id }}\nLast gate: Q12\nNext gate: F1\n\nFor arrivals not created and controlled by the authenticated GitHub owner, F1 remains pending until the owner posts: /gscc-owner-f1-approve {\"runtime_id\":\"${{ steps.q9.outputs.runtime_id }}\"} . No session is auto-admitted, and 00_START_HERE.md remains NOT_YET_APPLICABLE."
+
+      - name: Persist resumed per-arrival runtime state
+        if: ${{ always() && steps.q9.outcome == 'success' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: first-touch-state-${{ steps.arrival_scope.outputs.state_scope }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/provider-first-touch-capture.sqlite
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload resumed runtime evidence
+        if: ${{ always() && steps.q9.outcome == 'success' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: gscc-session-runtime-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/gscc-session-control-result.json
+            ${{ runner.temp }}/gscc-gacr-bind-result.json
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Record owner F1 failure on the SAME issue
+        if: ${{ always() && steps.owner_f1.outcome == 'failure' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARRIVAL_RUNTIME: ${{ steps.q9.outputs.runtime_id }}
+        run: |
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/${{ github.event.issue.number }}/comments" \
+            -f body="### Owner F1 not released — this arrival only
+          Runtime: ${ARRIVAL_RUNTIME}
+          Status: NOT_RELEASED; 00_START_HERE.md: NOT_YET_APPLICABLE.
+          Per-arrival artifacts were checkpointed; no global HOLD, claim or fabricated session.
+          Recover via the same arrival with fresh canonical evidence."
+
+      - name: Preserve explicit failed outcome after checkpoint
+        if: ${{ always() && steps.owner_f1.outcome == 'failure' }}
+        run: |
+          echo "OWNER_F1_NOT_RELEASED_THIS_ARRIVAL_ONLY"
+          exit 1
+
+  renew_q12:
+    if: ${{ github.event_name == 'issue_comment' && startsWith(github.event.issue.title, '[GSCC First Touch]') && github.actor != 'github-actions[bot]' && startsWith(github.event.comment.body, '/gscc-entry-renew-q12 ') && contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) }}
+    permissions:
+      contents: read
+      actions: read
+      issues: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Resolve the SAME arrival scope
+        id: arrival_scope
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          from scripts.gscc_arrival_identity import mint
+          event=json.loads(Path(os.environ["GITHUB_EVENT_PATH"]).read_text(encoding="utf-8"))
+          repository=((event.get("repository") or {}).get("full_name") or os.environ.get("GITHUB_REPOSITORY"))
+          result=mint({"repository":repository,"identity":{}},event,run_id=os.environ.get("GITHUB_RUN_ID"),run_attempt=os.environ.get("GITHUB_RUN_ATTEMPT"))
+          with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as stream:
+              stream.write("state_scope="+result["gscc_arrival"]["state_scope"]+"\n")
+          PY
+
+      - name: Restore original arrival state
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 scripts/first_touch_state_artifact.py restore \
+            --repository "$GITHUB_REPOSITORY" \
+            --run-id "$GITHUB_RUN_ID" \
+            --scope "${{ steps.arrival_scope.outputs.state_scope }}" \
+            --output "$RUNNER_TEMP/provider-first-touch-capture.sqlite"
+          test -f "$RUNNER_TEMP/provider-first-touch-capture.sqlite"
+
+      - name: Verify same-arrival Q12 renewal using fresh canonical inputs
+        id: renewed
+        env:
+          COMMENT_BODY: ${{ github.event.comment.body }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          prefix="/gscc-entry-renew-q12 "
+          raw=os.environ["COMMENT_BODY"].strip()
+          if not raw.startswith(prefix):
+              raise SystemExit("Q12_RENEWAL_COMMAND_INVALID")
+          data=json.loads(raw[len(prefix):])
+          if not isinstance(data,dict) or set(data)!={"runtime_id"}:
+              raise SystemExit("Q12_RENEWAL_FIELDS_INVALID")
+          runtime=data["runtime_id"]
+          if not isinstance(runtime,str) or not runtime.startswith("GSCC-RUNTIME-"):
+              raise SystemExit("Q12_RENEWAL_RUNTIME_REQUIRED")
+          (Path(os.environ["RUNNER_TEMP"])/"q12-renewal-request.json").write_text(
+              json.dumps(data,sort_keys=True),encoding="utf-8"
+          )
+          PY
+          runtime_id="$(python3 -c 'import json,os,pathlib; print(json.loads(pathlib.Path(os.environ["RUNNER_TEMP"]).joinpath("q12-renewal-request.json").read_text())["runtime_id"])')"
+          git fetch origin main
+          current_head="$(git rev-parse FETCH_HEAD)"
+          for path in \
+              .governance/control-plane-state/gacr-sessions.json \
+              .governance/control-plane-state/gacr-dispatches.json \
+              .governance/control-plane-state/gacr-claims.json \
+              .governance/control-plane-state/tasks.json \
+              .governance/agent-relay/gscc-admission-access-policy.json; do
+            git show "FETCH_HEAD:$path" > "$RUNNER_TEMP/$(basename "$path")"
+          done
+          python3 scripts/gscc_q12_renewal.py \
+            --db "$RUNNER_TEMP/provider-first-touch-capture.sqlite" \
+            --runtime-id "$runtime_id" \
+            --sessions "$RUNNER_TEMP/gacr-sessions.json" \
+            --dispatches "$RUNNER_TEMP/gacr-dispatches.json" \
+            --claims "$RUNNER_TEMP/gacr-claims.json" \
+            --tasks "$RUNNER_TEMP/tasks.json" \
+            --policy "$RUNNER_TEMP/gscc-admission-access-policy.json" \
+            --current-head "$current_head" \
+            > "$RUNNER_TEMP/gscc-q12-renewal-result.json"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          result=json.loads((Path(os.environ["RUNNER_TEMP"])/"gscc-q12-renewal-result.json").read_text())
+          if result["status"] not in {"REQUALIFIED","ALREADY_CURRENT"}:
+              raise SystemExit("Q12_RENEWAL_NOT_ACCEPTED")
+          grant=(result.get("access_grant") or {}).get("grant_id") or result.get("access_grant_id")
+          with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as stream:
+              stream.write("state="+result["status"]+"\n")
+              stream.write("runtime_id="+result["runtime_id"]+"\n")
+              stream.write("grant_id="+str(grant)+"\n")
+              stream.write("bound_head="+str(result["bound_head"])+"\n")
+          PY
+
+      - name: Report Q12 outcome; F1 remains required
+        if: ${{ steps.renewed.outputs.state == 'REQUALIFIED' || steps.renewed.outputs.state == 'ALREADY_CURRENT' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/issues/${{ github.event.issue.number }}/comments" \
+            -f body="### Q12 same-arrival requalification\n\nRuntime: ${{ steps.renewed.outputs.runtime_id }}\nStatus: ${{ steps.renewed.outputs.state }}\nGrant ID: ${{ steps.renewed.outputs.grant_id }}\nBound HEAD: ${{ steps.renewed.outputs.bound_head }}\n\nNext gate: F1. No new First Touch, session, mutation grant, or RELEASE."
+
+      - name: Persist renewed runtime of original arrival
+        uses: actions/upload-artifact@v4
+        with:
+          name: first-touch-state-${{ steps.arrival_scope.outputs.state_scope }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/provider-first-touch-capture.sqlite
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload Q12 renewal result
+        uses: actions/upload-artifact@v4
+        with:
+          name: gscc-q12-renewal-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/gscc-q12-renewal-result.json
+          if-no-files-found: error
+          retention-days: 30
+
+  release:
+    if: ${{ github.event_name == 'issue_comment' && startsWith(github.event.issue.title, '[GSCC First Touch]') && (github.actor == 'Wealthtechinnovations' || github.actor == 'Patricked-code') && startsWith(github.event.comment.body, '/gscc-owner-f1-approve ') }}
+    permissions:
+      contents: write
+      actions: read
+      issues: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Resolve this arrival state scope
+        id: arrival_scope
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          from scripts.gscc_arrival_identity import mint
+          event=json.loads(Path(os.environ["GITHUB_EVENT_PATH"]).read_text(encoding="utf-8"))
+          repository=((event.get("repository") or {}).get("full_name") or os.environ.get("GITHUB_REPOSITORY"))
+          result=mint({"repository":repository,"identity":{}},event,run_id=os.environ.get("GITHUB_RUN_ID"),run_attempt=os.environ.get("GITHUB_RUN_ATTEMPT"))
+          with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as f:
+              f.write("state_scope="+result["gscc_arrival"]["state_scope"]+"\n")
+          PY
+
+      - name: Restore this arrival runtime state
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 scripts/first_touch_state_artifact.py restore \
+            --repository "${GITHUB_REPOSITORY}" \
+            --run-id "${GITHUB_RUN_ID}" \
+            --scope "${{ steps.arrival_scope.outputs.state_scope }}" \
+            --output "${RUNNER_TEMP}/provider-first-touch-capture.sqlite"
+          test -f "${RUNNER_TEMP}/provider-first-touch-capture.sqlite"
+
+
+      - name: Verify owner GitHub approval and release this exact GACR-bound F1 runtime
+        id: release
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          COMMENT_BODY: ${{ github.event.comment.body }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          raw=os.environ["COMMENT_BODY"].strip()
+          prefix="/gscc-owner-f1-approve "
+          if not raw.startswith(prefix):
+              raise SystemExit("OWNER_F1_APPROVAL_PREFIX_INVALID")
+          try:
+              payload=json.loads(raw[len(prefix):])
+          except json.JSONDecodeError:
+              raise SystemExit("OWNER_F1_APPROVAL_PAYLOAD_INVALID")
+          if not isinstance(payload,dict) or set(payload)!={"runtime_id"} or not isinstance(payload["runtime_id"],str) or not payload["runtime_id"]:
+              raise SystemExit("OWNER_F1_APPROVAL_RUNTIME_INVALID")
+          (Path(os.environ["RUNNER_TEMP"])/"gscc-owner-f1-approval.json").write_text(
+              json.dumps(payload,ensure_ascii=False,sort_keys=True),encoding="utf-8"
+          )
+          PY
+          runtime_id="$(python3 -c 'import json,os,pathlib; print(json.loads(pathlib.Path(os.environ["RUNNER_TEMP"]).joinpath("gscc-owner-f1-approval.json").read_text())["runtime_id"])')"
+          current_head="$(git ls-remote --exit-code origin refs/heads/main | awk '{print $1}')"
+          test -n "$current_head"
+          git fetch origin main
+          git show FETCH_HEAD:.governance/control-plane-state/gacr-sessions.json > "$RUNNER_TEMP/gacr-sessions.json"
+          python3 scripts/gscc_owner_f1.py \
+            --db "$RUNNER_TEMP/provider-first-touch-capture.sqlite" \
+            --runtime-id "$runtime_id" \
+            --sessions "$RUNNER_TEMP/gacr-sessions.json" \
+            --current-head "$current_head" \
+            > "$RUNNER_TEMP/gscc-owner-f1-release.json"
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          item=json.loads((Path(os.environ["RUNNER_TEMP"])/"gscc-owner-f1-release.json").read_text())
+          receipt=item["owner_f1_receipt"]
+          grant=item["access_grant"]
+          if not (item["state"]=="RELEASED_TO_NORMAL_GOVERNANCE"
+                  and receipt["grant_id"]==grant["grant_id"]
+                  and receipt["session_id"]==item["gacr_session_id"]
+                  and receipt["head"]==grant["bound_head"]==item["released_head"]):
+              raise SystemExit("OWNER_F1_RELEASE_INTEGRITY_INVALID")
+          with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as f:
+              for key,value in (
+                  ("runtime_id",item["runtime_id"]),
+                  ("state",item["state"]),
+                  ("gacr_session_id",item["gacr_session_id"]),
+                  ("owner_f1_receipt",receipt["receipt_id"]),
+                  ("released_head",item["released_head"])):
+                  f.write(key+"="+value+"\n")
+          PY
+
+      - name: Publish owner-signed F1 receipt and bounded grant for this agent
+        if: ${{ steps.release.outputs.state == 'RELEASED_TO_NORMAL_GOVERNANCE' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          root=Path(os.environ["RUNNER_TEMP"])
+          d=json.loads((root/"gscc-owner-f1-release.json").read_text())
+          r=d["owner_f1_receipt"]
+          g=d["access_grant"]
+          if r["grant_id"]!=g["grant_id"] or g["bound_head"]!=d["released_head"]:
+              raise SystemExit("OWNER_F1_DURABLE_PROOF_MISMATCH")
+          intro=("### Door A — GitHub-owner-verified F1 approval\n\n"
+                 "Status: RELEASED_TO_NORMAL_GOVERNANCE\n"
+                 "Next: 00_START_HERE.md\n"
+                 "Admission is not a claim or an authorization to mutate.\n")
+          body=(intro+"\n#### Receipt\n~~~json\n"
+                +json.dumps(r,ensure_ascii=False,sort_keys=True,indent=2)
+                +"\n~~~\n#### Bounded access grant\n~~~json\n"
+                +json.dumps(g,ensure_ascii=False,sort_keys=True,indent=2)+"\n~~~\n")
+          if len(body)>16000:
+              raise SystemExit("OWNER_F1_RECEIPT_TOO_LARGE")
+          (root/"gscc-owner-f1-publication.txt").write_text(body,encoding="utf-8")
+          PY
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/${{ github.event.issue.number }}/comments" \
+            -f body="$(cat "$RUNNER_TEMP/gscc-owner-f1-publication.txt")"
+
+      - name: Report release to normal governed workflow
+        if: ${{ steps.release.outputs.state == 'RELEASED_TO_NORMAL_GOVERNANCE' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/${GITHUB_REPOSITORY}/issues/${{ github.event.issue.number }}/comments" \
+            -f body="### GSCC/GSE/GACR pre-entry released\n\nRuntime: ${{ steps.release.outputs.runtime_id }}\nGACR session: ${{ steps.release.outputs.gacr_session_id }}\nOwner-GitHub F1 receipt: ${{ steps.release.outputs.owner_f1_receipt }}\nReleased HEAD: ${{ steps.release.outputs.released_head }}\n\nStatus: RELEASED_TO_NORMAL_GOVERNANCE\nNext authority: 00_START_HERE.md\n\nThe pre-entry lane is complete for this arrival. Normal governed workflow must now continue from 00_START_HERE.md without replaying GSCC First Touch."
+
+      - name: Publish F1 release and declared work profile to GACR
+        if: ${{ steps.release.outputs.state == 'RELEASED_TO_NORMAL_GOVERNANCE' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          GACR_SESSION_ID: ${{ steps.release.outputs.gacr_session_id }}
+          OWNER_F1_RECEIPT: ${{ steps.release.outputs.owner_f1_receipt }}
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+
+          body=os.environ.get("ISSUE_BODY") or ""
+          start=body.find("{")
+          envelope={}
+          if start>=0:
+              try:
+                  envelope=json.loads(body[start:])
+              except json.JSONDecodeError:
+                  envelope={}
+
+          declared=envelope.get("declared_work_profile") or {}
+          desired=envelope.get("desired_logical_intent") or {}
+          provider_agent=((envelope.get("provider_context") or {}).get("agent") or {})
+
+          roles={"INTAKER","SUPERVISOR","CODE_AGENT","REVIEWER"}
+          purposes={"WORK_ON_CONTROL_PLANE","APPLY_GOVERNANCE_CASE"}
+          work_kinds={"CODE_IMPLEMENTATION","EXECUTE_EXISTING_TASK","ADD_OR_ENRICH_INFORMATION"}
+          availability_states={"AVAILABLE","WAITING","BUSY","BLOCKED","RATE_LIMITED","QUOTA_BLOCKED","CHECKPOINTING","TERMINATING"}
+
+          role=declared.get("ROLE")
+          if role not in roles:
+              candidate=provider_agent.get("agent_role")
+              role=candidate if candidate in roles else None
+          purpose=desired.get("ENTRY_PURPOSE")
+          if purpose not in purposes:
+              purpose=None
+          work_kind=desired.get("WORK_KIND")
+          if work_kind not in work_kinds:
+              work_kind=None
+          availability=declared.get("AVAILABILITY_STATE") or desired.get("AVAILABILITY_STATE")
+          if availability not in availability_states:
+              availability=None
+
+          payload={
+              "session_id":os.environ["GACR_SESSION_ID"],
+              "event_type":"F1_RELEASED",
+              "source":"GITHUB_ACTIONS",
+              "evidence_ref":"gscc-owner-f1:"+os.environ["OWNER_F1_RECEIPT"],
+              "checkpoint_ref":"RELEASED_TO_NORMAL_GOVERNANCE",
+          }
+          if role:
+              payload["agent_role"]=role
+          if purpose:
+              payload["entry_purpose"]=purpose
+          if work_kind:
+              payload["work_kind"]=work_kind
+          if availability:
+              payload["availability_state"]=availability
+              payload["availability_reason_code"]="WAITING_FOR_WORK" if availability in {"AVAILABLE","WAITING"} else "UNKNOWN"
+
+          if len(payload)>10:
+              raise SystemExit("GACR_F1_RELEASE_PAYLOAD_TOO_WIDE")
+          out={"event_type":"gacr_beacon","client_payload":payload}
+          Path(os.environ["RUNNER_TEMP"]).joinpath("gacr-f1-release-dispatch.json").write_text(
+              json.dumps(out,ensure_ascii=False,separators=(",",":")),encoding="utf-8"
+          )
+          PY
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/dispatches"             --input "$RUNNER_TEMP/gacr-f1-release-dispatch.json"
+
+      - name: Persist released per-arrival runtime state
+        uses: actions/upload-artifact@v4
+        with:
+          name: first-touch-state-${{ steps.arrival_scope.outputs.state_scope }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/provider-first-touch-capture.sqlite
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload normal-governance release evidence
+        if: ${{ steps.release.outputs.state == 'RELEASED_TO_NORMAL_GOVERNANCE' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: gscc-normal-governance-release-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/gscc-owner-f1-approval.json
+            ${{ runner.temp }}/gscc-owner-f1-release.json
+
+      - name: Preserve failed owner-approval arrival runtime
+        if: ${{ always() && steps.release.outcome == 'failure' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: gscc-owner-f1-failure-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/provider-first-touch-capture.sqlite
+            ${{ runner.temp }}/gscc-owner-f1-approval.json
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Record owner approval F1 failure on the SAME issue
+        if: ${{ always() && steps.release.outcome == 'failure' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/${GITHUB_REPOSITORY}/issues/${{ github.event.issue.number }}/comments" \
+            -f body="### Door A owner-approved F1 not released
+          Status: NOT_RELEASED; START_HERE unavailable for this arrival.
+          Original runtime is preserved; no GACR claim or global hold was created."
+
+      - name: Fail this owner approval attempt after retaining evidence
+        if: ${{ always() && steps.release.outcome == 'failure' }}
+        run: |
+          echo "OWNER_F1_APPROVAL_NOT_RELEASED"
+          exit 1
+          if-no-files-found: error
+          retention-days: 30

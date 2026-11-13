@@ -1,0 +1,480 @@
+{
+  "schema_version": "1.7.0",
+  "process_name": "GACR",
+  "process_title": "Governed Agent Continuity Relay",
+  "authority_id": "CP-AGENT-RELAY-001",
+  "enabled": true,
+  "heartbeat_interval_seconds": 300,
+  "suspected_stall_after_seconds": 900,
+  "stalled_after_seconds": 1800,
+  "supervisor_scan_interval_minutes": 10,
+  "external_conversation_reference": {
+    "allowed": true,
+    "persist_full_url": false,
+    "persist_provider_reference": true,
+    "reconstruct_known_provider_url_when_requested": true,
+    "automatic_browser_url_capture": false,
+    "note": "A provider URL/reference is recorded only when explicitly supplied by the client/orchestrator. The model must never invent a conversation identifier."
+  },
+  "takeover": {
+    "auto_detect_stall": true,
+    "auto_offer_to_compatible_standby": true,
+    "auto_execute_takeover": false,
+    "requires_exact_head_reconciliation": true,
+    "transfers_active_claims_only_after_accept": true,
+    "stale_predecessor_cannot_resume_after_transfer": true
+  },
+  "states": [
+    "ACTIVE",
+    "STANDBY",
+    "SUSPECTED_STALL",
+    "STALLED",
+    "TAKEOVER_READY",
+    "HANDOFF_STALLED",
+    "CLOSED"
+  ],
+  "reusable_across_projects": true,
+  "execution_authority_granted": false,
+  "telemetry": {
+    "beacon_enabled": true,
+    "correlation_enabled": true,
+    "dispatcher_enabled": true,
+    "safe_github_context_only": true,
+    "raw_event_payload_persisted": false,
+    "secret_values_persisted": false,
+    "correlation_levels": [
+      "EXACT",
+      "STRONG",
+      "PROBABLE",
+      "AMBIGUOUS",
+      "UNKNOWN"
+    ],
+    "auto_bind_levels": [
+      "EXACT",
+      "STRONG"
+    ],
+    "default_wake_channel": "POLL_REPOSITORY",
+    "forensics_enabled": true,
+    "action_trace_fields": [
+      "action_id",
+      "action_label",
+      "action_phase",
+      "tool_name",
+      "tool_call_id",
+      "outcome",
+      "written_head_sha",
+      "checkpoint_ref",
+      "evidence_ref",
+      "interruption_code"
+    ]
+  },
+  "external_bridge": {
+    "contract_only": false,
+    "can_capture_conversation_ref_when_client_supplies_it": true,
+    "can_capture_client_instance_id": true,
+    "can_receive_dispatch_offer": true,
+    "outbound_browser_wakeup_implemented": false,
+    "note": "Repository-side GACR can prepare and target wake events. R6 adds a GitHub issue-comment ingress for provider hosts that cannot call repository_dispatch directly; provider browser wake remains a separate capability.",
+    "client_emitter_implemented": true,
+    "client_emitter_wake_polling": true,
+    "chatgpt_issue_bridge_implemented": true,
+    "chatgpt_issue_bridge_live_proven": true,
+    "provider_host_live_mode": "EVENT_DRIVEN_GITHUB_ISSUE_COMMENT",
+    "continuous_background_heartbeat_proven": false,
+    "github_issue_control_channel_candidate": true
+  },
+  "revision_authority_id": "CP-AGENT-RELAY-001-R8",
+  "forensics": {
+    "enabled": true,
+    "projection_only": true,
+    "derives_from": [
+      "sessions",
+      "claims",
+      "takeovers",
+      "beacons",
+      "correlations",
+      "dispatches"
+    ],
+    "external_cause_policy": "OBSERVED_ONLY_NEVER_INFER",
+    "exact_head_reobservation_before_resume": true,
+    "in_flight_action_replay": "FORBIDDEN_WITHOUT_RECONCILIATION",
+    "independent_lock_store": false,
+    "lock_model": "CLAIMS_PLUS_COLLISION_DOMAINS"
+  },
+  "auto_attachment": {
+    "enabled": true,
+    "required_for_governed_arrival": true,
+    "provider_conversation_ref_required": false,
+    "source_priority": [
+      "EXPLICIT_CLIENT",
+      "FRESH_CONVERSATION_CHRONICLE",
+      "GITHUB_ACTIONS"
+    ],
+    "chronicle_freshness_seconds": 3600,
+    "late_provider_binding_reuses_connection_session": true,
+    "duplicate_session_on_late_provider_binding": false,
+    "unobservable_provider_reference_state": "UNAVAILABLE",
+    "main_push_auto_attach": true,
+    "github_actions_bot_state_push_reentry": false,
+    "note": "A governed arrival attaches with the strongest observable anchor. Missing provider conversation metadata never blocks attachment and may enrich the same session later.",
+    "internal_transport_workflows": [
+      "Governed Agent Continuity Relay"
+    ],
+    "internal_transport_identity_policy": "NEVER_CREATE_SESSION",
+    "unobservable_internal_transport_behavior": "SKIP_AND_REFRESH_DERIVED_CORRELATIONS",
+    "stale_chronicle_behavior": "DO_NOT_PROMOTE_INTERNAL_GACR_TRANSPORT_TO_AGENT"
+  },
+  "client_emitter": {
+    "enabled": true,
+    "provenance": "CLIENT_EMITTER",
+    "transport": "GITHUB_REPOSITORY_DISPATCH",
+    "heartbeat_interval_seconds": 300,
+    "supports": [
+      "AUTO_ATTACH",
+      "HEARTBEAT",
+      "ACTION_TRACE",
+      "INTERRUPTION_SIGNAL",
+      "WAKE_POLL",
+      "AVAILABILITY_UPDATE",
+      "WORK_OFFER_ACCEPT"
+    ],
+    "runtime_credential_policy": "MEMORY_ONLY_NEVER_PERSIST",
+    "repository_dispatch_events": [
+      "gacr_auto-attach",
+      "gacr_heartbeat",
+      "gacr_beacon",
+      "gacr_work-offer-accept"
+    ],
+    "interruption_signal_policy": "EXPLICIT_OBSERVATION_ONLY",
+    "wake_poll_may_accept_takeover": false,
+    "takeover_requires_exact_head_reconciliation": true,
+    "note": "Provider/host adapters may use the client emitter SDK/CLI. The emitter transports safe metadata only and never grants mutation authority."
+  },
+  "host_issue_bridge": {
+    "enabled": true,
+    "authority_id": "CP-AGENT-RELAY-001-R6",
+    "decision_id": "CPD-056",
+    "transport": "GITHUB_ISSUE_COMMENT",
+    "issue_number": 115,
+    "issue_title": "[GACR Host Bridge] Provider event ingress",
+    "comment_prefix": "/gacr-host ",
+    "event_schema": "gacr-host-event/v1",
+    "allowed_author_associations": [
+      "OWNER",
+      "MEMBER",
+      "COLLABORATOR"
+    ],
+    "max_payload_chars": 8192,
+    "supported_events": [
+      "attach",
+      "heartbeat",
+      "action",
+      "interrupt",
+      "command_ack",
+      "challenge_response",
+      "availability",
+      "work_offer_accept"
+    ],
+    "auto_attach_before_event": true,
+    "auto_resolve_session": true,
+    "idempotency_key": "GITHUB_ISSUE_COMMENT_ID",
+    "provenance": "CLIENT_EMITTER",
+    "raw_transcript_persisted": false,
+    "secret_values_persisted": false,
+    "execution_authority_granted": false,
+    "live_proof_status": "PASS_CHATGPT_EVENT_DRIVEN",
+    "source_issue_number_distributed": false,
+    "client_issue_strategy": "TITLE_FALLBACK_UNTIL_LOCAL_NUMBER_BOUND",
+    "repository_local_issue_identity": true,
+    "live_proof": {
+      "source_issue_number": 115,
+      "start_comment_id": 5943461065,
+      "start_state_commit": "69ccfc90c14f2fa02a264c765e31c49c64951635",
+      "completed_comment_id": 5943497457,
+      "completed_state_commit": "3d258e3c9fdfacd1232fb0a19448594ab452b47f",
+      "rerun_run_id": 36947989601,
+      "rerun_result": "GACR_HOST_EVENT_ALREADY_PROCESSED_GACR_NO_STATE_CHANGE",
+      "portability_comment_id": 5943559595,
+      "portability_state_commit": "371509ac60d1a63c0be7cee8ec8620346210d824",
+      "provider_enrichment_comment_id": 5943592733,
+      "provider_enrichment_state_commit": "46a4a3068f0eb28ec3dc1d141cbcf349542a3348",
+      "canonical_session_id": "session-68c97d4bb1ef71c86444de12",
+      "correlation": "EXACT",
+      "duplicate_active_session": false
+    },
+    "control_channel": {
+      "enabled": true,
+      "controller_request_prefix": "/gscc-control ",
+      "command_delivery_prefix": "/gscc-control-command ",
+      "command_schema": "gscc-control-command/v1",
+      "request_schema": "gscc-control-request/v1",
+      "delivery_mode": "GITHUB_ISSUE_COMMENT",
+      "default_challenge_ttl_seconds": 60,
+      "max_challenge_ttl_seconds": 300,
+      "verified_minimum_capabilities": [
+        "COMMAND_RECEIVE",
+        "COMMAND_ACK",
+        "CHALLENGE_RESPONSE"
+      ],
+      "canonical_store": "GACR_DISPATCHES",
+      "fresh_response_renews_liveness": true,
+      "replay_renews_liveness": false,
+      "invocation_authority_granted": false,
+      "mutation_authority_granted": false
+    }
+  },
+  "presence_fabric": {
+    "enabled": true,
+    "additive_to_existing_gacr": true,
+    "envelope_schema": "gacr-connection-envelope/v1",
+    "fingerprint_version": "gacr-connection-fingerprint/v1",
+    "first_touch_time_bucket_seconds": 300,
+    "surface_classes": [
+      "CONTROLLED_INSTRUMENTABLE",
+      "GITHUB_EVENT_VISIBLE",
+      "PROPRIETARY_SILENT"
+    ],
+    "provenance_classes": [
+      "OBSERVABLE_BY_PLATFORM",
+      "DECLARED_BY_AGENT_OR_CLIENT",
+      "DERIVED_SAFE",
+      "CORRELATED",
+      "PROVIDER_PRIVATE_UNAVAILABLE"
+    ],
+    "unavailable_value": "UNAVAILABLE",
+    "first_touch_behavior": "OBSERVE_FROM_CONTROLLED_REPOSITORY_USE_WITHOUT_AGENT_GACR_CALL",
+    "resume_identity_policy": "FREEZE_FIRST_TOUCH_FINGERPRINT_INPUTS_AFTER_BIND",
+    "ambiguous_binding_policy": "UNBOUND_ACTIVITY_FAIL_CLOSED",
+    "provider_private_identity_policy": "SUPPLIED_ONLY_NEVER_INVENT",
+    "parallel_session_store": false,
+    "parallel_beacon_store": false,
+    "parallel_claim_store": false,
+    "parallel_takeover_engine": false,
+    "parallel_correlator": false
+  },
+  "progress_recency_seconds": 1800,
+  "liveness_progress": {
+    "projection_version": "1.0.0",
+    "independent_dimensions": true,
+    "heartbeat_implies_progress": false,
+    "liveness_states": [
+      "ACTIVE",
+      "QUIET",
+      "SUSPECTED_STALL",
+      "STALLED",
+      "UNKNOWN",
+      "TERMINAL"
+    ],
+    "progress_states": [
+      "ADVANCING",
+      "NO_RECENT_PROGRESS_EVIDENCE",
+      "BLOCKED_IF_EXPLICITLY_OBSERVED",
+      "UNKNOWN"
+    ],
+    "timestamps": [
+      "last_activity_at",
+      "last_liveness_evidence_at",
+      "last_progress_at"
+    ],
+    "qualifying_progress_evidence": [
+      "ACTION_COMPLETED",
+      "WRITTEN_HEAD_MOVEMENT",
+      "REPOSITORY_WRITE_ACTIVITY",
+      "COMMIT_MUTATION",
+      "PULL_REQUEST_MUTATION",
+      "CHECKPOINT_ADVANCED",
+      "WORK_ITEM_ADVANCED"
+    ],
+    "liveness_challenge": {
+      "optional": true,
+      "responses": [
+        "ACK",
+        "BUSY",
+        "IDLE",
+        "CHECKPOINTING",
+        "TERMINATING"
+      ],
+      "timeout_status": "LIVENESS_CHALLENGE_TIMEOUT",
+      "timeout_external_cause": "UNAVAILABLE",
+      "delivery_requires_external_bidirectional_hook": true,
+      "issue_comment_bidirectional_hook": "CANDIDATE_IMPLEMENTED_PENDING_LIVE_PROOF"
+    },
+    "unbound_activity": {
+      "storage_model": "CORRELATOR_PROJECTION_NO_SECOND_STORE",
+      "statuses": [
+        "UNBOUND",
+        "RECONCILED",
+        "SUPERSEDED"
+      ],
+      "ambiguous_or_unknown_auto_select": false,
+      "renews_candidate_lease": false,
+      "creates_candidate_progress": false,
+      "reconciliation": "IDEMPOTENT_AUDITABLE"
+    },
+    "agent_context": {
+      "aggregate_existing_stores": true,
+      "parallel_context_store": false,
+      "unknown_value": "UNAVAILABLE",
+      "worker_c_projection": true
+    },
+    "shared_integration_required": true
+  },
+  "gscc_arrival_gateway": {
+    "enabled": true,
+    "authority": "GSCC_CANONICAL_PROTOCOL",
+    "workflow": ".github/workflows/gscc-observable-arrival.yml",
+    "script": "scripts/gscc_observable_arrival.py",
+    "mandatory_for_controlled_surfaces": true,
+    "first_touch_event": "SESSION_ATTACH",
+    "downstream_adapter": "GACRClientEmitterAdapter",
+    "downstream_event": "gacr_auto-attach",
+    "github_event_visible_triggers": [
+      "push",
+      "create",
+      "pull_request",
+      "issues",
+      "issue_comment",
+      "pull_request_review",
+      "pull_request_review_comment",
+      "workflow_dispatch"
+    ],
+    "dispatch_payload_top_level_limit": 10,
+    "nested_context_key": "arrival_context",
+    "internal_loop_guards": [
+      "GITHUB_ACTIONS_BOT_STATE_PUSH",
+      "GACR_OR_GSCC_REPOSITORY_DISPATCH",
+      "GACR_HOST_ISSUE_INGRESS"
+    ],
+    "provider_private_identity_policy": "SUPPLIED_ONLY_NEVER_INVENT",
+    "proprietary_silent_policy": "NOT_OBSERVABLE_NO_FALSE_ATTACH",
+    "github_event_identity_semantics": "OBSERVABLE_SURFACE_IDENTITY_NOT_PROVIDER_CONVERSATION_IDENTITY",
+    "step_13b_acceptance_effect": "ENABLES_INSTRUMENTED_PATH_DOES_NOT_BY_ITSELF_PASS_STEP_13B",
+    "live_candidate_status": "IMPLEMENTED_AND_EVENT_PATH_OBSERVED_PENDING_FINAL_PR_INTEGRATION"
+  },
+  "gscc_function_exposure_gate": {
+    "enabled": true,
+    "mandatory": true,
+    "workflow": ".github/workflows/gscc-function-exposure-gate.yml",
+    "script": "scripts/gscc_function_exposure_gate.py",
+    "receipt_schema": "gscc-function-exposure-receipt/v1",
+    "raw_capability_catalogue_publishable": false,
+    "exposure_policy": "NOT_EXPOSED_UNTIL_VALIDATED",
+    "invocation_revalidation_required": true,
+    "active_gscc_session_required": true,
+    "exact_head_required": true,
+    "explicit_authority_evidence_required": true,
+    "mutation_live_preflight_required": true,
+    "unknown_function_policy": "DENY",
+    "stale_session_policy": "DENY",
+    "head_mismatch_policy": "DENY",
+    "authority_mismatch_policy": "DENY",
+    "receipt_storage": "GITHUB_ACTIONS_ARTIFACT_NO_PARALLEL_STATE_STORE",
+    "safe_metadata_only": true,
+    "raw_prompt_persisted": false,
+    "raw_tool_arguments_persisted": false,
+    "raw_tool_results_persisted": false,
+    "secret_values_persisted": false,
+    "provider_private_identity_policy": "SUPPLIED_ONLY_NEVER_INVENT",
+    "external_unintegrated_surface_policy": "OUTSIDE_GOVERNED_EXPOSURE_BOUNDARY",
+    "issue_number": 161,
+    "issue_title": "[GSCC Admission Gate] Provider event ingress",
+    "source_issue_number_distributed": false,
+    "client_issue_strategy": "DISABLED_UNTIL_LOCAL_NUMBER_BOUND"
+  },
+  "gscc_admission_gate": {
+    "enabled": true,
+    "status": "INTEGRATED_POSTMERGE_GREEN_PENDING_LIVE_ADMISSION_REQUEST",
+    "authority": "docs/control-plane/GSCC_ADMISSION_ACCESS_GATE.md",
+    "workflow": ".github/workflows/gscc-admission-gate.yml",
+    "script": "scripts/gscc/admission.py",
+    "admission_event": "gscc_admission_request",
+    "qualification_event": "gscc_access_qualification_request",
+    "mandatory_before_function_exposure": true,
+    "preserves_observable_arrival_gateway": true,
+    "preauthorization_repository_access": "NOT_YET_GRANTED",
+    "access_grant_function_exposure_eligibility_only": true,
+    "access_grant_invocation_authority": false,
+    "access_grant_mutation_authority": false,
+    "workflow_contents_permission": "read",
+    "artifact_retention_days": 14,
+    "secrets_allowed_in_payload": false,
+    "live_provider_proof": "NOT_EXECUTED",
+    "merge": "56c48aafbe00a50b47ad2189f4ab3645b937c82f",
+    "postmerge_governance_ci": 37002783058,
+    "postmerge_arrival_gateway": 37002783052,
+    "postmerge_function_exposure_gate": 37002783152,
+    "postmerge_function_route_selftest": 37002783428,
+    "postmerge_relay_push": 37002783111,
+    "postmerge_relay_dispatch": 37002796444,
+    "access_policy": {
+      "authority_id": "GSCC-ADMISSION-ACCESS-POLICY-001",
+      "path": ".governance/agent-relay/gscc-admission-access-policy.json",
+      "schema": "gscc-admission-access-policy/v1",
+      "default_decision": "DENY",
+      "baseline_authority_class": "READ_ONLY_DISCOVERY_AUTHORITY",
+      "mutation_or_operational_authority": "EXPLICIT_SEPARATE_GOVERNANCE_EVIDENCE_REQUIRED",
+      "invocation_authority_granted": false,
+      "mutation_authority_granted": false
+    }
+  },
+  "capacity_dispatch": {
+    "enabled": true,
+    "require_explicit_availability": true,
+    "max_parallel_offers_per_session": 1,
+    "available_states": [
+      "AVAILABLE",
+      "WAITING"
+    ],
+    "auto_refresh_on_relay_cycle": true,
+    "provider_limit_inference": "OBSERVED_ONLY_NEVER_INFER",
+    "offer_requires_acceptance": true,
+    "claim_required_after_acceptance": true,
+    "exact_head_reconciliation_required": true,
+    "grants_write_authority": false,
+    "require_f1_release_for_source_work": true,
+    "require_canonical_role_for_source_work": true,
+    "canonical_source_work_queue": true,
+    "source_work_authority": ".governance/control-plane-state/tasks.json",
+    "source_work_blueprint": ".governance/control-plane-state/governance-model-execution-blueprint.json"
+  },
+  "capacity_dispatch_contract": {
+    "states": [
+      "AVAILABLE",
+      "WAITING",
+      "BUSY",
+      "BLOCKED",
+      "RATE_LIMITED",
+      "QUOTA_BLOCKED",
+      "CHECKPOINTING",
+      "TERMINATING",
+      "STALLED",
+      "TERMINAL",
+      "UNKNOWN"
+    ],
+    "explicit_block_codes": [
+      "PROVIDER_RATE_LIMIT",
+      "PROVIDER_QUOTA_EXHAUSTED",
+      "CONTEXT_LIMIT",
+      "WAITING_FOR_INPUT",
+      "DEPENDENCY_BLOCKED"
+    ],
+    "no_idle_inference_from_silence": true,
+    "no_claim_on_offer": true,
+    "no_write_authority_on_offer_or_accept": true,
+    "collision_domains_enforced": true,
+    "dependencies_enforced": true,
+    "capabilities_roles_authorities_enforced": true,
+    "f1_release_required_before_source_work_offer": true,
+    "canonical_role_declaration_required_before_source_work_offer": true,
+    "source_control_plane_uses_global_task_graph_not_bootstrap_work_item": true,
+    "entry_purpose_and_work_kind_are_recorded_but_not_authority_while_router_planned": true,
+    "stale_generic_source_offers_cancelled": true,
+    "invariants": [
+      "F1_RELEASE_REQUIRED_BEFORE_SOURCE_WORK_OFFER",
+      "EXPLICIT_CANONICAL_ROLE_REQUIRED_BEFORE_SOURCE_WORK_OFFER",
+      "EXPLICIT_AVAILABILITY_REQUIRED",
+      "SOURCE_CONTROL_PLANE_CANONICAL_TASK_GRAPH_ONLY",
+      "WORK_OFFER_NE_CLAIM_NE_WRITE_AUTHORITY"
+    ]
+  }
+}
