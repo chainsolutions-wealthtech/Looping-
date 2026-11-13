@@ -22,8 +22,8 @@
 
 - [ ] Resolve or explicitly defer the project profile in `.governance/project-profile.json`.
 - [ ] Discover deployment target and access state in `.governance/infrastructure-intent.json`.
-- [ ] Complete `PROJECT_CONTEXT.md`.
-- [ ] Describe architecture in `docs/ARCHITECTURE.md`.
+- [x] Complete `PROJECT_CONTEXT.md`.
+- [x] Describe architecture in `docs/ARCHITECTURE.md`.
 - [ ] Define project acceptance criteria.
 - [ ] Identify initial risks and dependencies.
 - [ ] Capture project baseline and CI.
@@ -54,3 +54,12 @@
 - [x] Produce explicit target handoff packages.
 - [x] Keep generated/adopted repositories as clients, not duplicate control planes.
 - [x] Add CI regression tests for control-plane lifecycle and source/client boundary.
+
+
+## Demandes propres à Looping-
+Le propriétaire détaillé est [docs/memory/REQUESTS.json](docs/memory/REQUESTS.json). Ce tableau et ses critères ne sont pas dupliqués ici. L’ordre et les sorties sont dans [ROADMAP.md](ROADMAP.md) ; la reprise globale est NEXT_ACTION.md. Les cases héritées du template décrivent son catalogue et ne certifient pas la réussite de chaque mécanisme dans cette instance.
+
+- Conserver et faire évoluer les demandes documentées, en distinguant les capacités encore planifiées.
+- Achever la qualification historique et les limites de capture : LOOP-REQ-005 / LOOP-REQ-015.
+- Poursuivre la baseline et caractériser les blocages de portabilité : LOOP-FIND-001.
+- Détailler les contrats de workflows puis le raccordement moteur : LOOP-REQ-003/004/007/008.

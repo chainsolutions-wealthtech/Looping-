@@ -1,0 +1,670 @@
+{
+  "schema_version": "1.0.0",
+  "registry_id": "LOOP-REQUESTS",
+  "repository": "chainsolutions-wealthtech/Looping-",
+  "updated_at": "2026-11-13T07:14:36+00:00",
+  "role": "CANONICAL_USER_REQUEST_LEDGER_NOT_EXECUTION_QUEUE",
+  "status_vocabulary": [
+    "DOCUMENTED",
+    "VERIFIED",
+    "SPECIFIED_NOT_IMPLEMENTED",
+    "PLANNED",
+    "PARTIAL",
+    "IN_PROGRESS"
+  ],
+  "requests": [
+    {
+      "request_id": "LOOP-REQ-001",
+      "origin": "USER_REQUEST",
+      "title": "Retenir la base en huit parties",
+      "source_message_ids": [
+        "U01",
+        "U06"
+      ],
+      "source_owner": "docs/memory/CONVERSATION_LEDGER.json",
+      "interpretation": "Retenir la base en huit parties",
+      "context": "La base utilisateur désigne le référentiel de conception.",
+      "work_method_ref": "docs/WORK_METHOD.md",
+      "architecture_component_ids": [
+        "M01"
+      ],
+      "roadmap_phase_id": "RP-01",
+      "depends_on_request_ids": [],
+      "status": "DOCUMENTED",
+      "status_meaning": "DOCUMENTED désigne un livrable documentaire, pas une capacité du moteur mise en œuvre.",
+      "deliverable_refs": [
+        "docs/intake/BASE_REGISTRY.json"
+      ],
+      "acceptance_criteria": [
+        "Conserver les huit familles, leurs éléments, leur hiérarchie et leur provenance sans les transformer en preuves de déploiement."
+      ],
+      "execution_authority": "NONE_FROM_THIS_RECORD",
+      "canonical_work_item_id": null,
+      "remaining": "Conserver et faire évoluer selon les nouvelles instructions."
+    },
+    {
+      "request_id": "LOOP-REQ-002",
+      "origin": "USER_REQUEST",
+      "title": "Préparer le registre initial",
+      "source_message_ids": [
+        "U02"
+      ],
+      "source_owner": "docs/memory/CONVERSATION_LEDGER.json",
+      "interpretation": "Préparer le registre initial",
+      "context": "Le registre doit exister avant le détail des futurs projets.",
+      "work_method_ref": "docs/WORK_METHOD.md",
+      "architecture_component_ids": [
+        "M01"
+      ],
+      "roadmap_phase_id": "RP-01",
+      "depends_on_request_ids": [
+        "LOOP-REQ-001"
+      ],
+      "status": "DOCUMENTED",
+      "status_meaning": "DOCUMENTED désigne un livrable documentaire, pas une capacité du moteur mise en œuvre.",
+      "deliverable_refs": [
+        "docs/intake/BASE_REGISTRY.json"
+      ],
+      "acceptance_criteria": [
+        "Disposer d’un registre identifié et de règles de rattachement utilisables pour recevoir de nouvelles informations."
+      ],
+      "execution_authority": "NONE_FROM_THIS_RECORD",
+      "canonical_work_item_id": null,
+      "remaining": "Conserver et faire évoluer selon les nouvelles instructions."
+    },
+    {
+      "request_id": "LOOP-REQ-003",
+      "origin": "USER_REQUEST",
+      "title": "Définir les étapes et expliquer le fonctionnement",
+      "source_message_ids": [
+        "U02"
+      ],
+      "source_owner": "docs/memory/CONVERSATION_LEDGER.json",
+      "interpretation": "Définir les étapes et expliquer le fonctionnement",
+      "context": "Les étapes doivent produire des sorties explicites.",
+      "work_method_ref": "docs/WORK_METHOD.md",
+      "architecture_component_ids": [
+        "M03"
+      ],
+      "roadmap_phase_id": "RP-03",
+      "depends_on_request_ids": [
+        "LOOP-REQ-002"
+      ],
+      "status": "DOCUMENTED",
+      "status_meaning": "DOCUMENTED désigne un livrable documentaire, pas une capacité du moteur mise en œuvre.",
+      "deliverable_refs": [
+        "docs/intake/PLAN_PREPARATOIRE.md",
+        "ROADMAP.md"
+      ],
+      "acceptance_criteria": [
+        "Définir un ordre, les livrables, les prérequis et les conditions de sortie ; les contrats détaillés restent à concevoir."
+      ],
+      "execution_authority": "NONE_FROM_THIS_RECORD",
+      "canonical_work_item_id": null,
+      "remaining": "Conserver et faire évoluer selon les nouvelles instructions."
+    },
+    {
+      "request_id": "LOOP-REQ-004",
+      "origin": "USER_REQUEST",
+      "title": "Concevoir les workflows Loop Engineering",
+      "source_message_ids": [
+        "U03"
+      ],
+      "source_owner": "docs/memory/CONVERSATION_LEDGER.json",
+      "interpretation": "Concevoir les workflows Loop Engineering",
+      "context": "Les boucles doivent être réutilisables et se rattacher à l’existant.",
+      "work_method_ref": "docs/WORK_METHOD.md",
+      "architecture_component_ids": [
+        "M02"
+      ],
+      "roadmap_phase_id": "RP-03",
+      "depends_on_request_ids": [
+        "LOOP-REQ-003"
+      ],
+      "status": "SPECIFIED_NOT_IMPLEMENTED",
+      "status_meaning": "DOCUMENTED désigne un livrable documentaire, pas une capacité du moteur mise en œuvre.",
+      "deliverable_refs": [
+        "docs/intake/WORKFLOW_MAPPING.md"
+      ],
+      "acceptance_criteria": [
+        "Qualifier pour chaque workflow ses entrées, sorties, dépendances, retours, reprises et preuves ; distinguer catalogue candidat et historique."
+      ],
+      "execution_authority": "NONE_FROM_THIS_RECORD",
+      "canonical_work_item_id": null,
+      "remaining": "Qualifier pour chaque workflow ses entrées, sorties, dépendances, retours, reprises et preuves ; distinguer catalogue candidat et historique."
+    },
+    {
+      "request_id": "LOOP-REQ-005",
+      "origin": "USER_REQUEST",
+      "title": "Retrouver le traitement des informations par MCP",
+      "source_message_ids": [
+        "U04"
+      ],
+      "source_owner": "docs/memory/CONVERSATION_LEDGER.json",
+      "interpretation": "Retrouver le traitement des informations par MCP",
+      "context": "La demande porte sur l’organisation historique du dépôt MCP.",
+      "work_method_ref": "docs/WORK_METHOD.md",
+      "architecture_component_ids": [
+        "M01"
+      ],
+      "roadmap_phase_id": "RP-02",
+      "depends_on_request_ids": [],
+      "status": "PARTIAL",
+      "status_meaning": "DOCUMENTED désigne un livrable documentaire, pas une capacité du moteur mise en œuvre.",
+      "deliverable_refs": [
+        "docs/intake/SOURCE_REGISTER.json"
+      ],
+      "acceptance_criteria": [
+        "Sourcer les mécanismes retrouvés, dater les versions et signaler les éléments inaccessibles ; aucune intervention sur le dépôt MCP."
+      ],
+      "execution_authority": "NONE_FROM_THIS_RECORD",
+      "canonical_work_item_id": null,
+      "remaining": "Sourcer les mécanismes retrouvés, dater les versions et signaler les éléments inaccessibles ; aucune intervention sur le dépôt MCP."
+    },
+    {
+      "request_id": "LOOP-REQ-006",
+      "origin": "USER_REQUEST",
+      "title": "Construire d’abord le registre initial",
+      "source_message_ids": [
+        "U05"
+      ],
+      "source_owner": "docs/memory/CONVERSATION_LEDGER.json",
+      "interpretation": "Construire d’abord le registre initial",
+      "context": "Correction de l’ordre de travail demandée explicitement.",
+      "work_method_ref": "docs/WORK_METHOD.md",
+      "architecture_component_ids": [
+        "M01"
+      ],
+      "roadmap_phase_id": "RP-01",
+      "depends_on_request_ids": [
+        "LOOP-REQ-001"
+      ],
+      "status": "DOCUMENTED",
+      "status_meaning": "DOCUMENTED désigne un livrable documentaire, pas une capacité du moteur mise en œuvre.",
+      "deliverable_refs": [
+        "docs/intake/BASE_REGISTRY.json"
+      ],
+      "acceptance_criteria": [
+        "Garder la fondation BASE disponible avant le chargement du moteur et la planification détaillée."
+      ],
+      "execution_authority": "NONE_FROM_THIS_RECORD",
+      "canonical_work_item_id": null,
+      "remaining": "Conserver et faire évoluer selon les nouvelles instructions."
+    },
+    {
+      "request_id": "LOOP-REQ-007",
+      "origin": "USER_REQUEST",
+      "title": "Définir le raccordement au moteur",
+      "source_message_ids": [
+        "U07"
+      ],
+      "source_owner": "docs/memory/CONVERSATION_LEDGER.json",
+      "interpretation": "Définir le raccordement au moteur",
+      "context": "Le prototype ne possède pas de chargeur BASE démontré.",
+      "work_method_ref": "docs/WORK_METHOD.md",
+      "architecture_component_ids": [
+        "M02"
+      ],
+      "roadmap_phase_id": "RP-05",
+      "depends_on_request_ids": [
+        "LOOP-REQ-002",
+        "LOOP-REQ-004"
+      ],
+      "status": "SPECIFIED_NOT_IMPLEMENTED",
+      "status_meaning": "DOCUMENTED désigne un livrable documentaire, pas une capacité du moteur mise en œuvre.",
+      "deliverable_refs": [
+        "docs/intake/ENGINE_BINDING.md"
+      ],
+      "acceptance_criteria": [
+        "Spécifier chargement/version, liens, compatibilité et erreurs ; prouver plus tard le raccordement avant de le déclarer opérationnel."
+      ],
+      "execution_authority": "NONE_FROM_THIS_RECORD",
+      "canonical_work_item_id": null,
+      "remaining": "Spécifier chargement/version, liens, compatibilité et erreurs ; prouver plus tard le raccordement avant de le déclarer opérationnel."
+    },
+    {
+      "request_id": "LOOP-REQ-008",
+      "origin": "INTERPRETATION_OF_USER_REQUEST",
+      "title": "Organiser les informations au fil des instructions",
+      "source_message_ids": [
+        "U07"
+      ],
+      "source_owner": "docs/memory/CONVERSATION_LEDGER.json",
+      "interpretation": "Organiser les informations au fil des instructions",
+      "context": "L’information nouvelle doit alimenter besoins, documents et travaux sans dispersion.",
+      "work_method_ref": "docs/WORK_METHOD.md",
+      "architecture_component_ids": [
+        "M03"
+      ],
+      "roadmap_phase_id": "RP-04",
+      "depends_on_request_ids": [
+        "LOOP-REQ-007",
+        "LOOP-REQ-016"
+      ],
+      "status": "PLANNED",
+      "status_meaning": "DOCUMENTED désigne un livrable documentaire, pas une capacité du moteur mise en œuvre.",
+      "deliverable_refs": [
+        "docs/ARCHITECTURE.md",
+        "docs/WORK_METHOD.md"
+      ],
+      "acceptance_criteria": [
+        "Concevoir classement, responsabilité documentaire, impacts, contradictions et mise à jour du cahier des charges ; automatisation à réaliser."
+      ],
+      "execution_authority": "NONE_FROM_THIS_RECORD",
+      "canonical_work_item_id": null,
+      "remaining": "Concevoir classement, responsabilité documentaire, impacts, contradictions et mise à jour du cahier des charges ; automatisation à réaliser."
+    },
+    {
+      "request_id": "LOOP-REQ-009",
+      "origin": "USER_REQUEST",
+      "title": "Intégrer les informations dans Looping-",
+      "source_message_ids": [
+        "U08"
+      ],
+      "source_owner": "docs/memory/CONVERSATION_LEDGER.json",
+      "interpretation": "Intégrer les informations dans Looping-",
+      "context": "Le dépôt cible explicite est Looping-, distinct de Loop et MCP.",
+      "work_method_ref": "docs/WORK_METHOD.md",
+      "architecture_component_ids": [
+        "M01"
+      ],
+      "roadmap_phase_id": "RP-00",
+      "depends_on_request_ids": [],
+      "status": "VERIFIED",
+      "status_meaning": "DOCUMENTED désigne un livrable documentaire, pas une capacité du moteur mise en œuvre.",
+      "deliverable_refs": [
+        "docs/intake/README.md",
+        "docs/intake/VERIFICATION.md"
+      ],
+      "acceptance_criteria": [
+        "Conserver les informations accessibles, leurs sources et un point de reprise ; preuves des commits 217f238 et 4569cd8."
+      ],
+      "execution_authority": "NONE_FROM_THIS_RECORD",
+      "canonical_work_item_id": null,
+      "remaining": "Conserver et faire évoluer selon les nouvelles instructions."
+    },
+    {
+      "request_id": "LOOP-REQ-010",
+      "origin": "USER_REQUEST",
+      "title": "Préparer le plan à partir des informations",
+      "source_message_ids": [
+        "U08"
+      ],
+      "source_owner": "docs/memory/CONVERSATION_LEDGER.json",
+      "interpretation": "Préparer le plan à partir des informations",
+      "context": "La préparation précède la réalisation fonctionnelle.",
+      "work_method_ref": "docs/WORK_METHOD.md",
+      "architecture_component_ids": [
+        "M04"
+      ],
+      "roadmap_phase_id": "RP-01",
+      "depends_on_request_ids": [
+        "LOOP-REQ-009"
+      ],
+      "status": "DOCUMENTED",
+      "status_meaning": "DOCUMENTED désigne un livrable documentaire, pas une capacité du moteur mise en œuvre.",
+      "deliverable_refs": [
+        "docs/intake/PLAN_PREPARATOIRE.md",
+        "ROADMAP.md"
+      ],
+      "acceptance_criteria": [
+        "Produire des phases ordonnées et dépendantes, avec livrables, états et critères observables."
+      ],
+      "execution_authority": "NONE_FROM_THIS_RECORD",
+      "canonical_work_item_id": null,
+      "remaining": "Conserver et faire évoluer selon les nouvelles instructions."
+    },
+    {
+      "request_id": "LOOP-REQ-011",
+      "origin": "OWNER_ENTRY_DECISION",
+      "title": "Confirmer l’entrée directe",
+      "source_message_ids": [
+        "U09"
+      ],
+      "source_owner": "docs/memory/CONVERSATION_LEDGER.json",
+      "interpretation": "Confirmer l’entrée directe",
+      "context": "Choix explicite de la porte B dans cette conversation.",
+      "work_method_ref": "docs/WORK_METHOD.md",
+      "architecture_component_ids": [
+        "M06"
+      ],
+      "roadmap_phase_id": "RP-00",
+      "depends_on_request_ids": [],
+      "status": "VERIFIED",
+      "status_meaning": "DOCUMENTED désigne un livrable documentaire, pas une capacité du moteur mise en œuvre.",
+      "deliverable_refs": [
+        "docs/intake/DIRECT_OWNER_ENTRY_EVIDENCE.json",
+        "docs/memory/DIRECT_ENTRY_EVIDENCE.json"
+      ],
+      "acceptance_criteria": [
+        "Vérifier acteur, permissions natives et HEAD pour les opérations ; ne pas inventer de session, claim ou reçu GSCC."
+      ],
+      "execution_authority": "NONE_FROM_THIS_RECORD",
+      "canonical_work_item_id": null,
+      "remaining": "Conserver et faire évoluer selon les nouvelles instructions."
+    },
+    {
+      "request_id": "LOOP-REQ-012",
+      "origin": "USER_REQUEST",
+      "title": "Continuer le travail autorisé",
+      "source_message_ids": [
+        "U10"
+      ],
+      "source_owner": "docs/memory/CONVERSATION_LEDGER.json",
+      "interpretation": "Continuer le travail autorisé",
+      "context": "La poursuite porte ici sur mémoire, registre, contexte, méthode, architecture et roadmap.",
+      "work_method_ref": "docs/WORK_METHOD.md",
+      "architecture_component_ids": [
+        "M04"
+      ],
+      "roadmap_phase_id": "RP-01",
+      "depends_on_request_ids": [
+        "LOOP-REQ-009"
+      ],
+      "status": "IN_PROGRESS",
+      "status_meaning": "DOCUMENTED désigne un livrable documentaire, pas une capacité du moteur mise en œuvre.",
+      "deliverable_refs": [
+        "docs/memory/CHECKPOINT.json"
+      ],
+      "acceptance_criteria": [
+        "Terminer les livrables documentaires du présent mandat et laisser les capacités futures dans leur état réel."
+      ],
+      "execution_authority": "NONE_FROM_THIS_RECORD",
+      "canonical_work_item_id": null,
+      "remaining": "Terminer les livrables documentaires du présent mandat et laisser les capacités futures dans leur état réel."
+    },
+    {
+      "request_id": "LOOP-REQ-013",
+      "origin": "USER_REQUEST",
+      "title": "Enregistrer les informations dans GitHub",
+      "source_message_ids": [
+        "U10"
+      ],
+      "source_owner": "docs/memory/CONVERSATION_LEDGER.json",
+      "interpretation": "Enregistrer les informations dans GitHub",
+      "context": "Le propriétaire autorise une base de données ou un registre.",
+      "work_method_ref": "docs/WORK_METHOD.md",
+      "architecture_component_ids": [
+        "M01"
+      ],
+      "roadmap_phase_id": "RP-01",
+      "depends_on_request_ids": [
+        "LOOP-REQ-009"
+      ],
+      "status": "DOCUMENTED",
+      "status_meaning": "DOCUMENTED désigne un livrable documentaire, pas une capacité du moteur mise en œuvre.",
+      "deliverable_refs": [
+        "docs/memory/README.md",
+        "docs/adr/ADR-0002-canonical-project-memory.md"
+      ],
+      "acceptance_criteria": [
+        "Utiliser des registres JSON versionnés et des propriétaires explicites ; vérifier les écritures distantes ; aucune base serveur n’est requise pour ce lot."
+      ],
+      "execution_authority": "NONE_FROM_THIS_RECORD",
+      "canonical_work_item_id": null,
+      "remaining": "Conserver et faire évoluer selon les nouvelles instructions."
+    },
+    {
+      "request_id": "LOOP-REQ-014",
+      "origin": "USER_REQUEST",
+      "title": "Constituer la mémoire canonique du projet",
+      "source_message_ids": [
+        "U10"
+      ],
+      "source_owner": "docs/memory/CONVERSATION_LEDGER.json",
+      "interpretation": "Constituer la mémoire canonique du projet",
+      "context": "Le dépôt doit permettre la reprise indépendamment de la conversation.",
+      "work_method_ref": "docs/WORK_METHOD.md",
+      "architecture_component_ids": [
+        "M06"
+      ],
+      "roadmap_phase_id": "RP-01",
+      "depends_on_request_ids": [
+        "LOOP-REQ-013"
+      ],
+      "status": "DOCUMENTED",
+      "status_meaning": "DOCUMENTED désigne un livrable documentaire, pas une capacité du moteur mise en œuvre.",
+      "deliverable_refs": [
+        ".governance/canonical-memory/current.json",
+        "SOURCE_OF_TRUTH.md",
+        "docs/memory/README.md"
+      ],
+      "acceptance_criteria": [
+        "Relier les propriétaires détaillés, décisions, état, demandes, architecture, roadmap, preuves et point de reprise sans canon concurrent."
+      ],
+      "execution_authority": "NONE_FROM_THIS_RECORD",
+      "canonical_work_item_id": null,
+      "remaining": "Conserver et faire évoluer selon les nouvelles instructions."
+    },
+    {
+      "request_id": "LOOP-REQ-015",
+      "origin": "USER_REQUEST",
+      "title": "Conserver ce qui est dit et fait ici",
+      "source_message_ids": [
+        "U10"
+      ],
+      "source_owner": "docs/memory/CONVERSATION_LEDGER.json",
+      "interpretation": "Conserver ce qui est dit et fait ici",
+      "context": "La conservation concerne les échanges projet accessibles et les actions attestées.",
+      "work_method_ref": "docs/WORK_METHOD.md",
+      "architecture_component_ids": [
+        "M06"
+      ],
+      "roadmap_phase_id": "RP-01",
+      "depends_on_request_ids": [
+        "LOOP-REQ-013"
+      ],
+      "status": "PARTIAL",
+      "status_meaning": "DOCUMENTED désigne un livrable documentaire, pas une capacité du moteur mise en œuvre.",
+      "deliverable_refs": [
+        "docs/memory/CONVERSATION_LEDGER.json",
+        "docs/memory/ACTIONS.json"
+      ],
+      "acceptance_criteria": [
+        "Archiver les textes disponibles et les preuves d’action ; afficher les lacunes d’historique et les dates inconnues ; poursuivre la capture dans les sessions actives."
+      ],
+      "execution_authority": "NONE_FROM_THIS_RECORD",
+      "canonical_work_item_id": null,
+      "remaining": "Archiver les textes disponibles et les preuves d’action ; afficher les lacunes d’historique et les dates inconnues ; poursuivre la capture dans les sessions actives."
+    },
+    {
+      "request_id": "LOOP-REQ-016",
+      "origin": "USER_REQUEST",
+      "title": "Enregistrer toutes les demandes et leur restant",
+      "source_message_ids": [
+        "U10"
+      ],
+      "source_owner": "docs/memory/CONVERSATION_LEDGER.json",
+      "interpretation": "Enregistrer toutes les demandes et leur restant",
+      "context": "Les demandes, décisions, propositions et constats doivent rester distingués.",
+      "work_method_ref": "docs/WORK_METHOD.md",
+      "architecture_component_ids": [
+        "M04"
+      ],
+      "roadmap_phase_id": "RP-01",
+      "depends_on_request_ids": [
+        "LOOP-REQ-013"
+      ],
+      "status": "DOCUMENTED",
+      "status_meaning": "DOCUMENTED désigne un livrable documentaire, pas une capacité du moteur mise en œuvre.",
+      "deliverable_refs": [
+        "docs/memory/REQUESTS.json",
+        "TODO.md"
+      ],
+      "acceptance_criteria": [
+        "Chaque demande possède source, interprétation, contexte, méthode, dépendances, livrables, critères et état ; ne pas confondre demande et tâche exécutable."
+      ],
+      "execution_authority": "NONE_FROM_THIS_RECORD",
+      "canonical_work_item_id": null,
+      "remaining": "Conserver et faire évoluer selon les nouvelles instructions."
+    },
+    {
+      "request_id": "LOOP-REQ-017",
+      "origin": "USER_REQUEST",
+      "title": "Conserver le contexte de travail",
+      "source_message_ids": [
+        "U10"
+      ],
+      "source_owner": "docs/memory/CONVERSATION_LEDGER.json",
+      "interpretation": "Conserver le contexte de travail",
+      "context": "Le fil rouge est la conception méthodique d’un système Loop Engineering modulaire.",
+      "work_method_ref": "docs/WORK_METHOD.md",
+      "architecture_component_ids": [
+        "M06"
+      ],
+      "roadmap_phase_id": "RP-01",
+      "depends_on_request_ids": [
+        "LOOP-REQ-014"
+      ],
+      "status": "DOCUMENTED",
+      "status_meaning": "DOCUMENTED désigne un livrable documentaire, pas une capacité du moteur mise en œuvre.",
+      "deliverable_refs": [
+        "PROJECT_CONTEXT.md"
+      ],
+      "acceptance_criteria": [
+        "Décrire mission, périmètre, origine, contraintes, système existant et inconnues sans inventer de stack active."
+      ],
+      "execution_authority": "NONE_FROM_THIS_RECORD",
+      "canonical_work_item_id": null,
+      "remaining": "Conserver et faire évoluer selon les nouvelles instructions."
+    },
+    {
+      "request_id": "LOOP-REQ-018",
+      "origin": "USER_REQUEST",
+      "title": "Définir la méthode de travail",
+      "source_message_ids": [
+        "U10"
+      ],
+      "source_owner": "docs/memory/CONVERSATION_LEDGER.json",
+      "interpretation": "Définir la méthode de travail",
+      "context": "Le travail doit rester progressif, traçable et sans régression.",
+      "work_method_ref": "docs/WORK_METHOD.md",
+      "architecture_component_ids": [
+        "M02"
+      ],
+      "roadmap_phase_id": "RP-01",
+      "depends_on_request_ids": [
+        "LOOP-REQ-014"
+      ],
+      "status": "DOCUMENTED",
+      "status_meaning": "DOCUMENTED désigne un livrable documentaire, pas une capacité du moteur mise en œuvre.",
+      "deliverable_refs": [
+        "docs/WORK_METHOD.md"
+      ],
+      "acceptance_criteria": [
+        "Décrire la capture, qualification, rattachement, conception, planification, réalisation autorisée, validation, publication et reprise."
+      ],
+      "execution_authority": "NONE_FROM_THIS_RECORD",
+      "canonical_work_item_id": null,
+      "remaining": "Conserver et faire évoluer selon les nouvelles instructions."
+    },
+    {
+      "request_id": "LOOP-REQ-019",
+      "origin": "USER_REQUEST",
+      "title": "Placer les éléments dans une architecture",
+      "source_message_ids": [
+        "U10"
+      ],
+      "source_owner": "docs/memory/CONVERSATION_LEDGER.json",
+      "interpretation": "Placer les éléments dans une architecture",
+      "context": "Une architecture documentaire actuelle et une cible fonctionnelle sont nécessaires.",
+      "work_method_ref": "docs/WORK_METHOD.md",
+      "architecture_component_ids": [
+        "M03"
+      ],
+      "roadmap_phase_id": "RP-04",
+      "depends_on_request_ids": [
+        "LOOP-REQ-014",
+        "LOOP-REQ-017"
+      ],
+      "status": "DOCUMENTED",
+      "status_meaning": "DOCUMENTED désigne un livrable documentaire, pas une capacité du moteur mise en œuvre.",
+      "deliverable_refs": [
+        "docs/ARCHITECTURE.md"
+      ],
+      "acceptance_criteria": [
+        "Décrire composants, propriétaires, données, relations, frontières, intégrations et état de chaque partie ; distinguer cible et fonctionnement observé."
+      ],
+      "execution_authority": "NONE_FROM_THIS_RECORD",
+      "canonical_work_item_id": null,
+      "remaining": "Conserver et faire évoluer selon les nouvelles instructions."
+    },
+    {
+      "request_id": "LOOP-REQ-020",
+      "origin": "USER_REQUEST",
+      "title": "Construire une roadmap",
+      "source_message_ids": [
+        "U10"
+      ],
+      "source_owner": "docs/memory/CONVERSATION_LEDGER.json",
+      "interpretation": "Construire une roadmap",
+      "context": "Le plan doit couvrir les demandes avec dépendances et conditions de sortie.",
+      "work_method_ref": "docs/WORK_METHOD.md",
+      "architecture_component_ids": [
+        "M04"
+      ],
+      "roadmap_phase_id": "RP-01",
+      "depends_on_request_ids": [
+        "LOOP-REQ-010",
+        "LOOP-REQ-016",
+        "LOOP-REQ-019"
+      ],
+      "status": "DOCUMENTED",
+      "status_meaning": "DOCUMENTED désigne un livrable documentaire, pas une capacité du moteur mise en œuvre.",
+      "deliverable_refs": [
+        "ROADMAP.md"
+      ],
+      "acceptance_criteria": [
+        "Relier les phases aux demandes, livrables, preuves, risques et états ; conserver une prochaine action globale unique."
+      ],
+      "execution_authority": "NONE_FROM_THIS_RECORD",
+      "canonical_work_item_id": null,
+      "remaining": "Conserver et faire évoluer selon les nouvelles instructions."
+    }
+  ],
+  "derived_findings": [
+    {
+      "finding_id": "LOOP-FIND-001",
+      "origin": "VERIFIED_CI_FINDING",
+      "title": "Portabilité client des workflows GSCC/GACR à examiner",
+      "status": "OPEN",
+      "evidence_refs": [
+        "docs/intake/VERIFICATION.md",
+        "https://github.com/chainsolutions-wealthtech/Looping-/actions/runs/43381457082"
+      ],
+      "context": "Les fichiers SQL 007 et namespace-work-registry sont absents de la baseline client ; leur absence n’est pas une suppression de l’import.",
+      "next_required_result": "Déterminer le correctif de portabilité selon la frontière source/client ; ne pas réinjecter aveuglément la mémoire du template.",
+      "roadmap_phase_id": "RP-02",
+      "user_request": false
+    },
+    {
+      "finding_id": "LOOP-FIND-002",
+      "origin": "COVERAGE_LIMITATION",
+      "title": "Historique brut et horodatages incomplets",
+      "status": "OPEN",
+      "evidence_refs": [
+        "docs/memory/CONVERSATION_LEDGER.json"
+      ],
+      "context": "Les données visibles n’exposent pas tous les anciens messages assistant ni leurs horodatages natifs.",
+      "next_required_result": "Compléter seulement avec des sources retrouvées ; conserver la provenance et les lacunes.",
+      "roadmap_phase_id": "RP-00",
+      "user_request": false
+    },
+    {
+      "finding_id": "LOOP-FIND-003",
+      "origin": "VERIFIED_PROJECTION_SCOPE",
+      "title": "Révisions initiales du curseur et du pointeur différentes",
+      "status": "RECONCILED",
+      "evidence_refs": [
+        ".governance/canonical-memory/current.json",
+        ".governance/intake/cursor.json"
+      ],
+      "context": "Avant les revues, le pointeur mémoire bootstrap était à 1/1 tandis que le curseur intake était à 0/0. La réponse A01 parlait du curseur ; elle ne décrit pas les deux objets.",
+      "next_required_result": "Les deux revues sont appliquées dans l’ordre ; curseur et pointeur finaux portent canonical_revision=3, work_revision=1.",
+      "roadmap_phase_id": "RP-01",
+      "user_request": false
+    }
+  ],
+  "execution_registry": ".governance/work/work-items.json",
+  "authority_rule": "Une demande ou une phase ne crée ni work-item, claim, session ou permission. La file d’exécution native reste distincte."
+}

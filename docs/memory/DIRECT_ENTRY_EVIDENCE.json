@@ -16,7 +16,7 @@
     "triage": true
   },
   "entry_file": "00_DIRECT_OWNER_ENTRY.md",
-  "selection_source": "docs/intake/CONVERSATION_INPUTS.md#u09",
+  "selection_source": "docs/intake/CONVERSATION_INPUTS.md",
   "current_authorization": "docs/memory/sources/U10.json",
   "role_declaration": "PLANNER_AGENT",
   "connection_intent": "CONTEXT_INTAKE",
@@ -29,5 +29,9 @@
   ],
   "no_runtime_or_code_permission_inferred": true,
   "gscc_receipt_issued": false,
-  "gacr_session_claimed": false
+  "gacr_session_claimed": false,
+  "selection_source_locator": {
+    "message_id": "U09",
+    "json_block_ordinal": 9
+  }
 }

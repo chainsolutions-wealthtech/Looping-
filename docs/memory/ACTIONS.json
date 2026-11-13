@@ -1,0 +1,125 @@
+{
+  "schema_version": "1.0.0",
+  "repository": "chainsolutions-wealthtech/Looping-",
+  "updated_at": "2026-11-13T07:14:36+00:00",
+  "role": "MATERIAL_ACTION_EVIDENCE_LEDGER",
+  "event_timestamp_rule": "null quand la date originale n’est pas exposée ; recorded_at date uniquement l’enregistrement.",
+  "actions": [
+    {
+      "action_id": "LOOP-ACT-001",
+      "kind": "SOURCE_COLLECTION",
+      "result": "VERIFIED",
+      "description": "Sources accessibles et snapshots enregistrés.",
+      "evidence_refs": [
+        "docs/intake/SOURCE_REGISTER.json"
+      ],
+      "event_timestamp": null,
+      "recorded_at": "2026-11-13T07:14:36+00:00",
+      "provider_session_ref": null
+    },
+    {
+      "action_id": "LOOP-ACT-002",
+      "kind": "DOOR_A_ATTEMPT",
+      "result": "FAILED",
+      "description": "Issue first-touch créée ; pas de release attestée.",
+      "evidence_refs": [
+        "https://github.com/chainsolutions-wealthtech/Looping-/issues/1",
+        "https://github.com/chainsolutions-wealthtech/Looping-/actions/runs/43376454383"
+      ],
+      "event_timestamp": null,
+      "recorded_at": "2026-11-13T07:14:36+00:00",
+      "provider_session_ref": null
+    },
+    {
+      "action_id": "LOOP-ACT-003",
+      "kind": "DIRECT_OWNER_ENTRY",
+      "result": "VERIFIED",
+      "description": "Porte B confirmée par U09 et identité/permissions GitHub observées.",
+      "evidence_refs": [
+        "docs/intake/DIRECT_OWNER_ENTRY_EVIDENCE.json"
+      ],
+      "event_timestamp": null,
+      "recorded_at": "2026-11-13T07:14:36+00:00",
+      "provider_session_ref": null
+    },
+    {
+      "action_id": "LOOP-ACT-004",
+      "kind": "INFORMATION_IMPORT",
+      "result": "VERIFIED",
+      "description": "Import initial : 28 ajouts, deux modifications, sans suppression.",
+      "evidence_refs": [
+        "https://github.com/chainsolutions-wealthtech/Looping-/commit/217f2380d19dc9b67eb60aef848c42ae7171062f"
+      ],
+      "event_timestamp": null,
+      "recorded_at": "2026-11-13T07:14:36+00:00",
+      "provider_session_ref": null
+    },
+    {
+      "action_id": "LOOP-ACT-005",
+      "kind": "POST_IMPORT_VERIFICATION",
+      "result": "VERIFIED",
+      "description": "31 blobs finaux comparés à la préparation ; absences préexistantes qualifiées.",
+      "evidence_refs": [
+        "https://github.com/chainsolutions-wealthtech/Looping-/commit/4569cd8bdb157f760729cf0b8b9e5751a640e6fb",
+        "docs/intake/VERIFICATION.md"
+      ],
+      "event_timestamp": null,
+      "recorded_at": "2026-11-13T07:14:36+00:00",
+      "provider_session_ref": null
+    },
+    {
+      "action_id": "LOOP-ACT-006",
+      "kind": "DIRECT_OWNER_REOBSERVATION",
+      "result": "VERIFIED",
+      "description": "Acteur Patricked-code et permissions pull/push observés pour la continuation documentaire.",
+      "evidence_refs": [
+        "docs/memory/DIRECT_ENTRY_EVIDENCE.json"
+      ],
+      "event_timestamp": null,
+      "recorded_at": "2026-11-13T07:14:36+00:00",
+      "provider_session_ref": null
+    },
+    {
+      "action_id": "LOOP-ACT-007",
+      "kind": "NEW_REQUEST_CAPTURE",
+      "result": "VERIFIED",
+      "description": "U10 archivé et INTAKE-0002 enregistré RECEIVED avant qualification.",
+      "evidence_refs": [
+        "https://github.com/chainsolutions-wealthtech/Looping-/commit/fb76f7386f910dc7419fa55b870469930f3f35cb",
+        "docs/memory/sources/U10.json"
+      ],
+      "event_timestamp": null,
+      "recorded_at": "2026-11-13T07:14:36+00:00",
+      "provider_session_ref": null
+    },
+    {
+      "action_id": "LOOP-ACT-008",
+      "kind": "INTAKE_REVIEW",
+      "result": "DOCUMENTED",
+      "description": "Revue des intakes 1 puis 2 ; effets limités et propriétaires explicités.",
+      "evidence_refs": [
+        ".governance/intake/INTAKE-0001.json",
+        ".governance/intake/INTAKE-0002.json",
+        "docs/adr/ADR-0002-canonical-project-memory.md"
+      ],
+      "event_timestamp": null,
+      "recorded_at": "2026-11-13T07:14:36+00:00",
+      "provider_session_ref": null
+    },
+    {
+      "action_id": "LOOP-ACT-009",
+      "kind": "CANONICAL_DOCUMENT_PREPARATION",
+      "result": "DOCUMENTED",
+      "description": "Mémoire, demandes, contexte, méthode, architecture et roadmap préparés dans un lot documentaire.",
+      "evidence_refs": [
+        "docs/memory/REQUESTS.json",
+        "docs/WORK_METHOD.md",
+        "docs/ARCHITECTURE.md",
+        "ROADMAP.md"
+      ],
+      "event_timestamp": null,
+      "recorded_at": "2026-11-13T07:14:36+00:00",
+      "provider_session_ref": null
+    }
+  ]
+}

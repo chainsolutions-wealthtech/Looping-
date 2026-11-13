@@ -47,3 +47,15 @@ Les entrées suivantes doivent documenter les changements durables, décisions, 
 - Objet : mémoire canonique des informations disponibles, registre des demandes avec contexte, méthode, architecture et roadmap.
 - Entrée directe confirmée dans U09 et réobservée : acteur Patricked-code, permissions natives pull/push, HEAD `4569cd8bdb157f760729cf0b8b9e5751a640e6fb`.
 - Rôle déclaré : PLANNER_AGENT ; intention CONTEXT_INTAKE ; aucune session, claim ou autorité serveur créée.
+
+## 2026-11-13T07:14:36+00:00 — Mémoire canonique et planification de Looping-
+
+- Source : U10, capturée dans le commit `fb76f7386f910dc7419fa55b870469930f3f35cb` avant qualification.
+- Revue documentaire des intakes 1 puis 2 : MEMORY / DECISION, RECONCILED, effet work=false.
+- Révisions : pointeur bootstrap 1/1 et curseur initial 0/0 observés distinctement ; après les revues, canonical_revision=3 et work_revision=1 dans les deux projections.
+- 20 demandes enregistrées avec sources, contexte, méthode, composants, phase, dépendances, livrables, critères et restant ; trois constats distincts.
+- Contexte, méthode de travail, architecture actuelle/cible, roadmap et propriétaires de mémoire renseignés ; ADR-0002 accepté pour le socle documentaire.
+- Les sources historiques, propositions de workflow et prototype conservent leur qualification ; aucun runtime ou nouveau mécanisme de dispatch activé.
+- Couverture des échanges accessible et lacunes consignées ; aucune date originale ou identité fournisseur inventée.
+- La baseline métier reste ouverte ; l’action globale demeure DISCOVER_PROJECT_BASELINE. La CI complète n’est pas déclarée réussie.
+- Validation locale et publication distante du lot : résultats à consulter dans docs/memory/CHECKPOINT.json.

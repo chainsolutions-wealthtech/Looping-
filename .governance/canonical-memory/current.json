@@ -2,14 +2,35 @@
   "schema_version": "1.0.0",
   "repository": "chainsolutions-wealthtech/Looping-",
   "canonical_branch": "main",
-  "canonical_revision": 1,
+  "canonical_revision": 3,
   "work_revision": 1,
-  "observed_head_sha": "4900f36b8aecc6cea8d7f77179f079d635c0a924",
-  "current_checkpoint": "bootstrap",
+  "observed_head_sha": "fb76f7386f910dc7419fa55b870469930f3f35cb",
+  "current_checkpoint": "docs/memory/CHECKPOINT.json",
   "current_handoff": null,
   "next_action": "DISCOVER_PROJECT_BASELINE",
-  "blockers": [],
-  "freshness": "ATTESTED",
+  "blockers": [
+    "LOOP-FIND-001: full CI blocked by inherited missing client dependencies",
+    "LOOP-FIND-002: source history coverage incomplete"
+  ],
+  "freshness": "OBSERVED_DOCUMENTARY_REVIEW",
   "bootstrap_attestation_subject_sha": "4900f36b8aecc6cea8d7f77179f079d635c0a924",
-  "attestation_model": "CHILD_COMMIT_ATTESTS_INITIALIZATION_COMMIT"
+  "attestation_model": "CHILD_COMMIT_ATTESTS_INITIALIZATION_COMMIT",
+  "memory_index": "docs/memory/README.md",
+  "owners": {
+    "context": "PROJECT_CONTEXT.md",
+    "current_state": "STATUS.md",
+    "requests": "docs/memory/REQUESTS.json",
+    "conversation": "docs/memory/CONVERSATION_LEDGER.json",
+    "sources": "docs/intake/SOURCE_REGISTER.json",
+    "method": "docs/WORK_METHOD.md",
+    "architecture": "docs/ARCHITECTURE.md",
+    "roadmap": "ROADMAP.md",
+    "decisions": "docs/DECISIONS.md",
+    "actions": "docs/memory/ACTIONS.json",
+    "history": "SUIVI.md",
+    "execution_work": ".governance/work/work-items.json",
+    "next_action": "NEXT_ACTION.md"
+  },
+  "last_reviewed_at": "2026-11-13T07:14:36+00:00",
+  "head_semantics": "observed_head_sha is the pre-write observed input; the containing Git commit is the output artifact, never a fabricated self-SHA."
 }

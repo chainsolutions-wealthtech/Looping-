@@ -11,3 +11,15 @@ Ajouter ici les preuves d'exécution significatives, commandes, runs CI, anomali
 - Bootstrap attestation: `PASS`
 - Attested initialization commit: `4900f36b8aecc6cea8d7f77179f079d635c0a924`
 - GitHub run: `43375273423`
+
+## 2026-11-13T07:14:36+00:00 — Préparation et contrôle du lot mémoire
+
+- Source : U10, capturée dans le commit `fb76f7386f910dc7419fa55b870469930f3f35cb` avant qualification.
+- Revue documentaire des intakes 1 puis 2 : MEMORY / DECISION, RECONCILED, effet work=false.
+- Révisions : pointeur bootstrap 1/1 et curseur initial 0/0 observés distinctement ; après les revues, canonical_revision=3 et work_revision=1 dans les deux projections.
+- 20 demandes enregistrées avec sources, contexte, méthode, composants, phase, dépendances, livrables, critères et restant ; trois constats distincts.
+- Contexte, méthode de travail, architecture actuelle/cible, roadmap et propriétaires de mémoire renseignés ; ADR-0002 accepté pour le socle documentaire.
+- Les sources historiques, propositions de workflow et prototype conservent leur qualification ; aucun runtime ou nouveau mécanisme de dispatch activé.
+- Couverture des échanges accessible et lacunes consignées ; aucune date originale ou identité fournisseur inventée.
+- La baseline métier reste ouverte ; l’action globale demeure DISCOVER_PROJECT_BASELINE. La CI complète n’est pas déclarée réussie.
+- Validation locale et publication distante du lot : résultats à consulter dans docs/memory/CHECKPOINT.json.

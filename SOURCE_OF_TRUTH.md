@@ -84,3 +84,9 @@ For the source control plane, authorities are separated by purpose:
 - HISTORY: decisions, suivi, events, evidence and owner feedback.
 
 Target architecture never overrides newer live Git evidence. Imported memory or historical snapshots cannot satisfy live approval or mutation authority.
+
+
+## Propriétaires canoniques de Looping-
+La mémoire projet est routée par `.governance/canonical-memory/current.json` et `docs/memory/README.md`, sans changement de la hiérarchie ci-dessus. PROJECT_CONTEXT porte la mission et le périmètre ; STATUS l’état courant ; REQUESTS.json les demandes détaillées ; WORK_METHOD la méthode ; ARCHITECTURE le modèle actuel/cible ; ROADMAP l’ordre des phases ; ADR/DECISIONS les décisions ; ACTIONS et SUIVI/WORK_LOG les preuves et l’historique ; NEXT_ACTION l’action globale unique.
+
+Les sources originales, snapshots et anciennes réponses sont des archives. Leur qualification courante est faite par les propriétaires et les dispositions d’intake. Une demande documentée n’est pas une tâche exécutable ; le registre natif `.governance/work/work-items.json` conserve ce rôle. L’absence d’historique accessible est explicitée ; aucun export fournisseur exhaustif ni capture permanente n’est inféré.

@@ -155,3 +155,7 @@ When `.template-source` exists:
 
 This enables exact conversation/agent continuity through versioned Git state while preserving a clean generic template for newly generated repositories.
 
+
+
+## Projet Looping- — parcours documentaire actuel
+Le contenu précédent décrit les capacités et l’origine du template ; leur présence ne certifie pas leur fonctionnement live dans ce dépôt. Pour le projet Looping-, lire [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md), [la mémoire canonique](docs/memory/README.md), [le registre des demandes](docs/memory/REQUESTS.json), [la méthode](docs/WORK_METHOD.md), [l’architecture](docs/ARCHITECTURE.md), [la roadmap](ROADMAP.md), puis STATUS et NEXT_ACTION. Les preuves et limites restent explicites dans le checkpoint et les dispositions d’intake.

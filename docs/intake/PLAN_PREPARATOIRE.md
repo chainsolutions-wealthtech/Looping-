@@ -26,3 +26,7 @@ Portée des prescriptions de la base par type de projet ; modèle de complétude
 
 ## Ordre immédiat
 L’entrée directe a été confirmée et vérifiée après l’échec distinct de la porte A. Enregistrer ce corpus comme information reçue, puis qualifier les sources et la correspondance au mécanisme d’intake natif. Garder DISCOVER_PROJECT_BASELINE ouvert tant que ses propres critères ne sont pas satisfaits.
+
+
+## Rattachement au plan courant
+Ce document conserve le plan préparatoire sourcé de l’intake. Sa déclinaison courante pour Looping- est [ROADMAP.md](../../ROADMAP.md), avec les demandes dans docs/memory/REQUESTS.json. La revue de l’intake est enregistrée ; le plan n’est pas une preuve de mise en œuvre du moteur.

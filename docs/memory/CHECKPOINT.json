@@ -1,0 +1,63 @@
+{
+  "schema_version": "1.0.0",
+  "checkpoint_id": "LOOP-MEMORY-001",
+  "record_type": "DIRECT_OWNER_DOCUMENTARY_CHECKPOINT",
+  "repository": "chainsolutions-wealthtech/Looping-",
+  "canonical_branch": "main",
+  "observed_input_head_sha": "fb76f7386f910dc7419fa55b870469930f3f35cb",
+  "recorded_at": "2026-11-13T07:14:36+00:00",
+  "provider_conversation_ref": null,
+  "gacr_session_id": null,
+  "claim_id": null,
+  "next_action": "DISCOVER_PROJECT_BASELINE",
+  "canonical_revision": 3,
+  "work_revision": 1,
+  "entry_evidence": "docs/memory/DIRECT_ENTRY_EVIDENCE.json",
+  "owners": {
+    "context": "PROJECT_CONTEXT.md",
+    "current_state": "STATUS.md",
+    "requests": "docs/memory/REQUESTS.json",
+    "conversation": "docs/memory/CONVERSATION_LEDGER.json",
+    "sources": "docs/intake/SOURCE_REGISTER.json",
+    "method": "docs/WORK_METHOD.md",
+    "architecture": "docs/ARCHITECTURE.md",
+    "roadmap": "ROADMAP.md",
+    "decisions": "docs/DECISIONS.md",
+    "actions": "docs/memory/ACTIONS.json",
+    "history": "SUIVI.md",
+    "execution_work": ".governance/work/work-items.json",
+    "next_action": "NEXT_ACTION.md"
+  },
+  "completed_documentary_outputs": [
+    "source capture U10",
+    "intake review 1 and 2",
+    "request ledger",
+    "memory routing",
+    "project context",
+    "work method",
+    "initial architecture",
+    "roadmap"
+  ],
+  "remaining_scope": [
+    "baseline qualification",
+    "complete missing history when sources are available",
+    "W1 detailed contract",
+    "engine implementation and evidence"
+  ],
+  "read_first": [
+    "PROJECT_CONTEXT.md",
+    "STATUS.md",
+    ".governance/canonical-memory/current.json",
+    "docs/memory/REQUESTS.json",
+    "docs/WORK_METHOD.md",
+    "ROADMAP.md",
+    "NEXT_ACTION.md"
+  ],
+  "verification": {
+    "local_checks": "PASS: JSON, source bodies/hashes, request references/dependencies, textual integrity",
+    "remote_publication": "PENDING",
+    "full_ci": "BLOCKED_ON_BASELINE",
+    "evidence_ref": "docs/intake/VERIFICATION.md"
+  },
+  "authority_limit": "Documentary checkpoint, not a GSCC receipt, GACR session checkpoint or runtime attestation."
+}

@@ -26,3 +26,7 @@ Entrée utilisée pour cet intake : 00_DIRECT_OWNER_ENTRY.md, confirmée par le 
 
 ## Fidélité des textes
 Les messages sont conservés dans des chaînes JSON source_text. Le grand document consolidé est conservé dans un conteneur source-text-json/v1 dont le champ text restitue ses octets UTF-8 originaux. Cette représentation garde les espaces et sauts de ligne sans modifier le contrôle Git des espaces de fin de ligne. Les empreintes du conteneur et du texte décodé sont distinctes dans le registre des sources.
+
+
+## Disposition après revue
+INTAKE-0001 est réconcilié comme MEMORY à la suite de U10 et ADR-0002. Les sources restent archivées et les propositions restent qualifiées comme telles. La mémoire courante est routée par [docs/memory/README.md](../memory/README.md), les demandes par REQUESTS.json et le plan courant par ROADMAP.md. Le statut RECEIVED décrit plus haut l’état d’import initial, pas la disposition courante. Voir le checkpoint de mémoire pour la reprise globale.

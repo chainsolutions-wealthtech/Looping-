@@ -2,13 +2,22 @@
   "schema_version": "1.0.0",
   "intake_id": "INTAKE-0001",
   "sequence": 1,
-  "status": "RECEIVED",
+  "status": "RECONCILED",
   "source_type": "chatgpt",
   "source_id": "docs/intake/SOURCE_REGISTER.json",
   "source_digest": "355643116001f28fb021bbec200a8f70bdaa4dce738be9de006ddcf5e6665426",
   "observed_at": "2026-11-13T06:37:06+00:00",
   "summary": "Intégrer les informations de la conversation sur la conception modulaire et le Loop Engineering : sources originales, registre BASE en huit parties, historique MCP sourcé, workflows et raccordement proposés, afin de préparer le plan de Looping-.",
-  "disposition": "UNASSESSED",
-  "canonical_effect": false,
-  "work_effect": false
+  "disposition": "MEMORY",
+  "canonical_effect": true,
+  "work_effect": false,
+  "reviewed_at": "2026-11-13T07:14:36+00:00",
+  "review": {
+    "method": "DIRECT_OWNER_DOCUMENTARY_REVIEW",
+    "decision_ref": "docs/adr/ADR-0002-canonical-project-memory.md",
+    "scope_note": "Corpus préservé et qualifié comme sources ; désignation de BASE conservée ; propositions et références externes non activées.",
+    "authority_source": "docs/memory/sources/U10.json",
+    "helper_command_executed": false,
+    "work_items_created": false
+  }
 }
