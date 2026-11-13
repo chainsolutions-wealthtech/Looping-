@@ -3,10 +3,10 @@
   "ledger_id": "LOOP-CONVERSATION-001",
   "id_namespace": "REPOSITORY_LOCAL_NOT_PROVIDER_NATIVE",
   "repository": "chainsolutions-wealthtech/Looping-",
-  "updated_at": "2026-11-13T07:47:09+00:00",
+  "updated_at": "2026-11-13T07:52:15+00:00",
   "provider_conversation_ref": null,
   "coverage": {
-    "user_source_blocks": 11,
+    "user_source_blocks": 12,
     "prior_consolidated_source": "docs/intake/sources/conversation/methodologie-architecture-modulaire.source.json",
     "historical_sources": "docs/intake/SOURCE_REGISTER.json",
     "assistant_records": 8,
@@ -161,6 +161,16 @@
       "sequence": 11,
       "source_ref": "docs/memory/sources/U11.json",
       "source_text_sha256": "1e333132172dd061d67ac0dbc591d542f0d768cff4e6cac5b66bad860c92382a",
+      "message_timestamp": null,
+      "timestamp_status": "UNAVAILABLE",
+      "capture": "VERBATIM_JSON_SOURCE_BLOCK"
+    },
+    {
+      "message_id": "U12",
+      "speaker": "user",
+      "sequence": 12,
+      "source_ref": "docs/memory/sources/U12.json",
+      "source_text_sha256": "88dc1bac40182e92dcf9b8060c0322b02aeaf9cea0c1570279416f99d6d44970",
       "message_timestamp": null,
       "timestamp_status": "UNAVAILABLE",
       "capture": "VERBATIM_JSON_SOURCE_BLOCK"

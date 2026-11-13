@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0.0",
+  "source_id": "U12",
+  "kind": "USER_INSTRUCTION",
+  "repository": "chainsolutions-wealthtech/Looping-",
+  "source_text": "Insemble sur le repos Patrickade MCP ou sur le serveur MCP directement, il doit avoir un registre dans lequel on doit pouvoir lier tous les repos GitHub des trois comptes à un compte et aussi à un répertoire ou des répertoires sur un des deux serveurs. Et donc l'idée c'est de faire cette jonction. Et quand c'est pas le cas, on doit pouvoir, voilà, alimenter ce répertoire sur la base de questions et sur la base de toute une procédure qui, elle, permet au fait de créer ce répertoire et même de déployer. C'est une partie de la procédure. Gouverne deploy application. Essaie de rechercher ça car ça permet déjà, quand on a un répertoire, de répondre à des questions pour savoir si on veut lier ou créer un répertoire sur un serveur, sur un des deux serveurs S1 ou S2 par le MCP. Donc essaie de trouver cette procédure qui lie plusieurs fonctions dans le MCP et vois comment tu peux coordonner ça. Et note ça. Donc quand on n'arrive pas comme ça, on doit pouvoir appeler ce processus-là, ce workflow",
+  "message_timestamp": null,
+  "provider_conversation_ref": null,
+  "observed_at": "2026-11-13T07:52:15+00:00",
+  "interpretation": "Rechercher et consigner la jonction des dépôts des trois propriétaires GitHub avec les répertoires S1/S2 et le raccordement au parcours Governed Deploy Applications si le mapping manque.",
+  "investigation_ref": "docs/memory/PROJECT_HOSTING_BINDING.md"
+}

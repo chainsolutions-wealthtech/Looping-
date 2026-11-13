@@ -1,9 +1,11 @@
 {
   "schema_version": "1.0.0",
-  "latest_sequence": 3,
+  "latest_sequence": 4,
   "reconciled_through_sequence": 3,
   "canonical_revision": 4,
   "work_revision": 2,
-  "pending_intake_ids": [],
+  "pending_intake_ids": [
+    "INTAKE-0004"
+  ],
   "last_reconciliation_digest": "37580a1e5bf453bdac939d704d0f1c1661393d0b1206258e37bcc1b7a91c4dd6"
 }
